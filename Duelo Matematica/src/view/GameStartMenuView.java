@@ -1,101 +1,96 @@
 package view;
 
-
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
-public class GameStartMenuView extends Application {
+/**
+ * GAME START MENU VIEW — The visual layout for the "Select Mode" screen.
+ * 
+ * WHAT DOES THIS CLASS DO?
+ * It draws the "SELECT MODE" title, the Story/1v1/Profile/Leaderboard/Back 
+ * buttons, and the Gear (settings) button in the bottom-left corner.
+ * 
+ * It is an INLINE view. It does not open a new window. The MainMenuController 
+ * will grab its root Node and place it inside the main app window.
+ */
+public class GameStartMenuView {
 
-    @Override
-    public void start(Stage stage) {
-        // Banner Header Title
-        Label headerLabel = createHeaderLabel("SELECT MODE");
+    private final StackPane root;
+    private final Button btnStory;
+    private final Button btn1vs1;
+    private final Button btnProfile;
+    private final Button btnLeaderboard;
+    private final Button btnBack;
+    private final Button gearButton;
 
-        // Buttons
-        Button btnStory = createBorderedButton("STORY");
-        Button btn1vs1 = createBorderedButton("1VS1");
-        Button btnProfile = createBorderedButton("PROFILE");
-        Button btnLeaderboard = createBorderedButton("LEADERBOARD");
-        Button btnBack = createBorderedButton("BACK");
+    public GameStartMenuView(String titleText) {
+        // 1. Build Header
+        Label headerLabel = new Label(titleText);
+        headerLabel.setAlignment(Pos.CENTER);
+        headerLabel.setStyle(
+            "-fx-font-size: 26px; -fx-font-weight: bold;" +
+            "-fx-border-color: #222222; -fx-border-width: 3px;" +
+            "-fx-padding: 12px 60px; -fx-background-color: #f4f4f4;" +
+            "-fx-alignment: center; -fx-text-alignment: center;"
+        );
 
-        // Side-by-side row for Profile & Leaderboard
+        // 2. Build Main Buttons
+        btnStory       = createBorderedButton("STORY");
+        btn1vs1        = createBorderedButton("1VS1");
+        btnProfile     = createBorderedButton("PROFILE");
+        btnLeaderboard = createBorderedButton("LEADERBOARD");
+        btnBack        = createBorderedButton("BACK");
+
+        // 3. Side-by-side row for Profile & Leaderboard
         HBox profileLeaderboardRow = new HBox(15, btnProfile, btnLeaderboard);
         profileLeaderboardRow.setAlignment(Pos.CENTER);
         profileLeaderboardRow.setFillHeight(true);
+        
+        // Make the two side-by-side buttons share the space equally
+        HBox.setHgrow(btnProfile, Priority.ALWAYS);
+        HBox.setHgrow(btnLeaderboard, Priority.ALWAYS);
 
-        // Actions
-        btnStory.setOnAction(e -> showDummyPopup("STORY MODE"));
-        btn1vs1.setOnAction(e -> showDummyPopup("1VS1 MODE"));
-        btnProfile.setOnAction(e -> showDummyPopup("PROFILE"));
-        btnLeaderboard.setOnAction(e -> showDummyPopup("LEADERBOARD"));
-        btnBack.setOnAction(e -> showDummyPopup("BACK"));
-
-        // Button Container
+        // 4. Group all buttons vertically
         VBox buttonBox = new VBox(15, btnStory, btn1vs1, profileLeaderboardRow, btnBack);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setFillWidth(true);
 
-        // Center Stack Content
+        // 5. Stack the header and buttons in the center
         VBox centerContent = new VBox(30, headerLabel, buttonBox);
         centerContent.setAlignment(Pos.CENTER);
         centerContent.setFillWidth(false);
 
-        // Bottom-Left Gear Icon
-        Button gearButton = createGearButton();
-        gearButton.setOnAction(e -> showDummyPopup("SETTINGS"));
+        // 6. Build the Gear Button (bottom-left)
+        gearButton = createGearButton();
 
-        // Root Layout
-        StackPane root = new StackPane();
+        // 7. Assemble Root Layout
+        root = new StackPane();
         root.setStyle("-fx-background-color: #ffffff;");
         root.getChildren().addAll(centerContent, gearButton);
+        
+        // Pin the gear icon to the bottom-left
         StackPane.setAlignment(gearButton, Pos.BOTTOM_LEFT);
         StackPane.setMargin(gearButton, new Insets(20));
-
-        // Scene Setup
-        Scene scene = new Scene(root, 800, 500);
-        stage.setTitle("Screen 3 - Game Modes");
-        stage.setScene(scene);
-        stage.show();
     }
 
-    private Label createHeaderLabel(String text) {
-        Label headerLabel = new Label(text);
-        headerLabel.setAlignment(Pos.CENTER);
-        headerLabel.setStyle(
-            "-fx-font-size: 26px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-border-color: #222222; " +
-            "-fx-border-width: 3px; " +
-            "-fx-padding: 12px 60px; " +
-            "-fx-background-color: #f4f4f4; " +
-            "-fx-alignment: center; " +
-            "-fx-text-alignment: center;"
-        );
-        return headerLabel;
-    }
-
+    // --- UI HELPERS ---
+    
     private Button createBorderedButton(String text) {
         Button button = new Button(text);
         button.setMaxWidth(Double.MAX_VALUE);
         button.setMinHeight(55);
         button.setMaxHeight(55);
         button.setStyle(
-            "-fx-font-size: 18px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-border-color: #000000; " +
-            "-fx-border-width: 3px; " +
-            "-fx-padding: 10px 30px; " +
-            "-fx-background-color: #f9f9f9; " +
-            "-fx-cursor: hand;"
+            "-fx-font-size: 18px; -fx-font-weight: bold;" +
+            "-fx-border-color: #000000; -fx-border-width: 3px;" +
+            "-fx-padding: 10px 30px; -fx-background-color: #f9f9f9; -fx-cursor: hand;"
         );
         return button;
     }
@@ -104,27 +99,20 @@ public class GameStartMenuView extends Application {
         Button gearBtn = new Button("\u2699");
         gearBtn.setPrefSize(48, 48);
         gearBtn.setStyle(
-            "-fx-font-size: 24px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-border-color: #000000; " +
-            "-fx-border-width: 2px; " +
-            "-fx-border-radius: 50%; " +
-            "-fx-background-radius: 50%; " +
-            "-fx-background-color: #f9f9f9; " +
-            "-fx-cursor: hand;"
+            "-fx-font-size: 24px; -fx-font-weight: bold;" +
+            "-fx-border-color: #000000; -fx-border-width: 2px;" +
+            "-fx-border-radius: 50%; -fx-background-radius: 50%;" +
+            "-fx-background-color: #f9f9f9; -fx-cursor: hand;"
         );
         return gearBtn;
     }
 
-    private void showDummyPopup(String buttonName) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Notice");
-        alert.setHeaderText(null);
-        alert.setContentText(buttonName + " clicked!");
-        alert.showAndWait();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+    // --- GETTERS for the Controller ---
+    public Node getRoot()               { return root; }
+    public Button getStoryButton()      { return btnStory; }
+    public Button get1vs1Button()       { return btn1vs1; }
+    public Button getProfileButton()    { return btnProfile; }
+    public Button getLeaderboardButton(){ return btnLeaderboard; }
+    public Button getBackButton()       { return btnBack; }
+    public Button getGearButton()       { return gearButton; }
 }

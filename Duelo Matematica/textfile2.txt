@@ -10,6 +10,3 @@ Models store data and handle the rules (like math, database logic, and session m
 The Views (The "Faces")
 Views build the UI. They don't know what the buttons do; they just hand the buttons to the Controller.
 
-
-
-Add comments inside the .java attached file explaining the use and functions of all the code in layman's term.

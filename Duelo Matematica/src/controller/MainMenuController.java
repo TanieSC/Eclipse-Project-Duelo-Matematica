@@ -39,21 +39,13 @@ public class MainMenuController implements Navigator {
         this.view = view;
         this.authService = authService;
 
-        // --- WIRING THE LOGIN BUTTON ---
-        // The Login button is special. It acts differently depending on the situation.
         view.getLoginButton().setOnAction(e -> {
             if (!Session.isLoggedIn()) {
-                // Scenario 1: Nobody is logged in. Show the Login screen.
                 goToLogin();
-            } else if (Session.hasSavedGame()) {
-                // Scenario 2: A user is logged in, and they quit a game halfway through.
-                // Show the "Resume or New Category?" screen.
-                goToResume();
             } else {
-            	 goToGameMainMenu();
+                goToGameMainMenu(); // Skip login if already logged in
             }
         });
-
         // --- WIRING THE REGISTER BUTTON ---
         // Simple: just open the Registration screen.
         view.getRegisterButton().setOnAction(e -> goToRegister());
@@ -71,37 +63,18 @@ public class MainMenuController implements Navigator {
     // ============================================================
     // NAVIGATION METHODS (The "Remote Control" implementation)
     // ============================================================
+    // --- Navigation Implementations ---
 
-    /**
-     * GO TO MENU — Takes the user back to the home screen.
-     * 
-     * It also updates the Login button text. If a user is logged in, 
-     * it will change the button to say "Logged in: [Username]".
-     */
     @Override
     public void goToMenu() {
-        // 1. Tell the view to show the menu layout.
         view.showMenu();
-        
-        // 2. Update the button text to reflect who is logged in.
         if (Session.isLoggedIn()) {
-            view.getLoginButton().setText(
-                "Logged in: " + Session.getCurrentUser().getUsername()
-            );
+            view.getLoginButton().setText("Logged in: " + Session.getCurrentUser().getUsername());
         } else {
-            view.getLoginButton().setText("Login");
+            view.getLoginButton().setText("LOGIN");
         }
     }
 
-    /**
-     * GO TO LOGIN — Builds the Login screen and its brain.
-     * 
-     * This is a standard 3-step pattern used for almost every screen:
-     * 1. Create the visual layout (View).
-     * 2. Create the brain (Controller) and give it the View, the shared 
-     *    data (authService), and a remote control (this).
-     * 3. Give the View to the main window so it can be displayed.
-     */
     @Override
     public void goToLogin() {
         LoginView v = new LoginView();
@@ -109,6 +82,29 @@ public class MainMenuController implements Navigator {
         view.setContent(v.getRoot());
     }
 
+    @Override
+    public void goToGameMainMenu() {
+        model.GameMenuModel model = new model.GameMenuModel("MAIN MENU");
+        GameMainMenuView v = new GameMainMenuView(model.getTitle());
+        new GameMainMenuController(v, this);
+        view.setContent(v.getRoot());
+    }
+
+    @Override
+    public void goToGameStartMenu() {
+        model.GameStartMenuModel model = new model.GameStartMenuModel("SELECT MODE");
+        GameStartMenuView v = new GameStartMenuView(model.getTitle());
+        new GameStartMenuController(v, this);
+        view.setContent(v.getRoot());
+    }
+
+    @Override
+    public void goToTopicSelection() {
+        TopicView v = new TopicView();
+        new TopicController(v, this);
+        view.setContent(v.getRoot());
+    }
+    
     /**
      * GO TO REGISTER — Builds the Registration screen and its brain.
      * (Same 3-step pattern as above).
@@ -131,39 +127,7 @@ public class MainMenuController implements Navigator {
         view.setContent(v.getRoot());
     }
 
-    
-    /**
-     * GO TO GAME MAIN MENU — Builds the secondary menu after login.
-     * 
-     * This shows the "START", "CREDITS", and "BACK" buttons.
-     */
-    @Override
-    public void goToGameMainMenu() {
-        // 1. Create the model (holds the title)
-        model.GameMenuModel model = new model.GameMenuModel("MAIN MENU");
-        
-        // 2. Create the view with the model's data
-        GameMainMenuView v = new GameMainMenuView(model.getTitle());
-        
-        // 3. Create the controller to wire the buttons
-        new GameMainMenuController(v, this);
-        
-        // 4. Swap the screen!
-        view.setContent(v.getRoot());
-    }
-    
    
-    /**
-     * GO TO TOPIC SELECTION — Builds the Category Picker screen and its brain.
-     * (Same 3-step pattern, but we don't need to pass authService here).
-     */
-    @Override
-    public void goToTopicSelection() {
-        TopicView v = new TopicView();
-        new TopicController(v, this);
-        view.setContent(v.getRoot());
-    }
-
     /**
      * GO TO RESUME — Builds the "Resume Game?" prompt.
      * 
