@@ -16,6 +16,13 @@ import view.LoginView;
  *   - X pressed              → go back to the menu (cancel login).
  *   - "FORGOT PASSWORD?" hit → navigate to the forgot-password card.
  *
+ * On success:
+ *   - If a paused game exists → go to the RESUME card.
+ *   - Otherwise → go to the CATEGORY picker.
+ *
+ * That's the only route into the game — no Play button exists on the
+ * menu, so without a login the game stays unreachable.
+ * 
  * The view does nothing on its own — every interactive element is wired
  * here.
  */
@@ -56,8 +63,15 @@ public class LoginController {
             return;
         }
 
-        // 3) Success — remember who's logged in, then leave the card.
+        // 3) Success — remember who's logged in, then goes straight to the game.
         Session.setCurrentUser(user);
-        nav.goToMenu();
+        //nav.goToMenu();
+        
+        // >>> Resume if we can, otherwise pick a category <<<
+        if (Session.hasSavedGame()) {
+            nav.goToResume();
+        } else {
+            nav.goToTopicSelection();
+        }
     }
 }

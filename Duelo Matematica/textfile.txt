@@ -1,0 +1,12 @@
+Login success (or click "Logged in: X" on menu)
+    ↓
+Has a paused game?
+    ├─ YES → ResumeView
+    │         ├─ RESUME       → continue same question, same score
+    │         ├─ NEW CATEGORY → TopicView (old game kept if you leave)
+    │         └─ X            → Menu (game stays paused)
+    └─ NO  → TopicView → Game
+
+Game X behavior:
+    - Game finished → clear savedGame + Menu
+    - Game in progress → save savedGame + Menu

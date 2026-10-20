@@ -1,43 +1,59 @@
 package model;
 
 /**
- * SESSION — the app's "memory of who is currently logged in".
+ * SESSION — the app's "memory of who is playing and what they were doing".
  *
- * JavaFX screens come and go, but we still need to know which user is
- * playing right now (to show their name on the menu, save their progress,
- * etc.). Session is a small global box that holds that one fact.
+ * Two pieces of state live here:
+ *   1. The current user (who logged in).
+ *   2. The paused game, if any (a GameService holding mid-round progress).
  *
- * "static" means you never create a Session object — you just call
- * Session.getCurrentUser() anywhere in the program.
+ * Both are static — one global instance for the whole app. Any screen
+ * can ask "is anyone logged in?" or "do we have a paused game?" without
+ * passing anything around.
  *
- * A private constructor prevents accidental `new Session()` — this class
- * is meant to be used as a utility, not as an object.
+ * "static" means you never write 'new Session()'. A private constructor
+ * enforces that.
  */
 public final class Session {
 
-    // The one and only "currently logged in" user. Null means nobody.
+    // The logged-in user, or null if nobody's logged in.
     private static User currentUser;
 
-    // Private so nobody can write `new Session()`.
-    private Session() { }
+    // A paused GameService (mid-round), or null if the player has no
+    // game in progress. Set when the player leaves a game via X; cleared
+    // when a round finishes or the player logs out.
+    private static GameService savedGame;
 
-    /** Called by the login controller after a successful login. */
-    public static void setCurrentUser(User user) {
-        currentUser = user;
-    }
+    private Session() { }   // never instantiated
 
-    /** Any screen can ask "who's playing?" — may return null. */
-    public static User getCurrentUser() {
-        return currentUser;
-    }
+    // ---- user ----
+    public static void setCurrentUser(User u) { currentUser = u; }
+    public static User getCurrentUser()       { return currentUser; }
+    public static boolean isLoggedIn()        { return currentUser != null; }
 
-    /** Convenience check: true if somebody is logged in. */
-    public static boolean isLoggedIn() {
-        return currentUser != null;
-    }
-
-    /** Called when the player logs out (or on shutdown). */
+    /**
+     * Log out. Also drops any paused game — it's tied to the account
+     * that just logged out, so a different user shouldn't inherit it.
+     */
     public static void logout() {
         currentUser = null;
+        savedGame = null;
     }
+
+    // ---- paused game ----
+
+    /**
+     * Stash the current game so the player can resume later. Called by
+     * GameController when the player clicks X mid-round.
+     */
+    public static void setSavedGame(GameService game) { savedGame = game; }
+
+    /** The paused game, or null if there isn't one. */
+    public static GameService getSavedGame() { return savedGame; }
+
+    /** Convenience check: does a paused game exist? */
+    public static boolean hasSavedGame() { return savedGame != null; }
+
+    /** Forget the paused game. Called on game completion, logout, restart. */
+    public static void clearSavedGame() { savedGame = null; }
 }
