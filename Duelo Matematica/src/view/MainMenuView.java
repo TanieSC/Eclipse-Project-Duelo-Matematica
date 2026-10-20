@@ -32,7 +32,7 @@ import javafx.stage.Stage;
  *
  * The view exposes its buttons so the controller can attach actions.
  * It does NOT decide what clicking a button should do — that's the
- * controller's job. 
+ * controller's job.
  */
 public class MainMenuView {
 
