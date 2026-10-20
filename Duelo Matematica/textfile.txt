@@ -10,3 +10,197 @@ Has a paused game?
 Game X behavior:
     - Game finished → clear savedGame + Menu
     - Game in progress → save savedGame + Menu
+    
+    
+    
+    
+//MainMenuView with popup transition    
+==========view/MainMenuView.java=========
+    
+package view;
+
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
+import javafx.animation.Transition;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+/**
+ * MAIN MENU VIEW — the "window shell" of the app.
+ *
+ * TRANSITION EFFECT:
+ * Every time a new card (Login, Register, Game, etc.) is loaded into this
+ * window via setContent(), it animates in using a "popup" effect:
+ *   - It starts slightly smaller (90% size).
+ *   - It fades in from transparent to solid.
+ *   - It grows to 100% size.
+ *
+ * This makes the inline navigation feel modern and polished, exactly
+ * like a popup window appearing, but without the overhead of a real window.
+ */
+public class MainMenuView {
+
+    private static final Duration ANIM_DURATION = Duration.millis(250);
+
+    private final Stage stage;
+    private final StackPane root;
+    private final VBox menuContent;
+
+    private final Button loginButton;
+    private final Button registerButton;
+    private final Button settingsButton;
+
+    private Transition activeTransition;
+
+    public MainMenuView(Stage stage) {
+        this.stage = stage;
+
+        Label headerLabel = new Label("Duelo\nX\nMatematica");
+        headerLabel.setAlignment(Pos.CENTER);
+        headerLabel.setStyle(
+            "-fx-font-size: 26px; -fx-font-weight: bold;" +
+            "-fx-border-color: #222222; -fx-border-width: 3px;" +
+            "-fx-padding: 12px 60px; -fx-background-color: #f4f4f4;" +
+            "-fx-alignment: center; -fx-text-alignment: center;"
+        );
+
+        loginButton    = createMenuButton("Login");
+        registerButton = createMenuButton("Register");
+        settingsButton = createMenuButton("Game Settings");
+
+        VBox buttonBox = new VBox(15, loginButton, registerButton, settingsButton);
+        buttonBox.setAlignment(Pos.CENTER);
+        buttonBox.setFillWidth(true);
+
+        menuContent = new VBox(30, headerLabel, buttonBox);
+        menuContent.setAlignment(Pos.CENTER);
+        menuContent.setFillWidth(false);
+        menuContent.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+        root = new StackPane(menuContent);
+        root.setStyle("-fx-background-color: #ffffff;");
+
+        stage.setTitle("Duelo X Matematica");
+        stage.setScene(new Scene(root, 800, 500));
+    }
+
+    private Button createMenuButton(String text) {
+        Button b = new Button(text);
+        b.setMaxWidth(Double.MAX_VALUE);
+        b.setMinHeight(55);
+        b.setMaxHeight(55);
+        b.setStyle(
+            "-fx-font-size: 18px; -fx-font-weight: bold;" +
+            "-fx-border-color: #000000; -fx-border-width: 3px;" +
+            "-fx-padding: 10px 30px; -fx-background-color: #f9f9f9;" +
+            "-fx-cursor: hand;"
+        );
+        return b;
+    }
+
+    /**
+     * Swap the current page for any Node (a login card, game card, etc.)
+     * and animate it in using the popup effect.
+     */
+    public void setContent(Node node) {
+        playPopupTransition(node);
+    }
+
+    /**
+     * Return to the menu card with the same popup effect.
+     */
+    public void showMenu() {
+        playPopupTransition(menuContent);
+    }
+
+    /**
+     * THE TRANSITION ENGINE
+     * 
+     * 1. Adds the new node on top of the old one.
+     * 2. Animates the new node (fade + scale).
+     * 3. Fades out the old node.
+     * 4. Removes the old node from memory when finished.
+     */
+    private void playPopupTransition(Node newNode) {
+        // Cancel previous animation if user clicks very fast
+        if (activeTransition != null) {
+            activeTransition.stop();
+            activeTransition = null;
+            // Clean up any half-finished nodes
+            if (root.getChildren().size() > 1) {
+                root.getChildren().remove(1, root.getChildren().size());
+            }
+            if (!root.getChildren().isEmpty()) {
+                Node current = root.getChildren().get(0);
+                current.setOpacity(1);
+                current.setScaleX(1);
+                current.setScaleY(1);
+            }
+        }
+
+        // If it's already the only node showing, do nothing
+        if (!root.getChildren().isEmpty() && root.getChildren().get(0) == newNode) {
+            return;
+        }
+
+        Node oldNode = root.getChildren().isEmpty() ? null : root.getChildren().get(0);
+        
+        // Add the new node on top
+        root.getChildren().add(newNode);
+
+        // Prepare new node for "popup" entry (scaled down, transparent)
+        newNode.setOpacity(0);
+        newNode.setScaleX(0.9);
+        newNode.setScaleY(0.9);
+
+        // Animate new node in
+        FadeTransition fadeIn = new FadeTransition(ANIM_DURATION, newNode);
+        fadeIn.setToValue(1.0);
+
+        ScaleTransition scaleIn = new ScaleTransition(ANIM_DURATION, newNode);
+        scaleIn.setToX(1.0);
+        scaleIn.setToY(1.0);
+
+        ParallelTransition transition;
+        
+        if (oldNode != null) {
+            // Animate old node out (fade only, don't scale it down to keep it smooth)
+            FadeTransition fadeOut = new FadeTransition(ANIM_DURATION, oldNode);
+            fadeOut.setToValue(0.0);
+            
+            transition = new ParallelTransition(fadeIn, scaleIn, fadeOut);
+        } else {
+            transition = new ParallelTransition(fadeIn, scaleIn);
+        }
+
+        activeTransition = transition;
+        
+        transition.setOnFinished(e -> {
+            // Cleanup: remove the old node so it doesn't take up memory
+            if (oldNode != null) {
+                root.getChildren().remove(oldNode);
+                oldNode.setOpacity(1); // reset just in case
+                oldNode.setScaleX(1);
+                oldNode.setScaleY(1);
+            }
+            activeTransition = null;
+        });
+
+        transition.play();
+    }
+
+    public Button getLoginButton()    { return loginButton; }
+    public Button getRegisterButton() { return registerButton; }
+    public Button getSettingsButton() { return settingsButton; }
+    public Stage  getStage()          { return stage; }
+    public void   show()              { stage.show(); }
+}
