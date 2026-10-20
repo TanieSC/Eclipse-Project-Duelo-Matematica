@@ -27,12 +27,12 @@ import javafx.stage.Stage;
  *     ├─ Register card   ← shown after goToRegister()
  *     └─ ...
  *
- * Only one child is visible at a time because setContent()/showMenu()
+ * Only one child is visible at a time because setContent()/showMenu() 
  * replaces the children.
  *
  * The view exposes its buttons so the controller can attach actions.
  * It does NOT decide what clicking a button should do — that's the
- * controller's job.
+ * controller's job. 
  */
 public class MainMenuView {
 
