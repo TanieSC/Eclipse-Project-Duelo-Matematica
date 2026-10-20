@@ -1,0 +1,15 @@
+The Controllers (The "Brains")
+Controllers listen for clicks, validate input, and tell the rest of the app what to do.
+
+
+The Models (The "Rules & Data")
+Models store data and handle the rules (like math, database logic, and session memory). They know NOTHING about buttons or screens.
+
+
+
+The Views (The "Faces")
+Views build the UI. They don't know what the buttons do; they just hand the buttons to the Controller.
+
+
+
+Add comments inside the .java attached file explaining the use and functions of all the code in layman's term.
