@@ -87,14 +87,6 @@ public class LoginController {
         // know who is playing.
         Session.setCurrentUser(user);
         
-        // STEP 4: Where do we go now? 
-        // We check the memory to see if this user quit a game earlier.
-        if (Session.hasSavedGame()) {
-            // If they have a paused game, show them the "Resume Game?" screen.
-            nav.goToResume();
-        } else {
-            // If they have no saved game, show them the Category Picker to start fresh.
-            nav.goToTopicSelection();
-        }
+        nav.goToGameMainMenu();
     }
 }

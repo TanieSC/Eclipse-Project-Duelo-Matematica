@@ -9,40 +9,50 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 /**
- * LOGIN VIEW — the "login card" you see when you click Login on the menu.
+ * LOGIN VIEW — The visual layout for the login screen.
  *
- * It's a pure UI component: it builds a VBox that looks like a small card
- * (title, email field, password field, forgot-password link, confirm
- * button, an error label). It does NOT know what a click on CONFIRM
- * should do — that's LoginController's job.
- *
- * Because it produces a Node (getRoot()), the MainMenuView can drop it
- * into its StackPane. No separate window, no showAndWait.
+ * WHAT DOES THIS CLASS DO?
+ * Think of this class as a "dumb" artist. Its ONLY job is to draw the 
+ * visual elements of the login card (the text boxes, buttons, and labels) 
+ * and arrange them neatly. 
+ * 
+ * It does NOT know what happens when you click "CONFIRM", and it does NOT 
+ * know how to check if a password is correct. It simply builds the UI and 
+ * waits for the LoginController to come along and "wire up" the actions.
+ * 
+ * Once built, it hands the whole card to the main window using getRoot().
  */
 public class LoginView {
 
-    // The outer card. Everything is packed inside this VBox.
+    // --- THE BUILDING BLOCKS ---
+    // We save these as class variables so the Controller can reach in 
+    // and grab them later.
+
+    // The main container holding everything (like a vertical stack of blocks).
     private final VBox root;
 
-    // Text inputs — the controller reads getText() when CONFIRM is pressed.
+    // The input boxes where the user types their email and password.
     private final TextField emailField;
     private final PasswordField passwordField;
 
-    // Buttons and links — exposed to the controller so it can attach actions.
-    private final Button confirmButton;   // "CONFIRM"
-    private final Button backButton;      // the "X" in the top-right corner
-    private final Hyperlink forgotPasswordLink; // "FORGOT PASSWORD?" link
+    // The clickable elements (Confirm, Close, and Forgot Password).
+    private final Button confirmButton;   
+    private final Button backButton;      
+    private final Hyperlink forgotPasswordLink; 
 
-    // Hidden text label that the controller can set to show validation
-    // errors ("Invalid email or password", "Please fill in all fields", …).
+    // A hidden text label that we can use to show red error messages.
     private final Label messageLabel;
 
     /**
-     * Builds the card. Buttons have no actions yet — the controller
-     * will wire them after construction.
+     * CONSTRUCTOR — Runs once when the Login screen is created.
+     * 
+     * This is where we actually build and arrange all the visual pieces.
      */
     public LoginView() {
-        // ---- Header: "LOGIN" title + "X" close button ----
+        
+        // ==========================================
+        // 1. THE HEADER (Title + Close Button)
+        // ==========================================
         Label titleLabel = new Label("LOGIN");
         titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
 
@@ -52,14 +62,18 @@ public class LoginView {
             "-fx-font-size: 14px; -fx-cursor: hand;"
         );
 
+        // A BorderPane lets us put the title in the center and the X on the right.
         BorderPane headerBox = new BorderPane();
         headerBox.setCenter(titleLabel);
         headerBox.setRight(backButton);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
-        // ---- EMAIL row ----
+        // ==========================================
+        // 2. THE FORM (Email and Password fields)
+        // ==========================================
         Label emailLabel = new Label("EMAIL");
         emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        
         emailField = new TextField();
         emailField.setPrefWidth(140);
         emailField.setStyle(
@@ -67,9 +81,10 @@ public class LoginView {
             "-fx-background-radius: 0;"
         );
 
-        // ---- PASSWORD row ----
         Label passwordLabel = new Label("PASSWORD");
         passwordLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        
+        // PasswordField hides the characters as the user types (shows dots instead).
         passwordField = new PasswordField();
         passwordField.setPrefWidth(140);
         passwordField.setStyle(
@@ -77,24 +92,30 @@ public class LoginView {
             "-fx-background-radius: 0;"
         );
 
-        // GridPane puts labels left, fields right, aligned in two columns.
+        // A GridPane works like an invisible spreadsheet. 
+        // We put the labels in the left column and the text boxes in the right column.
         GridPane formGrid = new GridPane();
-        formGrid.setHgap(15);
-        formGrid.setVgap(15);
+        formGrid.setHgap(15); // Horizontal gap between columns
+        formGrid.setVgap(15); // Vertical gap between rows
         formGrid.add(emailLabel, 0, 0);    formGrid.add(emailField, 1, 0);
         formGrid.add(passwordLabel, 0, 1); formGrid.add(passwordField, 1, 1);
 
-        // ---- Forgot-password link ----
+        // ==========================================
+        // 3. LINKS & FEEDBACK
+        // ==========================================
         forgotPasswordLink = new Hyperlink("FORGOT PASSWORD?");
         forgotPasswordLink.setStyle(
             "-fx-text-fill: black; -fx-underline: false; -fx-font-size: 11px;"
         );
 
-        // ---- Error message label (starts empty) ----
+        // This label is empty at first, but the Controller will fill it 
+        // with red text if the user makes a mistake.
         messageLabel = new Label();
         messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
 
-        // ---- Confirm button ----
+        // ==========================================
+        // 4. THE CONFIRM BUTTON
+        // ==========================================
         confirmButton = new Button("CONFIRM");
         confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
         confirmButton.setPrefSize(130, 35);
@@ -103,30 +124,52 @@ public class LoginView {
             "-fx-background-radius: 0; -fx-cursor: hand;"
         );
 
-        // ---- Assemble the card ----
+        // ==========================================
+        // 5. ASSEMBLING THE CARD
+        // ==========================================
+        // We stack everything vertically in our main 'root' VBox. 
+        // The number '10' is the vertical spacing between each element.
         root = new VBox(10, headerBox, formGrid, forgotPasswordLink, messageLabel, confirmButton);
+        
         root.setPadding(new Insets(15, 20, 20, 20));
         root.setAlignment(Pos.TOP_CENTER);
-        // Keep the card at its natural size — StackPane won't stretch it.
+        
+        // Keep the card at a nice, small size instead of stretching 
+        // to fill the entire giant window.
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        
+        // Give it a grey background and a border to look like a "card".
         root.setStyle(
             "-fx-background-color: #f4f4f4; -fx-border-color: #777777;" +
             "-fx-border-width: 1px;"
         );
     }
 
-    // -- Accessors for the controller --
+    // ============================================================
+    // GETTERS — The "Control Panel" for the LoginController
+    // ============================================================
+    // These methods let the LoginController grab the pieces it needs 
+    // to attach click events and read what the user typed.
 
-    /** The card itself. MainMenuView.setContent() inserts this into the window. */
+    /** Returns the whole card so the main window can display it. */
     public Node getRoot() { return root; }
 
+    /** Lets the controller read the email the user typed. */
     public TextField getEmailField()        { return emailField; }
+    
+    /** Lets the controller read the password the user typed. */
     public PasswordField getPasswordField() { return passwordField; }
+    
+    /** Lets the controller attach a click action to the CONFIRM button. */
     public Button getConfirmButton()        { return confirmButton; }
+    
+    /** Lets the controller attach a click action to the X button. */
     public Button getBackButton()           { return backButton; }
+    
+    /** Lets the controller attach a click action to the Forgot Password link. */
     public Hyperlink getForgotPasswordLink(){ return forgotPasswordLink; }
 
-    /** Called by the controller to display validation errors. */
+    /** Allows the controller to show red error text on the screen. */
     public void showMessage(String msg) {
         messageLabel.setText(msg);
     }
