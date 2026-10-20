@@ -9,7 +9,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextFlow;
 
@@ -19,7 +18,6 @@ import java.util.function.Consumer;
 
 public class GameView {
 
-    // We removed -fx-alignment because HBox handles alignment natively
     private static final String BASE_ANSWER_STYLE =
         "-fx-background-color: #ffffff;" +
         "-fx-border-color: #555555;" +
@@ -66,13 +64,13 @@ public class GameView {
     private final VBox root;
     private final Label scoreLabel;
     private final Label difficultyLabel;
+    private final Button settingsButton;
     private final Button backButton;
     private final VBox questionArea;
     private final VBox answersArea;
     private final Button nextButton;
     private final Button playAgainButton;
 
-    // Changed from Button to HBox
     private final List<HBox> currentAnswerBoxes = new ArrayList<>();
     private final List<Label> currentLetterBadges = new ArrayList<>();
     private int correctIndex = -1;
@@ -82,6 +80,7 @@ public class GameView {
     private Runnable onNext;
     private Runnable onPlayAgain;
     private Runnable onBack;
+    private Runnable onSettings;
 
     public GameView() {
         scoreLabel = new Label("Q 0/0 | Score: 0");
@@ -93,6 +92,14 @@ public class GameView {
             "-fx-background-radius: 8; -fx-text-fill: white;"
         );
 
+        // --- Settings and Back Buttons ---
+        settingsButton = new Button("⚙");
+        settingsButton.setStyle(
+            "-fx-background-color: transparent; -fx-font-weight: bold;" +
+            "-fx-font-size: 18px; -fx-cursor: hand;"
+        );
+        settingsButton.setOnAction(e -> { if (onSettings != null) onSettings.run(); });
+
         backButton = new Button("X");
         backButton.setStyle(
             "-fx-background-color: transparent; -fx-font-weight: bold;" +
@@ -103,9 +110,12 @@ public class GameView {
         HBox leftCluster = new HBox(15, scoreLabel, difficultyLabel);
         leftCluster.setAlignment(Pos.CENTER_LEFT);
 
+        HBox rightCluster = new HBox(15, settingsButton, backButton);
+        rightCluster.setAlignment(Pos.CENTER_RIGHT);
+
         BorderPane header = new BorderPane();
         header.setCenter(leftCluster);
-        header.setRight(backButton);
+        header.setRight(rightCluster);
         BorderPane.setAlignment(leftCluster, Pos.CENTER_LEFT);
 
         questionArea = new VBox();
@@ -153,12 +163,14 @@ public class GameView {
 
     public Node getRoot()             { return root; }
     public Button getBackButton()     { return backButton; }
+    public Button getSettingsButton() { return settingsButton; }
     public Button getNextButton()     { return nextButton; }
     public Button getPlayAgainButton(){ return playAgainButton; }
     public void setOnAnswerPicked(Consumer<Integer> h) { this.onAnswerPicked = h; }
     public void setOnNext(Runnable r)        { this.onNext = r; }
     public void setOnPlayAgain(Runnable r)   { this.onPlayAgain = r; }
     public void setOnBack(Runnable r)        { this.onBack = r; }
+    public void setOnSettings(Runnable r)    { this.onSettings = r; }
 
     public void showQuestion(String rawQuestion,
                              String[] rawOptions,
@@ -191,7 +203,6 @@ public class GameView {
 
             TextFlow optionFlow = LatexRenderer.toTextFlow(rawOptions[i], 16);
             
-            // THE FIX: Use HBox with Priority.ALWAYS instead of a Button.
             HBox answerBox = new HBox(14, letter, optionFlow);
             answerBox.setAlignment(Pos.CENTER_LEFT);
             answerBox.setPadding(new Insets(10, 20, 10, 20));
