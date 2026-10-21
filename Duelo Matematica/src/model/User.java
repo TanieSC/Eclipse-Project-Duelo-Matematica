@@ -29,6 +29,10 @@ public class User {
     // (Note: In a real, highly secure app, you would scramble/encrypt 
     // this before saving it, but for this game, we just store it as text).
     private final String password;
+    
+    private final String tier;
+    
+    private final int elo;
 
     /**
      * CONSTRUCTOR — The "Form Printer".
@@ -41,10 +45,24 @@ public class User {
      * @param username The user's display name.
      * @param password The user's secret password.
      */
+    
+    /**
+     * OLD CONSTRUCTOR — Used by AuthService so existing code doesn't break.
+     * Automatically assigns default Bronze tier and 0 ELO.
+     */
     public User(String email, String username, String password) {
+        this(email, username, password, "Bronze", 0);
+    }
+
+    /**
+     * NEW CONSTRUCTOR — Used when we want specific stats.
+     */
+    public User(String email, String username, String password, String tier, int elo) {
         this.email    = email;
         this.username = username;
         this.password = password;
+        this.tier     = tier;
+        this.elo      = elo;
     }
 
     // ============================================================
@@ -63,4 +81,8 @@ public class User {
 
     /** Returns the user's password. */
     public String getPassword() { return password; }
+    
+    public String getTier()     { return tier; }
+    
+    public int    getElo()      { return elo; }
 }

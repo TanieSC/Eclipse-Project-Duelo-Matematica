@@ -55,7 +55,7 @@ public class RegisterView {
         // 1. THE HEADER (Title + Close Button)
         // ==========================================
         Label titleLabel = new Label("CREATE ACCOUNT");
-        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
+        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
 
         backButton = new Button("X");
         backButton.setStyle(

@@ -49,14 +49,14 @@ public class ForgotPassView {
         // ==========================================
         // 1. THE HEADER (Title + Close Button)
         // ==========================================
-        Label titleLabel = new Label("FORGOT PASSWORD");
-        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+        Label titleLabel =  ViewUtils.createHeaderLabel("FORGOT PASSWORD"); //new Label("FORGOT PASSWORD");
+        //titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
 
-        backButton = new Button("X");
-        backButton.setStyle(
-            "-fx-background-color: transparent; -fx-font-weight: bold;" +
-            "-fx-font-size: 14px; -fx-cursor: hand;"
-        );
+        backButton = ViewUtils.createCloseButton("X"); //new Button("X");
+        //backButton.setStyle(
+        //    "-fx-background-color: transparent; -fx-font-weight: bold;" +
+        //    "-fx-font-size: 14px; -fx-cursor: hand;"
+        //);
 
         // We use a BorderPane to put the title in the center and the "X" on the right.
         BorderPane headerBox = new BorderPane();
@@ -74,7 +74,7 @@ public class ForgotPassView {
         emailField.setPrefWidth(140);
         emailField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
-            "-fx-background-radius: 0;"
+            "-fx-background-radius: 0; -fx-alignment: center-right;"
         );
 
         // A GridPane is like a mini-spreadsheet. We put the label in column 0 

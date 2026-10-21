@@ -2,8 +2,11 @@ package controller;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import model.Session;
+import model.UserProfileModel;
 import view.GameSettingsView;
 import view.GameStartMenuView;
+import view.UserProfileView;
 
 public class GameStartMenuController {
 
@@ -27,10 +30,11 @@ public class GameStartMenuController {
 
         // 1VS1, PROFILE, LEADERBOARD -> Placeholder popups for now
         view.get1vs1Button().setOnAction(e -> showDummyPopup("1VS1 MODE"));
-        view.getProfileButton().setOnAction(e -> showDummyPopup("PROFILE"));
+        view.getProfileButton().setOnAction(e -> nav.goToUserProfile());
         view.getLeaderboardButton().setOnAction(e -> showDummyPopup("LEADERBOARD"));
     }
 
+    
     private void showDummyPopup(String buttonName) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Notice");

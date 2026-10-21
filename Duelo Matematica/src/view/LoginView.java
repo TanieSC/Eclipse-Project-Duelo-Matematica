@@ -53,14 +53,14 @@ public class LoginView {
         // ==========================================
         // 1. THE HEADER (Title + Close Button)
         // ==========================================
-        Label titleLabel = new Label("LOGIN");
-        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
+        Label titleLabel = ViewUtils.createHeaderLabel("LOGIN");//new Label("LOGIN");
+        //titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
 
-        backButton = new Button("X");
-        backButton.setStyle(
-            "-fx-background-color: transparent; -fx-font-weight: bold;" +
-            "-fx-font-size: 14px; -fx-cursor: hand;"
-        );
+        backButton = ViewUtils.createCloseButton("X");  //new Button("X");
+        //backButton.setStyle(
+        //    "-fx-background-color: transparent; -fx-font-weight: bold;" +
+        //    "-fx-font-size: 14px; -fx-cursor: hand;"
+        //);
 
         // A BorderPane lets us put the title in the center and the X on the right.
         BorderPane headerBox = new BorderPane();

@@ -58,7 +58,6 @@ public class TopicController {
         // If the player clicks "ALL TOPICS", tell the Navigator to start a game with "All" (no filter).
         view.getAllButton()       .setOnAction(e -> nav.goToGame("All"));
         
-        // If the player clicks the "X" (Back button), tell the Navigator to cancel and return to the main menu.
-        view.getBackButton()      .setOnAction(e -> nav.goToMenu());
+        view.getBackButton()      .setOnAction(e -> nav.goToGameStartMenu());
     }
 }

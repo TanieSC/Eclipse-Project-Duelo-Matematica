@@ -31,7 +31,7 @@ public class AuthService {
      *   Password: 1234
      */
     public AuthService() {
-        users.put("demo@duelo.com", new User("demo@duelo.com", "demo", "1234"));
+        users.put("demo@duelo.com", new User("demo@duelo.com", "demo", "1234", "Gold", 1450));
     }
 
     /**
@@ -69,5 +69,29 @@ public class AuthService {
             return user;
         }
         return null;
+    }
+    
+    /**
+     * NEW: Checks if the email exists in the system.
+     */
+    public boolean emailExists(String email) {
+        return users.containsKey(email.toLowerCase().trim());
+    }
+
+    /**
+     * NEW: Updates the password for an existing user.
+     * Because the User class has 'final' fields, we must create a new User object.
+     */
+    public boolean updatePassword(String email, String newPassword) {
+        String cleanEmail = email.toLowerCase().trim();
+        User oldUser = users.get(cleanEmail);
+        
+        if (oldUser != null) {
+            // Create a new User with the same email/username but a new password
+            User updatedUser = new User(oldUser.getEmail(), oldUser.getUsername(), newPassword);
+            users.put(cleanEmail, updatedUser);
+            return true;
+        }
+        return false;
     }
 }

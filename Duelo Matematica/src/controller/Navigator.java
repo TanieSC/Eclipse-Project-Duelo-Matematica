@@ -6,13 +6,15 @@ public interface Navigator {
     void goToRegister();
     void goToForgotPassword();
     
-    // The new menu flow
-    void goToGameMainMenu();   
-    void goToGameStartMenu();  
+    // UPDATED: Now takes the email to pass to the next screen
+    void goToNewPass(String email); 
     
-    // The actual game flow
+    void goToGameMainMenu();
+    void goToGameStartMenu();
+    void goToUserProfile(); 
     void goToTopicSelection();
     void goToResume();
     void goToGame(String category);
     void resumeGame();
+    void goTo1v1Game();
 }

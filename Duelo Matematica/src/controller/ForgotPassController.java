@@ -66,12 +66,23 @@ public class ForgotPassController {
             view.showMessage("Please enter your email.");
             return; // Stop here. Don't do the rest of the method.
         }
+        
+        // VERIFY: Does this email exist in the temporary database?
+        if (!authService.emailExists(email)) {
+            view.showMessage("Email not found in our system.");
+            return;
+        }
 
-        // TODO: In the future, this is where we will check the AuthService 
+        // TODO: In the future, this is where we will check the AuthService database
         // to see if the email exists, and then open the "New Password" screen.
         
+        // Success! Pass the verified email to the New Password screen
+        nav.goToNewPass(email);
+
         // For now, we just show a generic success message. 
         // (We use a generic message so hackers can't guess which emails are registered).
-        view.showMessage("If this email exists, a reset link was sent.");
+        //view.showMessage("If this email exists, a reset link was sent.");
     }
+    
+    
 }
