@@ -26,7 +26,7 @@ public class GameStartMenuController {
         view.getBackButton().setOnAction(e -> nav.goToGameMainMenu());
 
         // GEAR -> Open Settings Popup
-        view.getGearButton().setOnAction(e -> openSettings());
+        view.getGearButton().setOnAction(e -> nav.goToSettings());
 
         // 1VS1, PROFILE, LEADERBOARD -> Placeholder popups for now
         view.get1vs1Button().setOnAction(e -> showDummyPopup("1VS1 MODE"));
@@ -43,10 +43,4 @@ public class GameStartMenuController {
         alert.showAndWait();
     }
 
-    private void openSettings() {
-        Stage owner = (Stage) view.getRoot().getScene().getWindow();
-        GameSettingsView settingsView = new GameSettingsView(owner);
-        new GameSettingsController(settingsView);
-        settingsView.show();
-    }
 }

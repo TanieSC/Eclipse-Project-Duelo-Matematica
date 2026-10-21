@@ -31,7 +31,7 @@ public class Game1v1Controller {
 
         // Wire buttons
         view.getSurrenderButton().setOnAction(e -> handleSurrender());
-        view.getGearButton().setOnAction(e -> openSettings());
+        view.getGearButton().setOnAction(e -> nav.goToSettings());
         
         for (int i = 0; i < 4; i++) {
             final int index = i;
@@ -82,12 +82,6 @@ public class Game1v1Controller {
         nav.goToGameStartMenu();
     }
 
-    private void openSettings() {
-        Stage owner = (Stage) view.getRoot().getScene().getWindow();
-        GameSettingsView v = new GameSettingsView(owner);
-        new GameSettingsController(v);
-        v.show();
-    }
 
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

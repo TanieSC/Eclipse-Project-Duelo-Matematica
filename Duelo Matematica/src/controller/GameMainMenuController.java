@@ -24,7 +24,7 @@ public class GameMainMenuController {
         view.getCreditsButton().setOnAction(e -> showCreditsPopup());
 
         // GEAR -> Popup
-        view.getGearButton().setOnAction(e -> openSettings());
+        view.getGearButton().setOnAction(e -> nav.goToSettings());
     }
 
     private void showCreditsPopup() {
@@ -35,10 +35,4 @@ public class GameMainMenuController {
         alert.showAndWait();
     }
 
-    private void openSettings() {
-        Stage owner = (Stage) view.getRoot().getScene().getWindow();
-        GameSettingsView settingsView = new GameSettingsView(owner);
-        new GameSettingsController(settingsView);
-        settingsView.show();
-    }
 }

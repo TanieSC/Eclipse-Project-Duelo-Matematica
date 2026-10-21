@@ -22,9 +22,9 @@ import model.UserProfileModel;
  * at the top of the card, consistent with the Login and Register views.
  */
 public class UserProfileView {
-
-    private final StackPane root;
-    private final Button backButton;
+	
+	private final VBox root;
+	private final Button backButton;
 
     public UserProfileView(UserProfileModel profile) {
         // ==========================================
@@ -69,27 +69,13 @@ public class UserProfileView {
         Label eloLabel = new Label("ELO: " + profile.getElo());
         eloLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #555555; -fx-font-weight: bold;");
 
-        // ==========================================
-        // 3. ASSEMBLING THE CARD
-        // ==========================================
-        VBox card = new VBox(15);
-        card.setAlignment(Pos.CENTER);
-        card.setPadding(new Insets(15, 40, 30, 40));
-        card.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        card.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #777777; -fx-border-width: 1px;");
+        // Card assembly — just the VBox, no overlay
+        root = new VBox(15, headerBox, avatar, nameLabel, tierLabel, eloLabel);
+        root.setPadding(new Insets(15, 40, 30, 40));
+        root.setAlignment(Pos.CENTER);
+        root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        root.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #777777; -fx-border-width: 1px;");
 
-        // Add the header at the top, then the avatar and stats
-        card.getChildren().addAll(headerBox, avatar, nameLabel, tierLabel, eloLabel);
-
-        // ==========================================
-        // 4. THE DARK OVERLAY BACKGROUND
-        // ==========================================
-        Region darkOverlay = new Region();
-        darkOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
-
-        root = new StackPane();
-        root.getChildren().addAll(darkOverlay, card);
-        StackPane.setAlignment(card, Pos.CENTER);
     }
 
     public Node getRoot()          { return root; }

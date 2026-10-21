@@ -17,4 +17,6 @@ public interface Navigator {
     void goToGame(String category);
     void resumeGame();
     void goTo1v1Game();
+    void goToSettings(); 
+    void closePopup(); 
 }

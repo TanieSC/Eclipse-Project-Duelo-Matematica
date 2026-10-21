@@ -81,8 +81,22 @@ public class MainMenuController implements Navigator {
         UserProfileView v = new UserProfileView(model);
         new UserProfileController(v, this);
         
-        // Show it as a full-screen popup
-        view.setContent(v.getRoot());
+        // Use showPopup instead of setContent!
+        view.showPopup(v.getRoot());
+    }
+    
+    @Override
+    public void goToSettings() {
+        // 1. Build the inline settings view
+        GameSettingsView v = new GameSettingsView();
+        
+        // 2. Create the controller (we pass 'this' so it can navigate back)
+        new GameSettingsController(v, this);
+        
+        // 3. Show it in the main window
+        // Note: Since GameSettingsView has its own dark background overlay, 
+        // we use setContent instead of setOverlayContent.
+        view.showPopup(v.getRoot()); 
     }
     
     // ==========================================
@@ -143,5 +157,10 @@ public class MainMenuController implements Navigator {
         view.Game1v1View v = new view.Game1v1View();
         new controller.Game1v1Controller(v, model, this);
         view.setContent(v.getRoot());
+    }
+    
+    @Override
+    public void closePopup() {
+        view.closePopup();
     }
 }

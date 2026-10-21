@@ -147,22 +147,23 @@ public class GameController {
         }
         nav.goToMenu(); // Go back to the main menu
     }
-
+    
     /**
-     * OPEN SETTINGS — Runs when the player clicks the Gear/Settings icon.
+     * OPEN SETTINGS — Triggers when the Gear button is clicked.
      * 
-     * This opens a completely separate mini-window (a popup) on top of the game.
-     * We need to know the main window (the "owner") so the popup knows where to center itself.
+     * Because Settings is now an inline view, we don't build a popup window.
+     * Instead, we save the current game progress (so they don't lose their spot),
+     * and ask the Navigator to swap to the Settings screen.
      */
     private void openSettings() {
-        // Grab the main JavaFX window from the view's scene.
-        Stage owner = (Stage) view.getRoot().getScene().getWindow();
+        // Save the game state so if they return to the menu and click "Resume", 
+        // they pick up exactly where they left off.
+        if (!service.isGameOver()) {
+            Session.setSavedGame(service);
+        }
         
-        // Create the popup screen and its controller.
-        GameSettingsView v = new GameSettingsView(owner);
-        new GameSettingsController(v);
-        
-        // Show the popup and pause the game code until it closes.
-        v.show(); 
+        // Tell the Navigator to show the inline settings view
+        nav.goToSettings();
     }
+
 }

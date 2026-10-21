@@ -18,7 +18,7 @@ public class UserProfileController {
         this.view = view;
         this.nav = nav;
 
-        // Clicking "X" closes the profile and goes back to the Start Menu
-        view.getBackButton().setOnAction(e -> nav.goToGameStartMenu());
+        // Use closePopup() — do NOT navigate to a new screen!
+        view.getBackButton().setOnAction(e -> nav.closePopup());
     }
 }
