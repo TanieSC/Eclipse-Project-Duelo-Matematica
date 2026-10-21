@@ -42,9 +42,23 @@ public class MainMenuView {
             "-fx-alignment: center; -fx-text-alignment: center;"
         );
 
-        loginButton    = createMenuButton("LOGIN");
-        registerButton = createMenuButton("CREATE ACCOUNT");
-        exitButton     = createMenuButton("EXIT");
+        
+        //For a standard button that hugs the text:
+        loginButton = ViewUtils.createSpriteButton("/buttons/btn.png", null);
+        loginButton.setText("LOGIN");
+
+       // For a massive, stretched button (e.g., 400 wide, 80 tall):
+        registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 270, 55, null);
+        registerButton.setText("CREATE ACCOUNT");
+        
+        //For a standard button that hugs the text:
+        exitButton = ViewUtils.createSpriteButton("/buttons/btn.png", null);
+        exitButton.setText("EXIT");
+
+        
+        //loginButton    = createMenuButton("LOGIN");
+        //registerButton = createMenuButton("CREATE ACCOUNT");
+        //exitButton     = createMenuButton("EXIT");
 
         VBox buttonBox = new VBox(15, loginButton, registerButton, exitButton);
         buttonBox.setAlignment(Pos.CENTER);

@@ -144,6 +144,21 @@ public class MainMenuController implements Navigator {
     }
 
     @Override
+    public void goToStoryLevels() {
+        StoryLevelsView v = new StoryLevelsView();
+        new StoryLevelsController(v, this);
+        view.setContent(v.getRoot());
+    }
+
+    @Override
+    public void goToStoryScreen(int level) {
+        StoryScreenView v = new StoryScreenView();
+        model.StoryModel model = new model.StoryModel();
+        new StoryScreenController(v, model, level, this);
+        view.setContent(v.getRoot());
+    }
+    
+    @Override
     public void goToTopicSelection() {
         TopicView v = new TopicView();
         new TopicController(v, this);

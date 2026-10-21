@@ -32,7 +32,7 @@ public class GameStartMenuController {
         view.get1vs1Button().setOnAction(e -> showDummyPopup("1VS1 MODE"));
         view.getProfileButton().setOnAction(e -> nav.goToUserProfile());
         view.getLeaderboardButton().setOnAction(e -> nav.goToLeaderboard());
-        view.getStoryButton().setOnAction(e -> showDummyPopup("STORY MODE"));
+        view.getStoryButton().setOnAction(e -> nav.goToStoryLevels());
     }
 
     

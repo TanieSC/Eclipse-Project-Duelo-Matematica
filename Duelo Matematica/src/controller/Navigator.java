@@ -21,4 +21,6 @@ public interface Navigator {
     void closePopup(); 
     void goToCredits();
     void goToLeaderboard();
+    void goToStoryLevels();
+    void goToStoryScreen(int level);
 }
