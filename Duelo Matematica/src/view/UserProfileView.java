@@ -6,38 +6,25 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import model.UserProfileModel;
 
 /**
- * USER PROFILE VIEW — The visual layout for the player's profile.
+ * USER PROFILE VIEW — The inline visual layout for the player's profile.
  * 
- * WHAT DOES THIS CLASS DO?
- * It draws a "Profile Card" displaying the user's avatar, their Username, 
- * their Tier, and their ELO score.
- * 
- * It now includes a standard HEADER with a Title and a Close (X) button 
- * at the top of the card, consistent with the Login and Register views.
+ * Matches the design image: Header with title and X button, and a 
+ * 2-column grid showing USER, TIER, and ELO.
  */
 public class UserProfileView {
-	
-	private final VBox root;
-	private final Button backButton;
+
+    private final VBox root;
+    private final Button backButton;
 
     public UserProfileView(UserProfileModel profile) {
         // ==========================================
-        // 1. THE HEADER (Title + Close Button)
+        // 1. HEADER (Title + Close Button)
         // ==========================================
-        Label titleLabel = new Label("PLAYER PROFILE");
-        titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 16));
-
-        backButton = new Button("X");
-        backButton.setStyle(
-            "-fx-background-color: transparent; -fx-font-weight: bold;" +
-            "-fx-font-size: 14px; -fx-cursor: hand;"
-        );
+        Label titleLabel = ViewUtils.createHeaderLabel("PROFILE");
+        backButton = ViewUtils.createCloseButton("X");
 
         BorderPane headerBox = new BorderPane();
         headerBox.setCenter(titleLabel);
@@ -45,37 +32,52 @@ public class UserProfileView {
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
         // ==========================================
-        // 2. AVATAR & STATS
+        // 2. STATS GRID (USER, TIER, ELO)
         // ==========================================
-        // Avatar Circle
-        String initial = profile.getUsername().substring(0, 1).toUpperCase();
-        Label avatarText = new Label(initial);
-        avatarText.setFont(Font.font("Arial", FontWeight.BOLD, 40));
-        avatarText.setTextFill(Color.WHITE);
+        GridPane grid = new GridPane();
+        grid.setHgap(80); // Space between label and value
+        grid.setVgap(25); // Space between rows
+        grid.setAlignment(Pos.CENTER_LEFT);
 
-        StackPane avatar = new StackPane(avatarText);
-        avatar.setStyle("-fx-background-color: #444444; -fx-background-radius: 50%;");
-        avatar.setPrefSize(100, 100);
-        avatar.setMaxSize(100, 100);
+        // Font styles
+        String labelStyle = "-fx-font-size: 20px; -fx-text-fill: #222222;";
+        String valueStyle = "-fx-font-size: 20px; -fx-text-fill: #000000;";
 
-        // Username
-        Label nameLabel = new Label(profile.getUsername());
-        nameLabel.setFont(Font.font("Arial", FontWeight.BOLD, 24));
+        // Row 1: USER
+        Label userLabel = new Label("USER:");
+        userLabel.setStyle(labelStyle);
+        Label userValue = new Label(profile.getUsername().toUpperCase());
+        userValue.setStyle(valueStyle);
+        grid.add(userLabel, 0, 0);
+        grid.add(userValue, 1, 0);
 
-        // Stats (Tier & ELO)
-        Label tierLabel = new Label("TIER: " + profile.getTier().toUpperCase());
-        tierLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #555555; -fx-font-weight: bold;");
+        // Row 2: TIER
+        Label tierLabel = new Label("TIER:");
+        tierLabel.setStyle(labelStyle);
+        Label tierValue = new Label(profile.getTier().toUpperCase());
+        tierValue.setStyle(valueStyle);
+        grid.add(tierLabel, 0, 1);
+        grid.add(tierValue, 1, 1);
 
-        Label eloLabel = new Label("ELO: " + profile.getElo());
-        eloLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #555555; -fx-font-weight: bold;");
+        // Row 3: ELO
+        Label eloLabel = new Label("ELO:");
+        eloLabel.setStyle(labelStyle);
+        Label eloValue = new Label(String.valueOf(profile.getElo()));
+        eloValue.setStyle(valueStyle);
+        grid.add(eloLabel, 0, 2);
+        grid.add(eloValue, 1, 2);
 
-        // Card assembly — just the VBox, no overlay
-        root = new VBox(15, headerBox, avatar, nameLabel, tierLabel, eloLabel);
-        root.setPadding(new Insets(15, 40, 30, 40));
-        root.setAlignment(Pos.CENTER);
+        // ==========================================
+        // 3. ASSEMBLE CARD
+        // ==========================================
+        root = new VBox(30, headerBox, grid);
+        root.setPadding(new Insets(15, 30, 30, 30));
+        root.setAlignment(Pos.TOP_CENTER);
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        root.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #777777; -fx-border-width: 1px;");
-
+        root.setStyle(
+                "-fx-background-color: #f4f4f4; -fx-border-color: #777777;" +
+                "-fx-border-width: 1px;"
+            );
     }
 
     public Node getRoot()          { return root; }

@@ -86,6 +86,30 @@ public class MainMenuController implements Navigator {
     }
     
     @Override
+    public void goToCredits() {
+        CreditsView v = new CreditsView();
+        new CreditsController(v, this);
+        
+        // Show it as a popup over the current screen
+        view.showPopup(v.getRoot());
+    }
+    
+    @Override
+    public void goToLeaderboard() {
+        // 1. Create the Model
+        model.LeaderBoardModel model = new model.LeaderBoardModel();
+        
+        // 2. Create the View (passing the model)
+        LeaderBoardView v = new LeaderBoardView(model);
+        
+        // 3. Wire the Controller
+        new LeaderBoardController(v, this);
+        
+        // 4. Show it as a popup
+        view.showPopup(v.getRoot());
+    }
+    
+    @Override
     public void goToSettings() {
         // 1. Build the inline settings view
         GameSettingsView v = new GameSettingsView();
@@ -126,6 +150,7 @@ public class MainMenuController implements Navigator {
         view.setContent(v.getRoot());
     }
 
+    
     @Override
     public void goToResume() {
         if (!Session.hasSavedGame()) { goToTopicSelection(); return; }

@@ -21,7 +21,7 @@ public class GameMainMenuController {
         view.getBackButton().setOnAction(e -> nav.goToMenu());
 
         // CREDITS -> Popup
-        view.getCreditsButton().setOnAction(e -> showCreditsPopup());
+        view.getCreditsButton().setOnAction(e -> nav.goToCredits());
 
         // GEAR -> Popup
         view.getGearButton().setOnAction(e -> nav.goToSettings());

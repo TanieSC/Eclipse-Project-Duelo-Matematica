@@ -31,7 +31,8 @@ public class GameStartMenuController {
         // 1VS1, PROFILE, LEADERBOARD -> Placeholder popups for now
         view.get1vs1Button().setOnAction(e -> showDummyPopup("1VS1 MODE"));
         view.getProfileButton().setOnAction(e -> nav.goToUserProfile());
-        view.getLeaderboardButton().setOnAction(e -> showDummyPopup("LEADERBOARD"));
+        view.getLeaderboardButton().setOnAction(e -> nav.goToLeaderboard());
+        view.getStoryButton().setOnAction(e -> showDummyPopup("STORY MODE"));
     }
 
     

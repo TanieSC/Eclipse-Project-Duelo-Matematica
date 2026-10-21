@@ -74,7 +74,7 @@ public class LoginView {
         Label emailLabel = new Label("EMAIL");
         emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         
-        emailField = new TextField();
+        emailField = new TextField("demo@duelo.com");
         emailField.setPrefWidth(140);
         emailField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +

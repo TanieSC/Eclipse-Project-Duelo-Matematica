@@ -19,4 +19,6 @@ public interface Navigator {
     void goTo1v1Game();
     void goToSettings(); 
     void closePopup(); 
+    void goToCredits();
+    void goToLeaderboard();
 }

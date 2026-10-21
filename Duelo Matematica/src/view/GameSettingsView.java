@@ -53,21 +53,21 @@ public class GameSettingsView {
         sfxLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333333;");
 
         // Use a GridPane to align the labels and sliders
-        GridPane grid = new GridPane();
-        grid.setHgap(25); // Horizontal space between label and slider
-        grid.setVgap(25); // Vertical space between rows
-        grid.setAlignment(Pos.CENTER);
+        GridPane formGrid = new GridPane();
+        formGrid.setHgap(25); // Horizontal space between label and slider
+        formGrid.setVgap(25); // Vertical space between rows
+        formGrid.setAlignment(Pos.CENTER);
 
         // Add to grid (Column 0 = Label, Column 1 = Slider)
-        grid.add(musicLabel, 0, 0);
-        grid.add(musicSlider, 1, 0);
-        grid.add(sfxLabel, 0, 1);
-        grid.add(sfxSlider, 1, 1);
+        formGrid.add(musicLabel, 0, 0);
+        formGrid.add(musicSlider, 1, 0);
+        formGrid.add(sfxLabel, 0, 1);
+        formGrid.add(sfxSlider, 1, 1);
 
         // ==========================================
         // 3. ASSEMBLING THE CARD
         // ==========================================
-        root = new VBox(30, headerBox, grid);
+        root = new VBox(30, headerBox, formGrid);
         root.setPadding(new Insets(15, 30, 30, 30));
         root.setAlignment(Pos.TOP_CENTER);
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
