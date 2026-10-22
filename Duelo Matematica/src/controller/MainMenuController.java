@@ -28,7 +28,7 @@ public class MainMenuController implements Navigator {
     public void goToMenu() {
         view.showMenu();
         if (Session.isLoggedIn()) {
-            view.getLoginButton().setText("Logged in: " + Session.getCurrentUser().getUsername());
+            view.getLoginButton().setText("LOGGED IN: " + Session.getCurrentUser().getUsername());
         } else {
             view.getLoginButton().setText("LOGIN");
         }

@@ -29,11 +29,12 @@ public class ForgotPassView {
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
         // 2. INPUT FORM
-        Label emailLabel = new Label("EMAIL");
-        emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL");//w Label("EMAIL");
+       // emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         
         emailField = new TextField();
         emailField.setPrefWidth(180);
+        emailField.setFont(ViewUtils.getCustomFont(10));
         // The CSS ensures text starts typing from the right side
         emailField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
@@ -49,16 +50,17 @@ public class ForgotPassView {
         
 
         // 3. FEEDBACK & ACTION
-        messageLabel = new Label();
-        messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
+        messageLabel = ViewUtils.createBodyTextLabel(""); //new Label();
+        messageLabel.setFont(ViewUtils.getCustomFont(8));
+        messageLabel.setStyle("-fx-text-fill: red;");
 
-        confirmButton = new Button("RESET");
-        confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-        confirmButton.setPrefSize(130, 35);
-        confirmButton.setStyle(
-            "-fx-background-color: #999999; -fx-text-fill: black;" +
-            "-fx-background-radius: 0; -fx-cursor: hand;"
-        );
+        confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "RESET", null); //new Button("RESET");
+       // confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
+      //  confirmButton.setPrefSize(130, 35);
+      //  confirmButton.setStyle(
+      //     "-fx-background-color: #999999; -fx-text-fill: black;" +
+      //      "-fx-background-radius: 0; -fx-cursor: hand;"
+      //  );
         
         // 4. ASSEMBLE CARD
         root = new VBox(10, headerBox, formGrid, messageLabel, confirmButton);

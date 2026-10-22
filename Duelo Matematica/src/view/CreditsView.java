@@ -61,14 +61,14 @@ public class CreditsView {
      */
     private VBox createSection(String role, String... names) {
         Label roleLabel = ViewUtils.createSubHeaderLabel(role);
-        roleLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #222222;"); // Matches image font
+        roleLabel.setStyle("-fx-text-fill: #222222; -fx-padding: -10px -10px;"); // Matches image font
 
         VBox section = new VBox(2); // Small gap between role and names
         section.getChildren().add(roleLabel);
 
         for (String name : names) {
             Label nameLabel = ViewUtils.createBodyTextLabel(name); //new Label(name);
-            nameLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
+            nameLabel.setStyle("-fx-text-fill: #333333; -fx-padding: -10px -10px; ");
             section.getChildren().add(nameLabel);
         }
 

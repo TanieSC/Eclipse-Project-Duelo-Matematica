@@ -2,6 +2,7 @@ package view;
 
 import javafx.geometry.Insets;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -20,7 +21,7 @@ import javafx.scene.paint.Color;
  * 
  * WHAT DOES THIS CLASS DO?
  * Instead of copy-pasting the same code to make headers, fonts, or buttons 
- * in every single view, we put the code here ONCE. 
+ * in every single screen, we put the code here ONCE. 
  * 
  * Any screen in the app can call `ViewUtils.createMainTitleLabel(...)` or 
  * `ViewUtils.createSpriteButton(...)` to instantly get perfectly styled 
@@ -50,7 +51,8 @@ public final class ViewUtils {
             java.io.InputStream stream = ViewUtils.class.getResourceAsStream("/_assets/fonts/Duelo.ttf");
             
             if (stream != null) {
-                // Load the font at size 12 (size doesn't matter here, we just want the name).
+                // Load the font at size 12. (The size here doesn't matter, we just 
+                // need JavaFX to read the file and memorize its internal name).
                 Font font = Font.loadFont(stream, 12);
                 if (font != null) {
                     // Save the font's actual internal name so we can use it later.
@@ -85,15 +87,15 @@ public final class ViewUtils {
         // Apply our custom font at size 26.
         headerLabel.setFont(Font.font(customFontFamily, 26));
         
-        // Force the label to be exactly 200 pixels tall.
+        // Force the label to be exactly 200 pixels tall so it doesn't stretch weirdly.
         headerLabel.setPrefHeight(200); 
         headerLabel.setMinHeight(200);  
         headerLabel.setMaxHeight(200);  
         
         headerLabel.setStyle(
                 "-fx-font-weight: bold;" +
-                "-fx-padding: 2px 60px; -fx-background-color: #f4f4f4;" +
-                // line-spacing is negative to squish the 3 lines of text closer together!
+                // Negative padding pulls the box up, line-spacing pulls the 3 lines closer together.
+                "-fx-padding: -100px 60px; -fx-background-color: #f4f4f4;" +
                 "-fx-alignment: center; -fx-text-alignment: center; -fx-line-spacing: -40px; " 
             );
         
@@ -106,9 +108,9 @@ public final class ViewUtils {
     public static Label createPopupHeaderLabel(String text) {
         Label headerLabel = new Label(text);
         headerLabel.setAlignment(Pos.CENTER);
-        headerLabel.setFont(Font.font(customFontFamily, 24));
+        headerLabel.setFont(Font.font(customFontFamily, 20));
         
-        // Standard grey background with a bold font.
+        // Standard grey background with a bold font and some padding.
         headerLabel.setStyle(
             "-fx-font-weight: bold; " +
             "-fx-border-width: 3px; " +
@@ -127,7 +129,7 @@ public final class ViewUtils {
     public static Label createSubHeaderLabel(String text) { 
         Label headerLabel = new Label(text);
         headerLabel.setAlignment(Pos.CENTER);
-        headerLabel.setFont(Font.font(customFontFamily, 18));
+        headerLabel.setFont(Font.font(customFontFamily, 14));
     	return headerLabel;
     }
     
@@ -137,7 +139,7 @@ public final class ViewUtils {
     public static Label createBodyTextLabel(String text) { 
         Label headerLabel = new Label(text);
         headerLabel.setAlignment(Pos.CENTER);
-        headerLabel.setFont(Font.font(customFontFamily, 14));
+        headerLabel.setFont(Font.font(customFontFamily, 10));
     	return headerLabel;
     }
     
@@ -146,6 +148,7 @@ public final class ViewUtils {
     */
    public static Button createCloseButton(String text) {
        Button closeButton = new Button(text);
+       // Transparent background so it looks like a clean text "X".
        closeButton.setStyle(
                "-fx-background-color: transparent; -fx-font-weight: bold;" +
                "-fx-font-size: 14px; -fx-cursor: hand;"
@@ -163,15 +166,33 @@ public final class ViewUtils {
    }
 
    /**
-    * SPRITE BUTTON (MANUAL SIZE) — The main engine that builds the 3-frame 
-    * animated button using the spritesheet image.
-    * 
-    * @param width  The exact width. Pass -1 to auto-size.
-    * @param height The exact height. Pass -1 to auto-size.
+    * SPRITE BUTTON (DYNAMIC TEXT WIDTH) — Calculates the exact pixel width 
+    * of the text and sizes the button to fit it perfectly.
+    */
+   public static Button createSpriteButton(String imagePath, String text, Runnable onClickAction) {
+       // 1. Create a temporary invisible Text object to measure the string.
+       Text measure = new Text(text);
+       measure.setFont(getCustomFont(18)); 
+       
+       // 2. Ask JavaFX exactly how wide that text is in pixels.
+       double textWidth = measure.getLayoutBounds().getWidth();
+       
+       // 3. Add 80 pixels of padding so the text doesn't touch the wooden edges.
+       double calculatedWidth = textWidth + 80; 
+       double fixedHeight = 60; // Keep a consistent height
+       
+       // 4. Generate the button using the manual size method.
+       Button btn = createSpriteButton(imagePath, calculatedWidth, fixedHeight, onClickAction);
+       btn.setText(text);
+       return btn;
+   }
+
+   /**
+    * THE MAIN SPRITE BUTTON ENGINE — Builds the 3-frame animated button.
     */
    public static Button createSpriteButton(String imagePath, double width, double height, Runnable onClickAction) {
        
-       // 1. Load the image. If it can't find it, print an error and return a boring text button.
+       // 1. Load the spritesheet image. If missing, return a boring default button.
        InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
        if (stream == null) {
            System.err.println("ERROR: Image NOT FOUND at path: /_assets" + imagePath);
@@ -179,52 +200,70 @@ public final class ViewUtils {
        }
       
        Image spriteSheet = new Image(stream);
-       
-       // 2. Calculate the math. The image has 3 frames side-by-side.
-       // We divide the total width by 3 to know how wide a single frame is.
+       // 2. The image is 3 frames wide. Divide by 3 to get the width of one frame.
        double frameWidth = spriteSheet.getWidth() / 3.0;
        double frameHeight = spriteSheet.getHeight();
       
-       // 3. Create the ImageView (the picture). 
+       // 3. Create the ImageView. The "Viewport" acts like a camera lens, 
+       // starting at the first frame (Normal state).
        ImageView imageView = new ImageView(spriteSheet);
        imageView.setPreserveRatio(false); 
-       
-       // The "Viewport" is like a camera lens. We start by looking at the FIRST frame (x=0).
        imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
 
-       // 4. Create the Text Label manually so it stays centered on the image.
+       // 4. Create the Text Label that will sit on top of the wood.
        Label textLabel = new Label();
-       DropShadow textShadow = new DropShadow(2, 0, 1, Color.rgb(0, 0, 0, 0.7));
-       String textStyle = "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ffffff; " +
-                          "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.7), 2, 0, 0, 1);";
-       textLabel.setStyle(textStyle);
-
-       // 5. Stack the Image and the Text on top of each other.
-       StackPane graphicStack = new StackPane(imageView, textLabel);
-       graphicStack.setAlignment(Pos.CENTER);
+       textLabel.setFont(getCustomFont(14)); 
+       textLabel.setTextFill(Color.BLACK);
        
-       // 6. Create the actual Button and attach the stack.
+       // --- THE ALIGNMENT FIXES ---
+       
+       // FIX 1: Remove hidden padding that JavaFX puts inside labels by default.
+       textLabel.setPadding(Insets.EMPTY);
+       
+       // FIX 2: Center the text inside the label box.
+       textLabel.setAlignment(Pos.CENTER);
+       textLabel.setTextAlignment(TextAlignment.CENTER);
+       
+       // FIX 3: Custom fonts often have invisible space at the top. We physically 
+       // nudge the text UP by 6 pixels to make it look truly centered on the wood.
+       textLabel.setTranslateY(-6);
+
+       // Optional: Create a shadow for the text (currently disabled in your code).
+       DropShadow textShadow = new DropShadow(2, 0, 1, Color.rgb(0, 0, 0, 0.7));
+       textLabel.setEffect(null);
+
+       // 5. Stack the Image and Text on top of each other.
+       StackPane graphicStack = new StackPane(imageView, textLabel);
+       StackPane.setAlignment(imageView, Pos.CENTER);
+       StackPane.setAlignment(textLabel, Pos.CENTER);
+
+       // 6. Create the Button. We tell it to ONLY show the graphic (our StackPane).
        Button button = new Button();
        button.setGraphic(graphicStack);
-       button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); // Ignore the default text layout
-       button.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0;");
+       button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); 
+       
+       // FIX 4: Strip away the Button's hidden background borders and padding.
+       button.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0; -fx-background-insets: 0; -fx-border-width: 0;");
       
-       // 7. Connect the button's text to our custom text label.
-       // If someone calls button.setText("PLAY"), our textLabel updates automatically.
+       // 7. Sync the Button's text property with our custom textLabel.
        button.textProperty().addListener((obs, oldV, newV) -> textLabel.setText(newV));
 
-       // 8. SIZING LOGIC
+       // 8. SIZING MODE LOGIC
        if (width > 0 && height > 0) {
            // --- MANUAL SIZE MODE ---
-           // Lock EVERYTHING to the exact size provided.
            button.setPrefSize(width, height);
            button.setMinSize(width, height);
            button.setMaxSize(width, height);
-           graphicStack.setPrefSize(width, height);
-           graphicStack.setMinSize(width, height);
-           graphicStack.setMaxSize(width, height);
            
-           // Stretch the image exactly to the StackPane's size
+           // FIX 5: Bind the StackPane tightly to the Button's dimensions so 
+           // it stretches the image perfectly to fill the space.
+           graphicStack.prefWidthProperty().bind(button.widthProperty());
+           graphicStack.prefHeightProperty().bind(button.heightProperty());
+           graphicStack.minWidthProperty().bind(button.widthProperty());
+           graphicStack.minHeightProperty().bind(button.heightProperty());
+           graphicStack.maxWidthProperty().bind(button.widthProperty());
+           graphicStack.maxHeightProperty().bind(button.heightProperty());
+           
            imageView.fitWidthProperty().bind(graphicStack.widthProperty());
            imageView.fitHeightProperty().bind(graphicStack.heightProperty());
            
@@ -233,44 +272,39 @@ public final class ViewUtils {
            // Add padding so the text has breathing room.
            graphicStack.setPadding(new Insets(10, 30, 10, 30));
            
-           // Make the image "invisible" to the layout engine.
-           // This allows the TEXT to dictate how wide the button becomes.
+           // Make image "invisible" to the layout engine so the text dictates the width.
            imageView.setManaged(false); 
-           
-           // Stretch the image to match the button's final calculated size
            imageView.fitWidthProperty().bind(button.widthProperty());
            imageView.fitHeightProperty().bind(button.heightProperty());
            
-           // Manually center the image behind the text
+           // Center the image behind the text.
            imageView.layoutXProperty().bind(button.widthProperty().subtract(imageView.fitWidthProperty()).divide(2));
            imageView.layoutYProperty().bind(button.heightProperty().subtract(imageView.fitHeightProperty()).divide(2));
        }
       
-       // 9. HOVER ANIMATION
-       // When the mouse hovers over, slide the camera lens to the middle frame.
+       // 9. HOVER ANIMATION (Frame 1)
        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
-          if (button.isArmed()) return; // If they are currently clicking, don't change the frame
+          if (button.isArmed()) return; 
           imageView.setViewport(new Rectangle2D(isNowHovered ? frameWidth : 0, 0, frameWidth, frameHeight));
        });
 
-       // 10. PRESS ANIMATION
+       // 10. PRESS ANIMATION (Frame 2)
        button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
           if (isNowArmed) {
-              // PRESSED: Slide the camera to the 3rd frame (the pressed wood).
+              // PRESSED: Slide to the 3rd frame.
               imageView.setViewport(new Rectangle2D(frameWidth * 2, 0, frameWidth, frameHeight));
               
-              // Make the text look physically pressed by moving it down/right and removing its shadow.
-              textLabel.setTranslateX(2);
-              textLabel.setTranslateY(2);
+              // Move the text DOWN by 1 pixel from its base offset (-6 becomes -5)
+              // to make it look physically pushed into the wood.
+              textLabel.setTranslateY(-5);
               textLabel.setEffect(null); 
           } else {
-              // RELEASED: Go back to Hover (or Normal if mouse dragged away).
+              // RELEASED: Go back to Hover or Normal frame.
               imageView.setViewport(new Rectangle2D(button.isHover() ? frameWidth : 0, 0, frameWidth, frameHeight));
               
-              // Snap the text back to its original position and restore the shadow.
-              textLabel.setTranslateX(0);
-              textLabel.setTranslateY(0);
-              textLabel.setEffect(textShadow);
+              // Snap text back to its base offset (-6).
+              textLabel.setTranslateY(-6);
+              textLabel.setEffect(null);
           }
        });
 

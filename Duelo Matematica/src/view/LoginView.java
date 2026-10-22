@@ -71,22 +71,24 @@ public class LoginView {
         // ==========================================
         // 2. THE FORM (Email and Password fields)
         // ==========================================
-        Label emailLabel = new Label("EMAIL");
-        emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL"); //  new Label("EMAIL");
+        //emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         
         emailField = new TextField("demo@duelo.com");
-        emailField.setPrefWidth(140);
+        emailField.setPrefWidth(180);
+        emailField.setFont(ViewUtils.getCustomFont(10));
         emailField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
             "-fx-background-radius: 0;"
         );
 
-        Label passwordLabel = new Label("PASSWORD");
-        passwordLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        Label passwordLabel = ViewUtils.createBodyTextLabel("PASSWORD"); // new Label("PASSWORD");
+        //passwordLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         
         // PasswordField hides the characters as the user types (shows dots instead).
         passwordField = new PasswordField();
-        passwordField.setPrefWidth(140);
+        passwordField.setPrefWidth(180);
+        passwordField.setFont(ViewUtils.getCustomFont(10));
         passwordField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
             "-fx-background-radius: 0;"
@@ -103,26 +105,30 @@ public class LoginView {
         // ==========================================
         // 3. LINKS & FEEDBACK
         // ==========================================
+        
+        
         forgotPasswordLink = new Hyperlink("FORGOT PASSWORD?");
+        forgotPasswordLink.setFont(ViewUtils.getCustomFont(10));
         forgotPasswordLink.setStyle(
-            "-fx-text-fill: black; -fx-underline: false; -fx-font-size: 11px;"
+            "-fx-text-fill: black; -fx-underline: false;"
         );
 
         // This label is empty at first, but the Controller will fill it 
         // with red text if the user makes a mistake.
-        messageLabel = new Label();
-        messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
+        messageLabel = ViewUtils.createBodyTextLabel("");//new Label();
+        messageLabel.setFont(ViewUtils.getCustomFont(8));
+        messageLabel.setStyle("-fx-text-fill: red;");
 
         // ==========================================
         // 4. THE CONFIRM BUTTON
         // ==========================================
-        confirmButton = new Button("CONFIRM");
-        confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
-        confirmButton.setPrefSize(130, 35);
-        confirmButton.setStyle(
-            "-fx-background-color: #999999; -fx-text-fill: black;" +
-            "-fx-background-radius: 0; -fx-cursor: hand;"
-        );
+        confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null); //new Button("CONFIRM");
+        //confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
+        //confirmButton.setPrefSize(130, 35);
+        //confirmButton.setStyle(
+        //    "-fx-background-color: #999999; -fx-text-fill: black;" +
+        //    "-fx-background-radius: 0; -fx-cursor: hand;"
+        //);
 
         // ==========================================
         // 5. ASSEMBLING THE CARD
