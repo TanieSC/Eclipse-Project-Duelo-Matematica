@@ -216,7 +216,7 @@ public final class ViewUtils {
        // 4. Create the Text Label that will sit on top of the wood.
        Label textLabel = new Label();
        textLabel.setFont(getCustomFont(14)); 
-       textLabel.setTextFill(Color.BLACK);
+       textLabel.setTextFill(Color.web("#6b3e26")); //(Color.BLACK);
        
        // --- THE ALIGNMENT FIXES ---
        
@@ -232,8 +232,8 @@ public final class ViewUtils {
        textLabel.setTranslateY(-6);
 
        // Optional: Create a shadow for the text (currently disabled in your code).
-       DropShadow textShadow = new DropShadow(2, 0, 1, Color.rgb(0, 0, 0, 0.7));
-       textLabel.setEffect(null);
+       //DropShadow textShadow = new DropShadow(2, 0, 1, Color.rgb(0, 0, 0, 0.7));
+       //textLabel.setEffect(null);
 
        // 5. Stack the Image and Text on top of each other.
        StackPane graphicStack = new StackPane(imageView, textLabel);
