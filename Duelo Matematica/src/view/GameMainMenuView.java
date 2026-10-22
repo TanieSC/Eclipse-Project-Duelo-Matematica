@@ -135,14 +135,14 @@ public class GameMainMenuView {
      * We use the special unicode character "\u2699" to display the gear symbol.
      */
     private Button createGearButton() {
-        Button gearBtn = new Button("\u2699"); 
-        gearBtn.setPrefSize(48, 48); // Make it a perfect 48x48 square
-        gearBtn.setStyle(
-            "-fx-font-size: 24px; -fx-font-weight: bold;" +
-            "-fx-border-color: #000000; -fx-border-width: 2px;" +
-            "-fx-border-radius: 50%; -fx-background-radius: 50%;" + // Makes it a circle
-            "-fx-background-color: #f9f9f9; -fx-cursor: hand;"
-        );
+        Button gearBtn =  ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null); //new Button("\u2699"); 
+        //gearBtn.setPrefSize(48, 48); // Make it a perfect 48x48 square
+       // gearBtn.setStyle(
+       //     "-fx-font-size: 24px; -fx-font-weight: bold;" +
+       //     "-fx-border-color: #000000; -fx-border-width: 2px;" +
+       //     "-fx-border-radius: 50%; -fx-background-radius: 50%;" + // Makes it a circle
+       //     "-fx-background-color: #f9f9f9; -fx-cursor: hand;"
+       // );
         return gearBtn;
     }
 

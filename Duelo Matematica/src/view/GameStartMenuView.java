@@ -44,7 +44,7 @@ public class GameStartMenuView {
         // 2. Build Main Buttons
         btnStory       = createBorderedButton("STORY");
         btn1vs1        = createBorderedButton("1VS1");
-        btnProfile     = createBorderedButton("PROFILE");
+        btnProfile     = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_profile.png", 50, null);//= createBorderedButton("PROFILE");
         btnLeaderboard = createBorderedButton("LEADERBOARD");
         btnBack        = createBorderedButton("BACK");
 
@@ -96,14 +96,14 @@ public class GameStartMenuView {
     }
 
     private Button createGearButton() {
-        Button gearBtn = new Button("\u2699");
-        gearBtn.setPrefSize(48, 48);
-        gearBtn.setStyle(
-            "-fx-font-size: 24px; -fx-font-weight: bold;" +
-            "-fx-border-color: #000000; -fx-border-width: 2px;" +
-            "-fx-border-radius: 50%; -fx-background-radius: 50%;" +
-            "-fx-background-color: #f9f9f9; -fx-cursor: hand;"
-        );
+        Button gearBtn =  ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null); //new Button("\u2699");
+        //gearBtn.setPrefSize(48, 48);
+       // gearBtn.setStyle(
+       //     "-fx-font-size: 24px; -fx-font-weight: bold;" +
+       //     "-fx-border-color: #000000; -fx-border-width: 2px;" +
+       //     "-fx-border-radius: 50%; -fx-background-radius: 50%;" +
+       //     "-fx-background-color: #f9f9f9; -fx-cursor: hand;"
+       // );
         return gearBtn;
     }
 

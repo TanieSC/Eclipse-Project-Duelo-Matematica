@@ -318,4 +318,126 @@ public final class ViewUtils {
 
        return button;
   }
+   
+   /**
+    * SPRITE BUTTON (2 FRAMES) — For square icon buttons with only 2 states.
+    * Frame 1 (Left) = Normal, Frame 2 (Right) = Hover/Pressed
+    */
+   public static Button createTwoFrameSpriteButton(String imagePath, double size, Runnable onClickAction) {
+       InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
+       if (stream == null) {
+           System.err.println("ERROR: Image NOT FOUND at path: /_assets" + imagePath);
+           return new Button("Missing Image");
+       }
+      
+       Image spriteSheet = new Image(stream);
+       
+       // This image has 2 frames side-by-side. We divide the width by 2.
+       double frameWidth = spriteSheet.getWidth() / 2.0;
+       double frameHeight = spriteSheet.getHeight();
+      
+       ImageView imageView = new ImageView(spriteSheet);
+       imageView.setPreserveRatio(false); 
+       // Start with the first frame (Normal)
+       imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+
+       Button button = new Button();
+       button.setGraphic(imageView);
+       button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); 
+       // Remove all default button styling
+       button.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0; -fx-background-insets: 0; -fx-border-width: 0;");
+      
+       // Lock the size to be perfectly square
+       button.setPrefSize(size, size);
+       button.setMinSize(size, size);
+       button.setMaxSize(size, size);
+       
+       // Stretch image to fit the button
+       imageView.fitWidthProperty().bind(button.widthProperty());
+       imageView.fitHeightProperty().bind(button.heightProperty());
+      
+       //===================================
+       //Add this code if hover is desired
+       //===================================
+       
+       // HOVER ANIMATION (Shows 2nd frame)
+       //button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+      //    if (button.isArmed()) return; 
+      //    imageView.setViewport(new Rectangle2D(isNowHovered ? frameWidth : 0, 0, frameWidth, frameHeight));
+      // });
+
+       // PRESS ANIMATION (Also shows 2nd frame)
+       //button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
+       //   if (isNowArmed) {
+       //       imageView.setViewport(new Rectangle2D(frameWidth, 0, frameWidth, frameHeight));
+      //    } else {
+      //        imageView.setViewport(new Rectangle2D(button.isHover() ? frameWidth : 0, 0, frameWidth, frameHeight));
+      //    }
+      // });       
+       //=======================================
+       //=======================================
+       
+       //========================================
+       //Add this code if pressed only is desired
+       //========================================
+       
+       // PRESS ANIMATION (Shows 2nd frame only when clicking)
+       //button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
+       //   if (isNowArmed) {
+       //       // Button is pressed down -> Show right frame
+       //       imageView.setViewport(new Rectangle2D(frameWidth, 0, frameWidth, frameHeight));
+       //   } else {
+       //       // Button is released -> Always go back to normal frame
+       //       imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+       //   }
+       //});      
+       //=======================================
+       //=======================================
+
+       // ==========================================
+       // 1. CREATE THE GLOW EFFECT
+       // ==========================================
+       DropShadow glow = new DropShadow();
+       glow.setColor(Color.rgb(255, 235, 59, 0.9)); // Soft Yellow/Gold glow
+       glow.setRadius(20);                          // How wide the glow spreads
+       glow.setSpread(0.3);                         // How solid the glow is near the button
+       glow.setOffsetX(0);                          // 0 means the glow surrounds evenly
+       glow.setOffsetY(0);
+
+       // ==========================================
+       // 2. APPLY GLOW ON HOVER
+       // ==========================================
+       button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+           if (button.isArmed()) return; 
+           
+           if (isNowHovered) {
+               imageView.setEffect(glow); // Turn on the light
+           } else {
+               imageView.setEffect(null); // Turn off the light
+           }
+       });
+
+       // ==========================================
+       // 3. PRESS ANIMATION (Keep your 2nd frame here)
+       // ==========================================
+       button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
+          if (isNowArmed) {
+              // Pressed down
+              imageView.setViewport(new Rectangle2D(frameWidth, 0, frameWidth, frameHeight));
+          } else {
+              // Released
+              imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+              // Ensure glow returns if the mouse is still over the button
+              if (button.isHover()) {
+                  imageView.setEffect(glow);
+              }
+          }
+       });
+       
+       if (onClickAction != null) {
+          button.setOnAction(e -> onClickAction.run());
+       }
+
+       return button;
+   }
 }
