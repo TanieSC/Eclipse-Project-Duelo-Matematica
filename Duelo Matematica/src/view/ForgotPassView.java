@@ -48,6 +48,11 @@ public class ForgotPassView {
         formGrid.add(emailLabel, 0, 0);
         formGrid.add(emailField, 1, 0);
         
+        // Tell the GridPane that Column 1 (the text fields) should grow
+        ColumnConstraints col1 = new ColumnConstraints(); // Column 0 (Labels)
+        ColumnConstraints col2 = new ColumnConstraints(); // Column 1 (Fields)
+        col2.setHgrow(Priority.ALWAYS);                   // <--- CRUCIAL LINE
+        formGrid.getColumnConstraints().addAll(col1, col2);
 
         // 3. FEEDBACK & ACTION
         messageLabel = ViewUtils.createBodyTextLabel(""); //new Label();

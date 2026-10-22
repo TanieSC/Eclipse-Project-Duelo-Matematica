@@ -54,8 +54,9 @@ public class RegisterView {
         // ==========================================
         // 1. THE HEADER (Title + Close Button)
         // ==========================================
-        Label titleLabel = new Label("CREATE ACCOUNT");
-        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("CREATE ACCOUNT");
+        //Label titleLabel = new Label("CREATE ACCOUNT");
+        //titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
 
         backButton = new Button("X");
         backButton.setStyle(
@@ -72,28 +73,31 @@ public class RegisterView {
         // ==========================================
         // 2. THE FORM (Email, Username, Password)
         // ==========================================
-        Label emailLabel = new Label("EMAIL");
-        emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL"); //new Label("EMAIL");
+       // emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         emailField = new TextField();
-        emailField.setPrefWidth(140);
+        emailField.setPrefWidth(180);
+        emailField.setFont(ViewUtils.getCustomFont(10));
         emailField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
             "-fx-background-radius: 0;"
         );
 
-        Label usernameLabel = new Label("USERNAME");
-        usernameLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        Label usernameLabel =  ViewUtils.createBodyTextLabel("USERNAME"); //new Label("USERNAME");
+        //usernameLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         usernameField = new TextField();
-        usernameField.setPrefWidth(140);
+        usernameField.setPrefWidth(180);
+        usernameField.setFont(ViewUtils.getCustomFont(10));
         usernameField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
             "-fx-background-radius: 0;"
         );
 
-        Label passwordLabel = new Label("PASSWORD");
-        passwordLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
+        Label passwordLabel = ViewUtils.createBodyTextLabel("PASSWORD"); // new Label("PASSWORD");
+       // passwordLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         passwordField = new PasswordField();
-        passwordField.setPrefWidth(140);
+        passwordField.setPrefWidth(180);
+        passwordField.setFont(ViewUtils.getCustomFont(10));
         passwordField.setStyle(
             "-fx-background-color: #666666; -fx-text-inner-color: white;" +
             "-fx-background-radius: 0;"
@@ -108,21 +112,28 @@ public class RegisterView {
         formGrid.add(usernameLabel, 0, 1);  formGrid.add(usernameField, 1, 1);
         formGrid.add(passwordLabel, 0, 2);  formGrid.add(passwordField, 1, 2);
 
+       // Tell the GridPane that Column 1 (the text fields) should grow
+        ColumnConstraints col1 = new ColumnConstraints(); // Column 0 (Labels)
+        ColumnConstraints col2 = new ColumnConstraints(); // Column 1 (Fields)
+        col2.setHgrow(Priority.ALWAYS);                   // <--- CRUCIAL LINE
+        formGrid.getColumnConstraints().addAll(col1, col2);
+        
         // ==========================================
         // 3. FEEDBACK & ACTION (Error text + CONFIRM Button)
         // ==========================================
         // This label is empty at first, but the Controller will fill it 
         // with red text if the user makes a mistake.
-        messageLabel = new Label();
-        messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
+        messageLabel = ViewUtils.createBodyTextLabel(""); //new Label();
+        messageLabel.setFont(ViewUtils.getCustomFont(8));
+        messageLabel.setStyle("-fx-text-fill: red;");
 
-        confirmButton = new Button("CONFIRM");
-        confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
-        confirmButton.setPrefSize(130, 35);
-        confirmButton.setStyle(
-            "-fx-background-color: #999999; -fx-text-fill: black;" +
-            "-fx-background-radius: 0; -fx-cursor: hand;"
-        );
+        confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null);  //new Button("CONFIRM");
+        //confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
+        //confirmButton.setPrefSize(130, 35);
+        //confirmButton.setStyle(
+        //    "-fx-background-color: #999999; -fx-text-fill: black;" +
+        //    "-fx-background-radius: 0; -fx-cursor: hand;"
+        //);
 
         // ==========================================
         // 4. ASSEMBLING THE CARD
