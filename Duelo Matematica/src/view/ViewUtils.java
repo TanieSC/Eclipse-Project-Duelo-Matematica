@@ -182,8 +182,11 @@ public final class ViewUtils {
        double fixedHeight = 60; // Keep a consistent height
        
        // 4. Generate the button using the manual size method.
-       Button btn = createSpriteButton(imagePath, calculatedWidth, fixedHeight, onClickAction);
+       Button btn = createSpriteButton(imagePath, calculatedWidth, fixedHeight, onClickAction);       
+       
+      // 4. Set the initial text (this triggers the resize)
        btn.setText(text);
+       
        return btn;
    }
 

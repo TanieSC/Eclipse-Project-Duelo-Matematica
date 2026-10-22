@@ -278,7 +278,7 @@ public class MainMenuView {
     // ==========================================
     // GETTERS
     // ==========================================
-    public Button getLoginButton()    { return loginButton; }
+    public Button getLoginButton()    {return loginButton; }
     public Button getRegisterButton() { return registerButton; }
     public Button getExitButton()     { return exitButton; }
     public Stage  getStage()          { return stage; }
