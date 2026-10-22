@@ -145,10 +145,7 @@ public class LoginView {
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         
         // Give it a grey background and a border to look like a "card".
-        root.setStyle(
-            "-fx-background-color: #f4f4f4; -fx-border-color: #777777;" +
-            "-fx-border-width: 1px;"
-        );
+        root.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
     }
 
     // ============================================================

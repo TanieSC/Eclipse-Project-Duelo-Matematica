@@ -73,7 +73,7 @@ public class ForgotPassView {
         root.setAlignment(Pos.TOP_CENTER);
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         root.setStyle(
-            "-fx-background-color: #f4f4f4; -fx-border-color: #777777;" +
+            "-fx-border-color: transparent;" +
             "-fx-border-width: 1px;"
         );
     }

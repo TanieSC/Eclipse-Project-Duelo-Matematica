@@ -151,7 +151,7 @@ public class RegisterView {
         
         // Give it a grey background and a border to look like a "card".
         root.setStyle(
-            "-fx-background-color: #f4f4f4; -fx-border-color: #777777;" +
+            "-fx-border-color: transparent;"+
             "-fx-border-width: 1px;"
         );
     }

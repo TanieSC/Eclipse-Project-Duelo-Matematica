@@ -5,6 +5,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -15,6 +16,13 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
+
 
 /**
  * VIEW UTILS — A "Toolbox" for shared visual elements.
@@ -115,9 +123,9 @@ public final class ViewUtils {
             "-fx-font-weight: bold; " +
             "-fx-border-width: 3px; " +
             "-fx-padding: 12px 12px; " +
-            "-fx-background-color: #f4f4f4; " +
             "-fx-alignment: center; " +
-            "-fx-text-alignment: center;"
+            "-fx-text-alignment: center;" + 
+            "-fx-border-color: transparent"
         );
         
         return headerLabel;
@@ -130,6 +138,7 @@ public final class ViewUtils {
         Label headerLabel = new Label(text);
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setFont(Font.font(customFontFamily, 14));
+        headerLabel.setStyle("-fx-border-color: transparent");
     	return headerLabel;
     }
     
@@ -140,6 +149,7 @@ public final class ViewUtils {
         Label headerLabel = new Label(text);
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setFont(Font.font(customFontFamily, 10));
+        headerLabel.setStyle("-fx-border-color: transparent");
     	return headerLabel;
     }
     
@@ -440,4 +450,70 @@ public final class ViewUtils {
 
        return button;
    }
+   
+   /**
+    * GLOBAL DROPDOWN ANIMATION
+    * Wraps the view in the wooden background and animates it dropping down.
+    * 
+    * @param view            The inline view to show (e.g., LoginView, GameMainMenuView).
+    * @param rootContainer   The main StackPane that holds everything.
+    * @param backgroundNodes Any screens that should stay in the background (like the menu or overlay).
+    */
+   public static void animateDropdown(Node view, StackPane rootContainer, Node... backgroundNodes) {
+       // 1. Load the 12-frame wooden animation
+       Image woodImg = new Image(ViewUtils.class.getResourceAsStream("/_assets/panels/ui_popup_scroll.png"));
+       ImageView woodBackground = new ImageView(woodImg);
+       
+       // 2. Cast the Node to a Region so we can access its width/height
+       Region viewRegion = (Region) view;
+       
+       woodBackground.setPreserveRatio(false);
+       woodBackground.fitWidthProperty().bind(viewRegion.widthProperty());
+       woodBackground.fitHeightProperty().bind(viewRegion.heightProperty());
+
+       // 3. Create a container for the Wood + The View
+       StackPane dropdownContainer = new StackPane(woodBackground, view);
+       dropdownContainer.setAlignment(Pos.CENTER); 
+       dropdownContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+       // 4. Add background nodes first, then the dropdown container
+       rootContainer.getChildren().setAll(backgroundNodes);
+       rootContainer.getChildren().add(dropdownContainer);
+       
+       // Force JavaFX to calculate the size
+       rootContainer.applyCss();
+       rootContainer.layout();
+
+       double targetHeight = dropdownContainer.getHeight();
+       if (targetHeight <= 0) targetHeight = 500; // Safety fallback
+
+       // 5. Create the mask (Curtain) revealing it downwards
+       Rectangle clip = new Rectangle();
+       clip.widthProperty().bind(dropdownContainer.widthProperty());
+       clip.setHeight(0); 
+       dropdownContainer.setClip(clip);
+
+       // 6. Animate the 12-frame wooden background
+       double frameWidth = woodImg.getWidth() / 12.0;
+       double frameHeight = woodImg.getHeight();
+       
+       Timeline woodTimeline = new Timeline();
+       for (int i = 0; i < 12; i++) {
+           final int frame = i;
+           woodTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 40), e -> {
+               woodBackground.setViewport(new Rectangle2D(frame * frameWidth, 0, frameWidth, frameHeight));
+           }));
+       }
+
+       // 7. Animate the curtain revealing the view
+       Timeline clipTimeline = new Timeline(
+           new KeyFrame(Duration.ZERO, new KeyValue(clip.heightProperty(), 0, Interpolator.EASE_IN)),
+           new KeyFrame(Duration.millis(480), new KeyValue(clip.heightProperty(), targetHeight, Interpolator.EASE_OUT))
+       );
+
+       // 8. Play them together!
+       woodTimeline.play();
+       clipTimeline.play();
+   }
+   
 }
