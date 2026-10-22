@@ -23,7 +23,7 @@ public class UserProfileView {
         // ==========================================
         // 1. HEADER (Title + Close Button)
         // ==========================================
-        Label titleLabel = ViewUtils.createHeaderLabel("PROFILE");
+        Label titleLabel = ViewUtils.createSubHeaderLabel("PROFILE");
         backButton = ViewUtils.createCloseButton("X");
 
         BorderPane headerBox = new BorderPane();

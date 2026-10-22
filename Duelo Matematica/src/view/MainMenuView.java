@@ -33,16 +33,8 @@ public class MainMenuView {
     public MainMenuView(Stage stage) {
         this.stage = stage;
 
-        Label headerLabel = new Label("Duelo\nX\nMatematica");
-        headerLabel.setAlignment(Pos.CENTER);
-        headerLabel.setStyle(
-            "-fx-font-size: 26px; -fx-font-weight: bold;" +
-            "-fx-border-color: #222222; -fx-border-width: 3px;" +
-            "-fx-padding: 12px 60px; -fx-background-color: #f4f4f4;" +
-            "-fx-alignment: center; -fx-text-alignment: center;"
-        );
+        Label headerLabel = ViewUtils.createMainTitleLabel("Duelo\nX\nMatematica");  //new Label("Duelo\nX\nMatematica");
 
-        
         //For a standard button that hugs the text:
         loginButton = ViewUtils.createSpriteButton("/buttons/btn.png", null);
         loginButton.setText("LOGIN");

@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 import model.AuthService;
 import view.MainMenuView;
+import view.ViewUtils;
 
 /**
  * APP — the "ignition switch" of the whole program.
@@ -64,6 +65,9 @@ public class MainApp extends Application {
      */
     @Override
     public void start(Stage stage) {
+    	
+        //Load the custom font FIRST
+        ViewUtils.loadCustomFont();
 
         // MODEL: one shared instance of the account manager.
         // Nothing else in App touches this — it's handed to MainMenuController

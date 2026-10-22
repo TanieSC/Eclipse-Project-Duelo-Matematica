@@ -27,7 +27,7 @@ public class GameSettingsView {
         // 1. THE HEADER
         // ==========================================
         // Changed title to "SETTINGS" to match the design
-        Label titleLabel = ViewUtils.createHeaderLabel("SETTINGS");
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("SETTINGS");
         backButton = ViewUtils.createCloseButton("X");
 
         BorderPane headerBox = new BorderPane();

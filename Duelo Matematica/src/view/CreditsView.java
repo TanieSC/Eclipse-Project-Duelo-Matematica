@@ -17,7 +17,7 @@ public class CreditsView {
 
     public CreditsView() {
         // Header
-        Label titleLabel = ViewUtils.createHeaderLabel("CREDITS");
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("CREDITS");
         backButton = ViewUtils.createCloseButton("X");
 
         BorderPane headerBox = new BorderPane();
@@ -60,14 +60,14 @@ public class CreditsView {
      * Helper method to create a block of text (Title + Names).
      */
     private VBox createSection(String role, String... names) {
-        Label roleLabel = new Label(role);
+        Label roleLabel = ViewUtils.createSubHeaderLabel(role);
         roleLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #222222;"); // Matches image font
 
         VBox section = new VBox(2); // Small gap between role and names
         section.getChildren().add(roleLabel);
 
         for (String name : names) {
-            Label nameLabel = new Label(name);
+            Label nameLabel = ViewUtils.createBodyTextLabel(name); //new Label(name);
             nameLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #333333;");
             section.getChildren().add(nameLabel);
         }

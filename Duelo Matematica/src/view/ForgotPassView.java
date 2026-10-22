@@ -20,7 +20,7 @@ public class ForgotPassView {
     public ForgotPassView() {
         
         // 1. HEADER
-        Label titleLabel = ViewUtils.createHeaderLabel("FORGOT PASSWORD");
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("FORGOT PASSWORD");
         backButton = ViewUtils.createCloseButton("X");
 
         BorderPane headerBox = new BorderPane();

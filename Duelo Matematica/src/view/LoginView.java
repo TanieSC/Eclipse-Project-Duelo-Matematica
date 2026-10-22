@@ -53,7 +53,7 @@ public class LoginView {
         // ==========================================
         // 1. THE HEADER (Title + Close Button)
         // ==========================================
-        Label titleLabel = ViewUtils.createHeaderLabel("LOGIN");//new Label("LOGIN");
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("LOGIN");//new Label("LOGIN");
         //titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
 
         backButton = ViewUtils.createCloseButton("X");  //new Button("X");
