@@ -105,9 +105,7 @@ public class RegisterView {
 
         // A GridPane works like an invisible spreadsheet. 
         // We put the labels in the left column (0) and the text boxes in the right column (1).
-        GridPane formGrid = new GridPane();
-        formGrid.setHgap(15); // Horizontal gap between columns
-        formGrid.setVgap(15); // Vertical gap between rows
+        GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
         formGrid.add(emailLabel, 0, 0);     formGrid.add(emailField, 1, 0);
         formGrid.add(usernameLabel, 0, 1);  formGrid.add(usernameField, 1, 1);
         formGrid.add(passwordLabel, 0, 2);  formGrid.add(passwordField, 1, 2);
@@ -128,12 +126,7 @@ public class RegisterView {
         messageLabel.setStyle("-fx-text-fill: red;");
 
         confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null);  //new Button("CONFIRM");
-        //confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
-        //confirmButton.setPrefSize(130, 35);
-        //confirmButton.setStyle(
-        //    "-fx-background-color: #999999; -fx-text-fill: black;" +
-        //    "-fx-background-radius: 0; -fx-cursor: hand;"
-        //);
+        confirmButton.setTranslateY(-20); 
 
         // ==========================================
         // 4. ASSEMBLING THE CARD

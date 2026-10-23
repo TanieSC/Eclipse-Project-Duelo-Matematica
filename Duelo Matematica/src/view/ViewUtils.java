@@ -13,6 +13,10 @@ import javafx.scene.image.ImageView;
 import java.io.InputStream;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -73,6 +77,29 @@ public final class ViewUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * STANDARD FORM GRID — Creates a pre-configured GridPane for forms.
+     * Column 0 is for Labels. Column 1 is for TextFields (which will stretch).
+     */
+    public static GridPane createStandardFormGrid(double Hgap, double Vgap) {
+        GridPane formGrid = new GridPane();
+        formGrid.setHgap(Hgap); // Horizontal gap between columns
+        formGrid.setVgap(Vgap); // Vertical gap between rows
+        formGrid.setPadding(new Insets(0, 20, 0, 20)); 
+        formGrid.setAlignment(Pos.CENTER);
+
+        // Column 0 (Labels) - Keeps its natural width
+        ColumnConstraints col1 = new ColumnConstraints(); 
+        
+        // Column 1 (Fields) - Stretches to fill available space
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setHgrow(Priority.ALWAYS); 
+        
+        formGrid.getColumnConstraints().addAll(col1, col2);
+
+        return formGrid;
     }
     
     /**
@@ -153,6 +180,36 @@ public final class ViewUtils {
     	return headerLabel;
     }
     
+    /**
+     * Creates a standardized TextField with the Duelo font and dark style.
+     */
+    public static TextField createStandardTextField() {
+        TextField field = new TextField();
+        field.setPrefWidth(140);
+        field.setFont(getCustomFont(10)); // Apply Duelo.ttf
+        field.setStyle(
+            "-fx-background-color: #666666; " +
+            "-fx-text-inner-color: white; " +
+            "-fx-background-radius: 0;"
+        );
+        return field;
+    }
+
+    /**
+     * Creates a standardized PasswordField with the Duelo font and dark style.
+     */
+    public static PasswordField createStandardPasswordField() {
+        PasswordField field = new PasswordField();
+        field.setPrefWidth(140);
+        field.setFont(getCustomFont(10)); // Apply Duelo.ttf
+        field.setStyle(
+            "-fx-background-color: #666666; " +
+            "-fx-text-inner-color: white; " +
+            "-fx-background-radius: 0;"
+        );
+        return field;
+    }
+    
    /**
     * CLOSE BUTTON — Creates a standard transparent "X" button.
     */
@@ -189,11 +246,11 @@ public final class ViewUtils {
        
        // 3. Add 80 pixels of padding so the text doesn't touch the wooden edges.
        double calculatedWidth = textWidth + 80; 
-       double fixedHeight = 60; // Keep a consistent height
+       double fixedHeight = 80; // Keep a consistent height
        
        // 4. Generate the button using the manual size method.
        Button btn = createSpriteButton(imagePath, calculatedWidth, fixedHeight, onClickAction);       
-       
+
       // 4. Set the initial text (this triggers the resize)
        btn.setText(text);
        
@@ -205,7 +262,6 @@ public final class ViewUtils {
     */
    public static Button createSpriteButton(String imagePath, double width, double height, Runnable onClickAction) {
        
-       // 1. Load the spritesheet image. If missing, return a boring default button.
        InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
        if (stream == null) {
            System.err.println("ERROR: Image NOT FOUND at path: /_assets" + imagePath);
@@ -213,63 +269,116 @@ public final class ViewUtils {
        }
       
        Image spriteSheet = new Image(stream);
-       // 2. The image is 3 frames wide. Divide by 3 to get the width of one frame.
-       double frameWidth = spriteSheet.getWidth() / 3.0;
-       double frameHeight = spriteSheet.getHeight();
-      
-       // 3. Create the ImageView. The "Viewport" acts like a camera lens, 
-       // starting at the first frame (Normal state).
-       ImageView imageView = new ImageView(spriteSheet);
-       imageView.setPreserveRatio(false); 
-       imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+       
+       // --- FORCE WHOLE NUMBERS (Fixes the blur) ---
+       int totalWidth = (int) Math.round(spriteSheet.getWidth());
+       int totalHeight = (int) Math.round(spriteSheet.getHeight());
+       int frameWidth = totalWidth / 3;
+       int frameHeight = totalHeight;
+       
+       // --- 3-SLICE SETUP (SEPARATE LEFT AND RIGHT CAP WIDTHS) ---
+       // You can now adjust these percentages independently if needed.
+       int capWidthLeft = (int) Math.round(frameWidth * 0.18); 
+       int capWidthRight = (int) Math.round(frameWidth * 0.18); 
+       
+       
+       
+       // Calculate the middle width by subtracting BOTH caps from the total frame width
+       int midWidth = frameWidth - capWidthLeft - capWidthRight;
 
-       // 4. Create the Text Label that will sit on top of the wood.
+       ImageView leftCap = new ImageView(spriteSheet);
+       ImageView midSection = new ImageView(spriteSheet);
+       ImageView rightCap = new ImageView(spriteSheet);
+
+       leftCap.setPreserveRatio(false);
+       midSection.setPreserveRatio(false);
+       rightCap.setPreserveRatio(false);
+       
+       leftCap.setSmooth(false);
+       midSection.setSmooth(false);
+       rightCap.setSmooth(false);
+
+       // Force the caps to EXACTLY match their respective widths
+       int colWidthLeft = capWidthLeft + 20;
+       int colWidthRight = capWidthRight + 20;
+       
+       leftCap.setFitWidth(colWidthLeft);
+       rightCap.setFitWidth(colWidthRight);
+
+       GridPane woodBackground = new GridPane();
+       woodBackground.setAlignment(Pos.CENTER);
+       
+       // Column 1: Left Cap
+       ColumnConstraints col1 = new ColumnConstraints();
+       col1.setMinWidth(colWidthLeft);
+       col1.setPrefWidth(colWidthLeft);
+       col1.setMaxWidth(colWidthLeft);
+       
+       // Column 2: Middle Stretch
+       ColumnConstraints col2 = new ColumnConstraints();
+       col2.setHgrow(Priority.ALWAYS); 
+       
+       // Column 3: Right Cap
+       ColumnConstraints col3 = new ColumnConstraints();
+       col3.setMinWidth(colWidthRight);
+       col3.setPrefWidth(colWidthRight);
+       col3.setMaxWidth(colWidthRight);
+       
+       woodBackground.getColumnConstraints().addAll(col1, col2, col3);
+       woodBackground.add(leftCap, 0, 0);
+       woodBackground.add(midSection, 1, 0);
+       woodBackground.add(rightCap, 2, 0);
+
+       // Bind the middle width to whatever space is left over after subtracting BOTH caps
+       midSection.fitWidthProperty().bind(javafx.beans.binding.Bindings.createDoubleBinding(
+           () -> Math.max(0, woodBackground.getWidth() - (capWidthLeft + capWidthRight)),
+           woodBackground.widthProperty()
+       ));
+
+       // Pass both cap widths to the viewport updater
+       updateSpriteViewports(leftCap, midSection, rightCap, 0, frameWidth, frameHeight, capWidthLeft, capWidthRight, midWidth);
+
+       // --- TEXT SETUP ---
        Label textLabel = new Label();
        textLabel.setFont(getCustomFont(14)); 
-       textLabel.setTextFill(Color.web("#6b3e26")); //(Color.BLACK);
-       
-       // --- THE ALIGNMENT FIXES ---
-       
-       // FIX 1: Remove hidden padding that JavaFX puts inside labels by default.
+       textLabel.setTextFill(Color.web("#6b3e26")); 
        textLabel.setPadding(Insets.EMPTY);
-       
-       // FIX 2: Center the text inside the label box.
        textLabel.setAlignment(Pos.CENTER);
        textLabel.setTextAlignment(TextAlignment.CENTER);
-       
-       // FIX 3: Custom fonts often have invisible space at the top. We physically 
-       // nudge the text UP by 6 pixels to make it look truly centered on the wood.
        textLabel.setTranslateY(-6);
 
-       // Optional: Create a shadow for the text (currently disabled in your code).
-       //DropShadow textShadow = new DropShadow(2, 0, 1, Color.rgb(0, 0, 0, 0.7));
-       //textLabel.setEffect(null);
+       // --- STACK SETUP ---
+       StackPane graphicStack = new StackPane(woodBackground, textLabel);
+       graphicStack.setAlignment(Pos.CENTER);
 
-       // 5. Stack the Image and Text on top of each other.
-       StackPane graphicStack = new StackPane(imageView, textLabel);
-       StackPane.setAlignment(imageView, Pos.CENTER);
-       StackPane.setAlignment(textLabel, Pos.CENTER);
+       // Bind the wood to perfectly fill the stack
+       woodBackground.prefWidthProperty().bind(graphicStack.widthProperty());
+       woodBackground.prefHeightProperty().bind(graphicStack.heightProperty());
+       woodBackground.minWidthProperty().bind(graphicStack.widthProperty());
+       woodBackground.minHeightProperty().bind(graphicStack.heightProperty());
+       woodBackground.maxWidthProperty().bind(graphicStack.widthProperty());
+       woodBackground.maxHeightProperty().bind(graphicStack.heightProperty());
 
-       // 6. Create the Button. We tell it to ONLY show the graphic (our StackPane).
+       // Make sure the slices stretch vertically
+       leftCap.fitHeightProperty().bind(woodBackground.heightProperty());
+       rightCap.fitHeightProperty().bind(woodBackground.heightProperty());
+       midSection.fitHeightProperty().bind(woodBackground.heightProperty());
+
+       // --- BUTTON SETUP ---
        Button button = new Button();
        button.setGraphic(graphicStack);
        button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); 
-       
-       // FIX 4: Strip away the Button's hidden background borders and padding.
        button.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0; -fx-background-insets: 0; -fx-border-width: 0;");
       
-       // 7. Sync the Button's text property with our custom textLabel.
        button.textProperty().addListener((obs, oldV, newV) -> textLabel.setText(newV));
 
-       // 8. SIZING MODE LOGIC
+       // --- SIZING LOGIC ---
        if (width > 0 && height > 0) {
-           // --- MANUAL SIZE MODE ---
+           // MANUAL SIZE MODE
            button.setPrefSize(width, height);
            button.setMinSize(width, height);
            button.setMaxSize(width, height);
            
-           // FIX 5: Bind the StackPane tightly to the Button's dimensions so 
-           // it stretches the image perfectly to fill the space.
            graphicStack.prefWidthProperty().bind(button.widthProperty());
            graphicStack.prefHeightProperty().bind(button.heightProperty());
            graphicStack.minWidthProperty().bind(button.widthProperty());
@@ -277,58 +386,55 @@ public final class ViewUtils {
            graphicStack.maxWidthProperty().bind(button.widthProperty());
            graphicStack.maxHeightProperty().bind(button.heightProperty());
            
-           imageView.fitWidthProperty().bind(graphicStack.widthProperty());
-           imageView.fitHeightProperty().bind(graphicStack.heightProperty());
-           
        } else {
-           // --- AUTO-SIZE MODE ---
-           // Add padding so the text has breathing room.
+           // AUTO-SIZE MODE
+           button.setMaxWidth(Region.USE_PREF_SIZE);
+           button.setMaxHeight(Region.USE_PREF_SIZE);
+           
            graphicStack.setPadding(new Insets(10, 30, 10, 30));
-           
-           // Make image "invisible" to the layout engine so the text dictates the width.
-           imageView.setManaged(false); 
-           imageView.fitWidthProperty().bind(button.widthProperty());
-           imageView.fitHeightProperty().bind(button.heightProperty());
-           
-           // Center the image behind the text.
-           imageView.layoutXProperty().bind(button.widthProperty().subtract(imageView.fitWidthProperty()).divide(2));
-           imageView.layoutYProperty().bind(button.heightProperty().subtract(imageView.fitHeightProperty()).divide(2));
        }
       
-       // 9. HOVER ANIMATION (Frame 1)
+       // --- HOVER ANIMATION ---
        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
           if (button.isArmed()) return; 
-          imageView.setViewport(new Rectangle2D(isNowHovered ? frameWidth : 0, 0, frameWidth, frameHeight));
+          int frame = isNowHovered ? 1 : 0;
+          updateSpriteViewports(leftCap, midSection, rightCap, frame, frameWidth, frameHeight, capWidthLeft, capWidthRight, midWidth);
        });
 
-       // 10. PRESS ANIMATION (Frame 2)
+       // --- PRESS ANIMATION ---
        button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
           if (isNowArmed) {
-              // PRESSED: Slide to the 3rd frame.
-              imageView.setViewport(new Rectangle2D(frameWidth * 2, 0, frameWidth, frameHeight));
-              
-              // Move the text DOWN by 1 pixel from its base offset (-6 becomes -5)
-              // to make it look physically pushed into the wood.
+              updateSpriteViewports(leftCap, midSection, rightCap, 2, frameWidth, frameHeight, capWidthLeft, capWidthRight, midWidth);
               textLabel.setTranslateY(-5);
-              textLabel.setEffect(null); 
           } else {
-              // RELEASED: Go back to Hover or Normal frame.
-              imageView.setViewport(new Rectangle2D(button.isHover() ? frameWidth : 0, 0, frameWidth, frameHeight));
-              
-              // Snap text back to its base offset (-6).
+              int frame = button.isHover() ? 1 : 0;
+              updateSpriteViewports(leftCap, midSection, rightCap, frame, frameWidth, frameHeight, capWidthLeft, capWidthRight, midWidth);
               textLabel.setTranslateY(-6);
-              textLabel.setEffect(null);
           }
        });
 
-       // 11. Attach the click action.
        if (onClickAction != null) {
           button.setOnAction(e -> onClickAction.run());
        }
 
        return button;
   }
-   
+
+  // --- UPDATED HELPER FOR SEPARATE CAP WIDTHS ---
+  private static void updateSpriteViewports(ImageView left, ImageView mid, ImageView right, 
+                                            int frameIndex, int frameWidth, int frameHeight, 
+                                            int capWidthLeft, int capWidthRight, int midWidth) {
+       int offsetX = frameIndex * frameWidth;
+       
+       // Left Cap: Start at offsetX, take capWidthLeft
+       left.setViewport(new Rectangle2D(offsetX, 0, capWidthLeft, frameHeight));
+       
+       // Middle: Start after Left Cap, take midWidth
+       mid.setViewport(new Rectangle2D(offsetX + capWidthLeft, 0, midWidth, frameHeight));
+       
+       // Right Cap: Start at the end of the frame, go back by capWidthRight
+       right.setViewport(new Rectangle2D(offsetX + frameWidth - capWidthRight, 0, capWidthRight, frameHeight));
+  }
    /**
     * SPRITE BUTTON (2 FRAMES) — For square icon buttons with only 2 states.
     * Frame 1 (Left) = Normal, Frame 2 (Right) = Hover/Pressed
@@ -516,4 +622,114 @@ public final class ViewUtils {
        clipTimeline.play();
    }
    
+   
+   public static StackPane createCustomSliderNode(Slider slider, double width, double height) {
+       int trackHeight = 24;   // Height of the dark frame
+       int fillHeight = 16;    // Height of the light fill
+       double trackPaddingX = 6; 
+       double handleWidth = 16; 
+
+       // 1. Load images
+       java.io.InputStream frameStream = ViewUtils.class.getResourceAsStream("/_assets/slider/ui_slider_frame.png");
+       java.io.InputStream fillStream = ViewUtils.class.getResourceAsStream("/_assets/slider/ui_slider_fill.png");
+       java.io.InputStream handleStream = ViewUtils.class.getResourceAsStream("/_assets/slider/ui_slider_control.png");
+
+       if (frameStream == null || fillStream == null || handleStream == null) {
+           System.err.println("CRITICAL ERROR: Slider images NOT FOUND!");
+           StackPane fallback = new StackPane(new Label("Missing Images"));
+           fallback.setPrefSize(width, height);
+           fallback.setStyle("-fx-background-color: red;");
+           return fallback;
+       }
+
+       // 2. Setup Frame
+       ImageView frameView = new ImageView(new Image(frameStream));
+       frameView.setFitWidth(width);
+       frameView.setFitHeight(trackHeight);
+       frameView.setPreserveRatio(false);
+       frameView.setSmooth(false);
+
+       // 3. Setup Fill
+       ImageView fillView = new ImageView(new Image(fillStream));
+       fillView.setFitWidth(width - (trackPaddingX * 2)); 
+       fillView.setFitHeight(fillHeight);
+       fillView.setPreserveRatio(false);
+       fillView.setSmooth(false);
+       
+       // Clip the fill
+       Rectangle clip = new Rectangle(0, 0, 0, fillHeight);
+       fillView.setClip(clip);
+
+       // 4. Setup Handle
+       ImageView handleView = new ImageView(new Image(handleStream));
+       handleView.setFitWidth(handleWidth);
+       handleView.setFitHeight(height);
+       handleView.setPreserveRatio(false);
+       handleView.setSmooth(false);
+
+       // --- THE FIX: USE A STACKPANE FOR PERFECT CENTERING ---
+       // By putting the frame and fill in a StackPane, JavaFX automatically centers them perfectly!
+       StackPane trackStack = new StackPane(frameView, fillView);
+       
+       // Align the fill to the left so it doesn't block the right side of the frame
+       StackPane.setAlignment(fillView, Pos.CENTER_LEFT);
+       // Push the fill inward by the padding
+       StackPane.setMargin(fillView, new Insets(0, 0, 0, trackPaddingX));
+       
+       // Ensure the StackPane is exactly the size of the frame
+       trackStack.setPrefSize(width, trackHeight);
+       trackStack.setMaxSize(width, trackHeight);
+       trackStack.setMinSize(width, trackHeight);
+
+       // 5. Main Visual Pane
+       Pane visualPane = new Pane();
+       visualPane.setPrefSize(width, height);
+       visualPane.setMaxSize(width, height);
+
+       // Center the trackStack vertically inside the main slider height
+       trackStack.setLayoutY((height - trackHeight) / 2.0);
+       
+       // Handle spans the full height
+       handleView.setY(0); 
+
+       visualPane.getChildren().addAll(trackStack, handleView);
+
+       // 6. Setup invisible slider
+       slider.setOpacity(0); 
+       slider.setPrefSize(width, height);
+       slider.setMaxSize(width, height);
+       slider.setMinSize(width, height);
+
+       // 7. Wrap everything
+       StackPane wrapper = new StackPane(visualPane, slider);
+       wrapper.setPrefSize(width, height);
+       wrapper.setMinSize(width, height);
+       wrapper.setMaxSize(width, height);
+
+       // 8. Update Logic
+       slider.valueProperty().addListener((obs, oldVal, newVal) -> {
+           double min = slider.getMin();
+           double max = slider.getMax();
+           double percent = (newVal.doubleValue() - min) / (max - min);
+           double trackWidth = width - handleWidth;
+           double handleX = trackWidth * percent;
+           
+           handleView.setX(handleX);
+           
+           // Clip width calculates exactly to the center of the handle
+           double currentClipWidth = handleX + (handleWidth / 2.0) - trackPaddingX;
+           clip.setWidth(Math.max(0, currentClipWidth)); 
+       });
+
+       // Set initial position
+       double initPercent = (slider.getValue() - slider.getMin()) / (slider.getMax() - slider.getMin());
+       double trackWidth = width - handleWidth;
+       handleView.setX(trackWidth * initPercent);
+       
+       double initClipWidth = (trackWidth * initPercent) + (handleWidth / 2.0) - trackPaddingX;
+       clip.setWidth(Math.max(0, initClipWidth));
+
+       return wrapper;
+   }
+
 }

@@ -13,3 +13,42 @@ Game X behavior:
     
     
    
+Visiual Flow
+   
+Legend:
+
+📺 [ Full Screen ] = Fades and scales into view (like a new page).
+
+📜 < Wooden Dropdown > = Unrolls from the top over the current screen. Clicking "X" rolls it back up.
+   
+   
+   📺 [ MAIN MENU ] (App Starts Here)
+ │
+ ├──▶ 📜 < LOGIN > 
+ │     └──▶ (Click Forgot Password) ──▶ 📜 < FORGOT PASSWORD >
+ │                                            └──▶ (Submit) ──▶ 📜 < NEW PASSWORD >
+ │
+ ├──▶ 📜 < REGISTER >
+ │
+ └──▶ (Exit App)
+ 
+========================= AFTER SUCCESSFUL LOGIN =========================
+
+📺 [ GAME MAIN MENU ]
+ │
+ ├──▶ 📺 [ GAME START MENU ]
+ │     │
+ │     ├──▶ 📺 [ STORY MODE GAMEPLAY ]
+ │     │
+ │     ├──▶ 📺 [ 1v1 GAMEPLAY ]
+ │     │
+ │     ├──▶ 📜 < PROFILE >          (View Username, Tier, ELO)
+ │     │
+ │     └──▶ 📜 < LEADERBOARD >      (View Top Players)
+ │
+ └──▶ 📜 < CREDITS >                (View Game Creators)
+
+========================= UNIVERSAL POPUPS =========================
+(Can be opened from almost any screen by clicking the Gear Icon ⚙)
+ 
+Any Screen ──▶ 📜 < SETTINGS > (Music & SFX Sliders)

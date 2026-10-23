@@ -14,9 +14,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-/**
- * STORY SCREEN VIEW — The cinematic text reveal screen.
- */
 public class StoryScreenView {
 
     private final BorderPane root;
@@ -27,22 +24,17 @@ public class StoryScreenView {
 
     public StoryScreenView() {
         root = new BorderPane();
-        root.setStyle("-fx-background-color: #000000;");
+        // Transparent background
+        root.setStyle("-fx-background-color: transparent;");
 
-        // Top Bar
-        pauseButton = new Button("II");
-        pauseButton.setPrefSize(48, 48);
-        pauseButton.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-background-color: #ffffff; -fx-text-fill: #000000; -fx-cursor: hand;");
-
-        skipButton = new Button("SKIP >");
-        skipButton.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-background-color: transparent; -fx-text-fill: #ffffff; -fx-cursor: hand;");
+        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null);
+        skipButton = ViewUtils.createSpriteButton("/buttons/btn.png", "SKIP >", null);
 
         BorderPane topBar = new BorderPane();
         topBar.setLeft(pauseButton);
         topBar.setRight(skipButton);
         topBar.setPadding(new Insets(20));
 
-        // Story Container
         storyContentBox = new VBox(20);
         storyContentBox.setAlignment(Pos.CENTER);
         storyContentBox.setPadding(new Insets(40, 20, 100, 20));
@@ -51,7 +43,7 @@ public class StoryScreenView {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background: #000000; -fx-background-color: #000000; -fx-viewport-background: #000000;");
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent; -fx-viewport-background: transparent;");
 
         root.setTop(topBar);
         root.setCenter(scrollPane);
@@ -63,11 +55,11 @@ public class StoryScreenView {
 
     public void addLine(String text) {
         Label label = new Label(text);
-        label.setStyle("-fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #ffffff;");
+        label.setFont(ViewUtils.getCustomFont(26));
+        label.setStyle("-fx-text-fill: #000000;"); // Black text since wood background is light
         label.setWrapText(true);
         storyContentBox.getChildren().add(label);
 
-        // Auto-scroll to bottom with soft animation
         Timeline scrollAnimation = new Timeline(
             new KeyFrame(Duration.millis(400), new KeyValue(scrollPane.vvalueProperty(), 1.0, Interpolator.EASE_BOTH))
         );

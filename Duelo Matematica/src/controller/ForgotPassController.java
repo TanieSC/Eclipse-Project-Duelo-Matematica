@@ -45,8 +45,7 @@ public class ForgotPassController {
         // When the "RESET" (or Confirm) button is clicked, run the handleReset() method below.
         view.getConfirmButton().setOnAction(e -> handleReset());
         
-        // When the "X" (back) button is clicked, tell the Navigator to go back to the main menu.
-        view.getBackButton().setOnAction(e -> nav.goToMenu());
+        view.getBackButton().setOnAction(e -> nav.closePopup());
     }
 
     /**

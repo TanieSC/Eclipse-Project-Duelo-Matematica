@@ -27,11 +27,11 @@ public class MainMenuController implements Navigator {
     @Override
     public void goToMenu() {
         view.showMenu();
-        if (Session.isLoggedIn()) {
-            view.getLoginButton().setText("LOGGED IN: " + Session.getCurrentUser().getUsername());
-        } else {
-            view.getLoginButton().setText("LOGIN");
-        }
+        //if (Session.isLoggedIn()) {
+       //     view.getLoginButton().setText("LOGGED IN: " + Session.getCurrentUser().getUsername());
+      //  } else {
+      //      view.getLoginButton().setText("LOGIN");
+      //  }
     }
 
     // ==========================================
@@ -81,8 +81,7 @@ public class MainMenuController implements Navigator {
         UserProfileView v = new UserProfileView(model);
         new UserProfileController(v, this);
         
-        // Use showPopup instead of setContent!
-        view.showPopup(v.getRoot());
+        view.setOverlayContent(v.getRoot());
     }
     
     @Override
@@ -90,8 +89,7 @@ public class MainMenuController implements Navigator {
         CreditsView v = new CreditsView();
         new CreditsController(v, this);
         
-        // Show it as a popup over the current screen
-        view.showPopup(v.getRoot());
+        view.setOverlayContent(v.getRoot());
     }
     
     @Override
@@ -105,8 +103,7 @@ public class MainMenuController implements Navigator {
         // 3. Wire the Controller
         new LeaderBoardController(v, this);
         
-        // 4. Show it as a popup
-        view.showPopup(v.getRoot());
+        view.setOverlayContent(v.getRoot());
     }
     
     @Override
@@ -117,10 +114,7 @@ public class MainMenuController implements Navigator {
         // 2. Create the controller (we pass 'this' so it can navigate back)
         new GameSettingsController(v, this);
         
-        // 3. Show it in the main window
-        // Note: Since GameSettingsView has its own dark background overlay, 
-        // we use setContent instead of setOverlayContent.
-        view.showPopup(v.getRoot()); 
+        view.setOverlayContent(v.getRoot());
     }
     
     // ==========================================
@@ -201,6 +195,6 @@ public class MainMenuController implements Navigator {
     
     @Override
     public void closePopup() {
-        view.closePopup();
+        view.closePopup(); // <--- This will now compile without errors
     }
 }

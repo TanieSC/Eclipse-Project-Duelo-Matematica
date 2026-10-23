@@ -5,8 +5,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 public class NewPassView {
     private final VBox root;
@@ -16,54 +14,43 @@ public class NewPassView {
     private final Button backButton;
     private final Label messageLabel;
 
-    // Pass the email in so we can display it
     public NewPassView(String email) {
-        Label titleLabel = new Label("RESET PASSWORD");
-        titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-
-        backButton = new Button("X");
-        backButton.setStyle("-fx-background-color: transparent; -fx-font-weight: bold; -fx-font-size: 14px; -fx-cursor: hand;");
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("RESET PASSWORD");
+        backButton = ViewUtils.createCloseButton("X");
 
         BorderPane headerBox = new BorderPane();
         headerBox.setCenter(titleLabel);
         headerBox.setRight(backButton);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
-        // Show the user which email they are resetting
         Label emailDisplay = new Label("Resetting: " + email);
-        emailDisplay.setStyle("-fx-font-size: 12px; -fx-text-fill: #555555; -fx-font-style: italic;");
+        emailDisplay.setFont(ViewUtils.getCustomFont(12));
+        emailDisplay.setStyle("-fx-text-fill: #555555;");
 
         Label passLabel = new Label("NEW PASSWORD");
-        passLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
-        newPassField = new PasswordField();
-        newPassField.setPrefWidth(140);
-        newPassField.setStyle("-fx-background-color: #666666; -fx-text-inner-color: white; -fx-background-radius: 0;");
+        passLabel.setFont(ViewUtils.getCustomFont(13));
+        newPassField = ViewUtils.createStandardPasswordField();
 
         Label confirmLabel = new Label("CONFIRM");
-        confirmLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
-        confirmPassField = new PasswordField();
-        confirmPassField.setPrefWidth(140);
-        confirmPassField.setStyle("-fx-background-color: #666666; -fx-text-inner-color: white; -fx-background-radius: 0;");
+        confirmLabel.setFont(ViewUtils.getCustomFont(13));
+        confirmPassField = ViewUtils.createStandardPasswordField();
 
-        GridPane formGrid = new GridPane();
-        formGrid.setHgap(15);
-        formGrid.setVgap(15);
+        GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
         formGrid.add(passLabel, 0, 0);    formGrid.add(newPassField, 1, 0);
         formGrid.add(confirmLabel, 0, 1); formGrid.add(confirmPassField, 1, 1);
 
         messageLabel = new Label();
-        messageLabel.setStyle("-fx-text-fill: red; -fx-font-size: 11px;");
+        messageLabel.setFont(ViewUtils.getCustomFont(12));
+        messageLabel.setStyle("-fx-text-fill: red;");
 
-        confirmButton = new Button("SAVE");
-        confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 16));
-        confirmButton.setPrefSize(130, 35);
-        confirmButton.setStyle("-fx-background-color: #999999; -fx-text-fill: black; -fx-background-radius: 0; -fx-cursor: hand;");
+        confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "SAVE", null);
+        confirmButton.setTranslateY(-20); 
 
         root = new VBox(15, headerBox, emailDisplay, formGrid, messageLabel, confirmButton);
         root.setPadding(new Insets(15, 20, 20, 20));
         root.setAlignment(Pos.TOP_CENTER);
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        root.setStyle("-fx-background-color: #f4f4f4; -fx-border-color: #777777; -fx-border-width: 1px;");
+        root.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
     }
 
     public Node getRoot() { return root; }

@@ -15,9 +15,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import model.GameStoryModel.Question;
 
-/**
- * GAME STORY VIEW — The visual layout for the Tug-of-War battle.
- */
 public class GameStoryView {
 
     private final BorderPane root;
@@ -33,29 +30,26 @@ public class GameStoryView {
 
     public GameStoryView() {
         root = new BorderPane();
-        root.setStyle("-fx-background-color: #ffffff;");
+        // Transparent background
+        root.setStyle("-fx-background-color: transparent;");
 
-        // 1. TOP BAR (Pause Button)
-        pauseButton = new Button("II");
-        pauseButton.setPrefSize(42, 42);
-        pauseButton.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-background-color: #e6e6e6; -fx-border-color: #000000; -fx-border-width: 2px; -fx-cursor: hand;");
-
+        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 42, null);
         HBox topBar = new HBox(pauseButton);
         topBar.setPadding(new Insets(10, 15, 0, 15));
         topBar.setAlignment(Pos.TOP_LEFT);
 
-        // 2. BOTTOM BAR (Options/Gear Button)
-        gearButton = createGearButton();
+        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 42, null);
         HBox bottomBar = new HBox(gearButton);
         bottomBar.setPadding(new Insets(0, 15, 12, 15));
         bottomBar.setAlignment(Pos.BOTTOM_LEFT);
 
-        // 3. QUESTION CARD
         categoryLabel = new Label("CATEGORY");
-        categoryLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #555555;");
+        categoryLabel.setFont(ViewUtils.getCustomFont(14));
+        categoryLabel.setStyle("-fx-text-fill: #555555;");
 
         equationLabel = new Label();
-        equationLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        equationLabel.setFont(ViewUtils.getCustomFont(18));
+        equationLabel.setStyle("-fx-text-fill: #000000;");
         equationLabel.setWrapText(true);
         equationLabel.setAlignment(Pos.TOP_CENTER);
 
@@ -76,7 +70,7 @@ public class GameStoryView {
         optionsGrid.setAlignment(Pos.CENTER);
 
         for (int i = 0; i < 4; i++) {
-            optionButtons[i] = createOptionButton();
+            optionButtons[i] = ViewUtils.createSpriteButton("/buttons/btn.png", "", null);
             int row = i / 2;
             int col = i % 2;
             optionsGrid.add(optionButtons[i], col, row);
@@ -84,11 +78,10 @@ public class GameStoryView {
 
         VBox questionCard = new VBox(10, equationHeaderBox, optionsGrid);
         questionCard.setAlignment(Pos.TOP_CENTER);
-        questionCard.setStyle("-fx-background-color: #dcdcdc; -fx-padding: 12px 25px; -fx-border-color: #b0b0b0; -fx-border-width: 2px;");
+        questionCard.setStyle("-fx-background-color: rgba(220, 220, 220, 0.9); -fx-padding: 12px 25px; -fx-border-color: #b0b0b0; -fx-border-width: 2px;");
         questionCard.setPrefSize(720, 290);
         questionCard.setMaxSize(720, 290);
 
-        // 4. TUG-OF-WAR PLATFORM
         Rectangle platformBar = new Rectangle(480, 20);
         platformBar.setFill(Color.web("#888888"));
 
@@ -125,27 +118,6 @@ public class GameStoryView {
         root.setBottom(bottomBar);
     }
 
-    private Button createGearButton() {
-        Button gearBtn = new Button("\u2699");
-        gearBtn.setPrefSize(42, 42);
-        gearBtn.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-border-color: #000000; -fx-border-width: 2px; -fx-border-radius: 50%; -fx-background-radius: 50%; -fx-background-color: #f9f9f9; -fx-cursor: hand;");
-        return gearBtn;
-    }
-
-    private Button createOptionButton() {
-        Button button = new Button();
-        button.setPrefWidth(320);
-        button.setPrefHeight(42);
-        button.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #ffffff; -fx-text-fill: #000000; -fx-border-color: #222222; -fx-border-width: 2px; -fx-cursor: hand;");
-        button.setOnMouseEntered(e -> {
-            if (!button.isDisabled()) button.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #e0e0e0; -fx-text-fill: #000000; -fx-border-color: #222222; -fx-border-width: 2px; -fx-cursor: hand;");
-        });
-        button.setOnMouseExited(e -> {
-            if (!button.isDisabled()) button.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #ffffff; -fx-text-fill: #000000; -fx-border-color: #222222; -fx-border-width: 2px; -fx-cursor: hand;");
-        });
-        return button;
-    }
-
     public Node getRoot() { return root; }
     public Button getPauseButton() { return pauseButton; }
     public Button getGearButton() { return gearButton; }
@@ -160,7 +132,6 @@ public class GameStoryView {
         for (int i = 0; i < 4; i++) {
             optionButtons[i].setText((char)(prefix + i) + ".  " + q.options.get(i));
             optionButtons[i].setDisable(false);
-            optionButtons[i].setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-background-color: #ffffff; -fx-text-fill: #000000; -fx-border-color: #222222; -fx-border-width: 2px; -fx-cursor: hand;");
         }
     }
 

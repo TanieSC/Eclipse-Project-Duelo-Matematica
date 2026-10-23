@@ -16,7 +16,7 @@ public class NewPassController {
         this.nav = nav;
 
         view.getConfirmButton().setOnAction(e -> handleReset());
-        view.getBackButton().setOnAction(e -> nav.goToLogin()); 
+        view.getBackButton().setOnAction(e -> nav.closePopup());
     }
 
     private void handleReset() {

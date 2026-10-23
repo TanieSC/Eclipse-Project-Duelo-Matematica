@@ -10,3 +10,132 @@ Models store data and handle the rules (like math, database logic, and session m
 The Views (The "Faces")
 Views build the UI. They don't know what the buttons do; they just hand the buttons to the Controller.
 
+
+
+
+   public static Button createSpriteButton(String imagePath, double width, double height, Runnable onClickAction) {
+       
+       // 1. Load the spritesheet image. If missing, return a boring default button.
+       InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
+       if (stream == null) {
+           System.err.println("ERROR: Image NOT FOUND at path: /_assets" + imagePath);
+           return new Button("Missing Image");
+       }
+      
+       Image spriteSheet = new Image(stream);
+       // 2. The image is 3 frames wide. Divide by 3 to get the width of one frame.
+       double frameWidth = spriteSheet.getWidth() / 3.0;
+       double frameHeight = spriteSheet.getHeight();
+      
+       // 3. Create the ImageView. The "Viewport" acts like a camera lens, 
+       // starting at the first frame (Normal state).
+       ImageView imageView = new ImageView(spriteSheet);
+       imageView.setPreserveRatio(false); 
+       imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+
+       // 4. Create the Text Label that will sit on top of the wood.
+       Label textLabel = new Label();
+       textLabel.setFont(getCustomFont(14)); 
+       textLabel.setTextFill(Color.web("#6b3e26")); //(Color.BLACK);
+       
+       // --- THE ALIGNMENT FIXES ---
+       
+       // FIX 1: Remove hidden padding that JavaFX puts inside labels by default.
+       textLabel.setPadding(Insets.EMPTY);
+       
+       // FIX 2: Center the text inside the label box.
+       textLabel.setAlignment(Pos.CENTER);
+       textLabel.setTextAlignment(TextAlignment.CENTER);
+       
+       // FIX 3: Custom fonts often have invisible space at the top. We physically 
+       // nudge the text UP by 6 pixels to make it look truly centered on the wood.
+       textLabel.setTranslateY(-6);
+
+       // Optional: Create a shadow for the text (currently disabled in your code).
+       //DropShadow textShadow = new DropShadow(2, 0, 1, Color.rgb(0, 0, 0, 0.7));
+       //textLabel.setEffect(null);
+
+       // 5. Stack the Image and Text on top of each other.
+       StackPane graphicStack = new StackPane(imageView, textLabel);
+       StackPane.setAlignment(imageView, Pos.CENTER);
+       StackPane.setAlignment(textLabel, Pos.CENTER);
+
+       // 6. Create the Button. We tell it to ONLY show the graphic (our StackPane).
+       Button button = new Button();
+       button.setGraphic(graphicStack);
+       button.setContentDisplay(ContentDisplay.GRAPHIC_ONLY); 
+       
+       // FIX 4: Strip away the Button's hidden background borders and padding.
+       button.setStyle("-fx-background-color: transparent; -fx-cursor: hand; -fx-padding: 0; -fx-background-insets: 0; -fx-border-width: 0;");
+      
+       // 7. Sync the Button's text property with our custom textLabel.
+       button.textProperty().addListener((obs, oldV, newV) -> textLabel.setText(newV));
+
+       // 8. SIZING MODE LOGIC
+       if (width > 0 && height > 0) {
+           // --- MANUAL SIZE MODE ---
+           button.setPrefSize(width, height);
+           button.setMinSize(width, height);
+           button.setMaxSize(width, height);
+           
+           // FIX 5: Bind the StackPane tightly to the Button's dimensions so 
+           // it stretches the image perfectly to fill the space.
+           graphicStack.prefWidthProperty().bind(button.widthProperty());
+           graphicStack.prefHeightProperty().bind(button.heightProperty());
+           graphicStack.minWidthProperty().bind(button.widthProperty());
+           graphicStack.minHeightProperty().bind(button.heightProperty());
+           graphicStack.maxWidthProperty().bind(button.widthProperty());
+           graphicStack.maxHeightProperty().bind(button.heightProperty());
+           
+           imageView.fitWidthProperty().bind(graphicStack.widthProperty());
+           imageView.fitHeightProperty().bind(graphicStack.heightProperty());
+           
+       } else {
+           // --- AUTO-SIZE MODE ---
+           // Add padding so the text has breathing room.
+           graphicStack.setPadding(new Insets(10, 30, 10, 30));
+           
+           // Make image "invisible" to the layout engine so the text dictates the width.
+           imageView.setManaged(false); 
+           imageView.fitWidthProperty().bind(button.widthProperty());
+           imageView.fitHeightProperty().bind(button.heightProperty());
+           
+           // Center the image behind the text.
+           imageView.layoutXProperty().bind(button.widthProperty().subtract(imageView.fitWidthProperty()).divide(2));
+           imageView.layoutYProperty().bind(button.heightProperty().subtract(imageView.fitHeightProperty()).divide(2));
+       }
+      
+       // 9. HOVER ANIMATION (Frame 1)
+       button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
+          if (button.isArmed()) return; 
+          imageView.setViewport(new Rectangle2D(isNowHovered ? frameWidth : 0, 0, frameWidth, frameHeight));
+       });
+
+       // 10. PRESS ANIMATION (Frame 2)
+       button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
+          if (isNowArmed) {
+              // PRESSED: Slide to the 3rd frame.
+              imageView.setViewport(new Rectangle2D(frameWidth * 2, 0, frameWidth, frameHeight));
+              
+              // Move the text DOWN by 1 pixel from its base offset (-6 becomes -5)
+              // to make it look physically pushed into the wood.
+              textLabel.setTranslateY(-5);
+              textLabel.setEffect(null); 
+          } else {
+              // RELEASED: Go back to Hover or Normal frame.
+              imageView.setViewport(new Rectangle2D(button.isHover() ? frameWidth : 0, 0, frameWidth, frameHeight));
+              
+              // Snap text back to its base offset (-6).
+              textLabel.setTranslateY(-6);
+              textLabel.setEffect(null);
+          }
+       });
+
+       // 11. Attach the click action.
+       if (onClickAction != null) {
+          button.setOnAction(e -> onClickAction.run());
+       }
+
+       return button;
+  }
+   

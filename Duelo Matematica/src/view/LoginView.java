@@ -96,12 +96,12 @@ public class LoginView {
 
         // A GridPane works like an invisible spreadsheet. 
         // We put the labels in the left column and the text boxes in the right column.
-        GridPane formGrid = new GridPane();
-        formGrid.setHgap(15); // Horizontal gap between columns
-        formGrid.setVgap(15); // Vertical gap between rows
+        GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
         formGrid.add(emailLabel, 0, 0);    formGrid.add(emailField, 1, 0);
         formGrid.add(passwordLabel, 0, 1); formGrid.add(passwordField, 1, 1);
+        
 
+        
         // ==========================================
         // 3. LINKS & FEEDBACK
         // ==========================================
@@ -123,12 +123,7 @@ public class LoginView {
         // 4. THE CONFIRM BUTTON
         // ==========================================
         confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null); //new Button("CONFIRM");
-        //confirmButton.setFont(Font.font("Arial", FontWeight.NORMAL, 18));
-        //confirmButton.setPrefSize(130, 35);
-        //confirmButton.setStyle(
-        //    "-fx-background-color: #999999; -fx-text-fill: black;" +
-        //    "-fx-background-radius: 0; -fx-cursor: hand;"
-        //);
+        confirmButton.setTranslateY(-15); 
 
         // ==========================================
         // 5. ASSEMBLING THE CARD

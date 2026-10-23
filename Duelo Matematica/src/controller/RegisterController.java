@@ -42,7 +42,7 @@ public class RegisterController {
         view.getConfirmButton().setOnAction(e -> handleRegister());
         
         // When the "X" button is clicked, tell the Navigator to cancel and go to the main menu.
-        view.getBackButton()   .setOnAction(e -> nav.goToMenu());
+        view.getBackButton().setOnAction(e -> nav.closePopup());
     }
 
     /**

@@ -15,13 +15,6 @@ import model.LeaderBoardModel.LeaderboardEntry;
 
 import java.util.List;
 
-/**
- * LEADERBOARD VIEW — Displays the top players.
- * 
- * WHAT DOES THIS CLASS DO?
- * It builds the visual layout (the gray card, the scrollable list, the buttons).
- * It uses the data provided by the LeaderBoardModel to fill in the rows.
- */
 public class LeaderBoardView {
 
     private final BorderPane root;
@@ -31,15 +24,11 @@ public class LeaderBoardView {
 
     public LeaderBoardView(LeaderBoardModel model) {
         root = new BorderPane();
-        root.setStyle("-fx-background-color: #ffffff;");
+        root.setStyle("-fx-background-color: transparent;");
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        // ==========================================
-        // 1. CENTER CARD (GRAY LEADERBOARD CONTAINER)
-        // ==========================================
-        Label titleLabel = new Label("LEADERBOARD");
-        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #000000;");
-
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("LEADERBOARD");
+        
         HBox headerRow = createHeaderRow();
 
         entryListVBox = new VBox(12);
@@ -49,39 +38,23 @@ public class LeaderBoardView {
         scrollPane.setFitToWidth(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        scrollPane.setStyle(
-            "-fx-background-color: transparent; " +
-            "-fx-background: transparent; " +
-            "-fx-viewport-background: transparent; " +
-            "-fx-padding: 0 0 0 10px;"
-        );
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent; -fx-viewport-background: transparent; -fx-padding: 0 0 0 10px;");
 
-        // Flip scrollpane horizontally to place scrollbar on left side
         scrollPane.setScaleX(-1);
         entryListVBox.setScaleX(-1);
 
         VBox leaderboardCard = new VBox(18, titleLabel, headerRow, scrollPane);
         leaderboardCard.setAlignment(Pos.TOP_CENTER);
-        leaderboardCard.setStyle("-fx-background-color: #d0d0d0; -fx-padding: 25px 30px;");
+        leaderboardCard.setStyle("-fx-padding: 25px 30px;");
         leaderboardCard.setPrefSize(440, 360);
         leaderboardCard.setMaxSize(440, 360);
 
-        // ==========================================
-        // 2. BOTTOM BAR (Gear Icon on Left + Centered BACK Button)
-        // ==========================================
         gearButton = createGearButton();
 
         backButton = new Button("BACK");
         backButton.setPrefSize(130, 42);
-        backButton.setStyle(
-            "-fx-font-size: 16px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-background-color: #d0d0d0; " +
-            "-fx-text-fill: #000000; " +
-            "-fx-border-color: #000000; " +
-            "-fx-border-width: 0px; " +
-            "-fx-cursor: hand;"
-        );
+        backButton.setFont(ViewUtils.getCustomFont(16));
+        backButton.setStyle("-fx-background-color: #d0d0d0; -fx-text-fill: #000000; -fx-cursor: hand;");
 
         HBox leftContainer = new HBox(gearButton);
         leftContainer.setAlignment(Pos.BOTTOM_LEFT);
@@ -105,7 +78,6 @@ public class LeaderBoardView {
         root.setCenter(centerLayout);
         root.setBottom(bottomBar);
 
-        // Load data from the Model
         updateLeaderboard(model.getEntries());
     }
 
@@ -114,20 +86,14 @@ public class LeaderBoardView {
         if (entries == null) return;
 
         for (LeaderboardEntry entry : entries) {
-            HBox row = createDataRow(
-                entry.getRank() + ".",
-                formatName(entry.getUser()),
-                entry.getTier()
-            );
+            HBox row = createDataRow(entry.getRank() + ".", formatName(entry.getUser()), entry.getTier());
             entryListVBox.getChildren().add(row);
         }
     }
 
     private String formatName(String name) {
         if (name == null) return "";
-        if (name.length() > 10) {
-            return name.substring(0, 10) + "...";
-        }
+        if (name.length() > 10) return name.substring(0, 10) + "...";
         return name;
     }
 
@@ -139,17 +105,17 @@ public class LeaderBoardView {
         Label rankHeader = new Label("RANK");
         rankHeader.setPrefWidth(90);
         rankHeader.setAlignment(Pos.CENTER_LEFT);
-        rankHeader.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        rankHeader.setFont(ViewUtils.getCustomFont(15));
 
         Label userHeader = new Label("USER");
         userHeader.setPrefWidth(160);
         userHeader.setAlignment(Pos.CENTER);
-        userHeader.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        userHeader.setFont(ViewUtils.getCustomFont(15));
 
         Label tierHeader = new Label("TIER");
         tierHeader.setPrefWidth(110);
         tierHeader.setAlignment(Pos.CENTER_RIGHT);
-        tierHeader.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        tierHeader.setFont(ViewUtils.getCustomFont(15));
 
         header.getChildren().addAll(rankHeader, userHeader, tierHeader);
         return header;
@@ -163,17 +129,17 @@ public class LeaderBoardView {
         Label rankLbl = new Label(rankText);
         rankLbl.setPrefWidth(90);
         rankLbl.setAlignment(Pos.CENTER_LEFT);
-        rankLbl.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        rankLbl.setFont(ViewUtils.getCustomFont(15));
 
         Label userLbl = new Label(userText);
         userLbl.setPrefWidth(160);
         userLbl.setAlignment(Pos.CENTER);
-        userLbl.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        userLbl.setFont(ViewUtils.getCustomFont(15));
 
         Label tierLbl = new Label(tierText);
         tierLbl.setPrefWidth(110);
         tierLbl.setAlignment(Pos.CENTER_RIGHT);
-        tierLbl.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #000000;");
+        tierLbl.setFont(ViewUtils.getCustomFont(15));
 
         row.getChildren().addAll(rankLbl, userLbl, tierLbl);
         return row;
@@ -182,14 +148,8 @@ public class LeaderBoardView {
     private Button createGearButton() {
         Button gearBtn = new Button("\u2699");
         gearBtn.setPrefSize(42, 42);
-        gearBtn.setStyle(
-            "-fx-font-size: 20px; " +
-            "-fx-font-weight: bold; " +
-            "-fx-border-color: #000000; " +
-            "-fx-border-width: 2px; " +
-            "-fx-background-color: #ffffff; " +
-            "-fx-cursor: hand;"
-        );
+        gearBtn.setFont(ViewUtils.getCustomFont(20));
+        gearBtn.setStyle("-fx-border-color: #000000; -fx-border-width: 2px; -fx-background-color: #ffffff; -fx-cursor: hand;");
         return gearBtn;
     }
 
