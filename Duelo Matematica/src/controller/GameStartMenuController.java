@@ -20,7 +20,7 @@ public class GameStartMenuController {
         // --- WIRING THE BUTTONS ---
 
         // STORY -> Go to the Topic/Category Selection screen!
-        view.getStoryButton().setOnAction(e -> nav.goToTopicSelection());
+        //view.getStoryButton().setOnAction(e -> nav.goToTopicSelection());
 
         // BACK -> Return to the Game Main Menu
         view.getBackButton().setOnAction(e -> nav.goToGameMainMenu());
@@ -29,7 +29,7 @@ public class GameStartMenuController {
         view.getGearButton().setOnAction(e -> nav.goToSettings());
 
         // 1VS1, PROFILE, LEADERBOARD -> Placeholder popups for now
-        view.get1vs1Button().setOnAction(e -> showDummyPopup("1VS1 MODE"));
+        view.get1vs1Button().setOnAction(e -> nav.goTo1v1Game());
         view.getProfileButton().setOnAction(e -> nav.goToUserProfile());
         view.getLeaderboardButton().setOnAction(e -> nav.goToLeaderboard());
         view.getStoryButton().setOnAction(e -> nav.goToStoryLevels());

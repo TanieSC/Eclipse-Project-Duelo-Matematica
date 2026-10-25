@@ -6,6 +6,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
@@ -48,6 +50,17 @@ public final class ViewUtils {
     // We default to "System" just in case the font fails to load.
     private static String customFontFamily = "System"; 
 	
+    // btn.png (3 frames: normal / hover / pressed)
+    private static final double BTN_CAP_X = 8, BTN_CAP_Y = 3, BTN_SCALE = 3;
+
+    // ui_scroll.png (title scroll)
+    private static final double SCROLL_CAP_X = 20, SCROLL_CAP_TOP = 8, SCROLL_CAP_BOTTOM = 14, SCROLL_SCALE = 3;
+
+    // ui_popup_scroll.png (12 animation frames)
+    private static final double POPUP_CAP_X = 8, POPUP_CAP_TOP = 8, POPUP_CAP_BOTTOM = 14, POPUP_SCALE = 3;
+
+    
+    
     // Private constructor so nobody tries to create an object of this toolbox.
     private ViewUtils() { }
 
@@ -246,7 +259,7 @@ public final class ViewUtils {
        
        // 3. Add 80 pixels of padding so the text doesn't touch the wooden edges.
        double calculatedWidth = textWidth + 80; 
-       double fixedHeight = 80; // Keep a consistent height
+       double fixedHeight = 60; // Keep a consistent height
        
        // 4. Generate the button using the manual size method.
        Button btn = createSpriteButton(imagePath, calculatedWidth, fixedHeight, onClickAction);       
@@ -257,6 +270,7 @@ public final class ViewUtils {
        return btn;
    }
 
+   
    /**
     * THE MAIN SPRITE BUTTON ENGINE — Builds the 3-frame animated button.
     */
@@ -731,5 +745,178 @@ public final class ViewUtils {
 
        return wrapper;
    }
+   
+   /**
+    * Factory method to easily create a NineSlice from a resource path.
+    */
+   public static NineSlice createNineSlice(String imagePath, int frames, double l, double r, double t, double b, double scale, boolean tileMiddle) {
+       Image img = new Image(ViewUtils.class.getResourceAsStream(imagePath));
+       return new NineSlice(img, frames, l, r, t, b, scale, tileMiddle);
+   }
 
+   // ==========================================
+   // SCROLL HEADER (9-slice)
+   // ==========================================
+   public static StackPane createSpriteHeader(String imagePath, String text) {
+       InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
+       if (stream == null) {
+           System.err.println("ERROR: Scroll Image NOT FOUND at path: /_assets" + imagePath);
+           return new StackPane(new Label(text));
+       }
+       Image img = new Image(stream);
+
+       Label label = new Label(text);
+       label.setFont(getCustomFont(18));
+       label.setTextFill(Color.web("#3b200c"));
+       label.setTextAlignment(TextAlignment.CENTER);
+       label.setAlignment(Pos.CENTER);
+       label.setLineSpacing(8);
+
+       // Measure the REAL text block (width AND height), then size the scroll around it
+       Text m = new Text(text);
+       m.setFont(getCustomFont(18));
+       m.setLineSpacing(8);
+       double textW = m.getLayoutBounds().getWidth();
+       double textH = m.getLayoutBounds().getHeight();
+
+       NineSlice scroll = new NineSlice(img, 1, SCROLL_CAP_X, SCROLL_CAP_X,
+               SCROLL_CAP_TOP, SCROLL_CAP_BOTTOM, SCROLL_SCALE, true);
+       double w = textW + 2 * SCROLL_CAP_X * SCROLL_SCALE + 40;
+       double h = textH + (SCROLL_CAP_TOP + SCROLL_CAP_BOTTOM) * SCROLL_SCALE + 100;
+       scroll.setPrefSize(w, h);
+       scroll.setMinSize(w, h);
+       scroll.setMaxSize(w, h);
+
+       StackPane stack = new StackPane(scroll, label);
+       stack.setAlignment(Pos.CENTER);
+       return stack;
+   }
+
+   /**
+    * Automatically calculates the 9-slice caps based on percentages of the image size.
+    * This prevents the rollers from stretching horizontally and stops the center from disappearing.
+    */
+   public static NineSlice createAutoNineSlice(String imagePath, double scale, boolean tileMiddle) {
+       InputStream stream = ViewUtils.class.getResourceAsStream(imagePath);
+       if (stream == null) {
+           System.err.println("ERROR: NineSlice Image NOT FOUND at path: " + imagePath);
+           return null;
+       }
+       Image img = new Image(stream);
+       double w = img.getWidth();
+       double h = img.getHeight();
+
+       // For a vertical scroll, the side rollers are usually ~15% of the width.
+       // The top/bottom edges are usually ~10% of the height.
+       // You can tweak these percentages if your image has bigger/smaller rollers!
+      // double leftPct = 0.15;   // 15% of image width
+      // double rightPct = 0.15;  // 15% of image width
+      // double topPct = 0.10;    // 10% of image height
+      // double bottomPct = 0.10; // 10% of image height
+       
+       double leftPct = 0.25;   
+       double rightPct = 0.25;  
+       double topPct = 0.25;    // Changed from 0.10
+       double bottomPct = 0.25; // Changed from 0.10
+
+
+       double l = w * leftPct;
+       double r = w * rightPct;
+       double t = h * topPct;
+       double b = h * bottomPct;
+
+       // Ensure the caps aren't larger than the image itself (which causes the negative math)
+       if (l + r >= w) { l = w * 0.3; r = w * 0.3; }
+       if (t + b >= h) { t = h * 0.3; b = h * 0.3; }
+
+       return new NineSlice(img, 1, l, r, t, b, scale, tileMiddle);
+   }
+   
+   /**
+    * The NineSlice class integrated into ViewUtils.
+    * Draws a frame of a sprite sheet as a resizable 9-slice.
+    */
+   public static final class NineSlice extends Region {
+       private final Canvas canvas = new Canvas();
+       private final Image img;
+       private final double frameW, frameH;       
+       private final double l, r, t, b;           
+       private final double scale;                
+       private final boolean tileMiddle;          
+       private int frame = 0;
+
+       public NineSlice(Image img, int frames, double l, double r, double t, double b,
+                        double scale, boolean tileMiddle) {
+           this.img = img;
+           this.frameW = img.getWidth() / frames;
+           this.frameH = img.getHeight();
+           this.l = l; this.r = r; this.t = t; this.b = b;
+           this.scale = scale;
+           this.tileMiddle = tileMiddle;
+
+           canvas.setManaged(false);
+           getChildren().add(canvas);
+           setMinSize((l + r) * scale, (t + b) * scale);
+       }
+
+       public void setFrame(int f) { 
+           this.frame = f; 
+           redraw(); 
+       }
+
+       @Override 
+       protected void layoutChildren() {
+           canvas.setWidth(getWidth());
+           canvas.setHeight(getHeight());
+           redraw();
+       }
+
+       private void redraw() {
+           double W = getWidth(), H = getHeight();
+           if (W <= 0 || H <= 0) return;
+           GraphicsContext gc = canvas.getGraphicsContext2D();
+           gc.setImageSmoothing(false); // Crisp pixel art
+           gc.clearRect(0, 0, W, H);
+
+           double sx = frame * frameW;
+           double dl = l * scale, dr = r * scale, dt = t * scale, db = b * scale;
+           double mSW = frameW - l - r, mSH = frameH - t - b;   
+           double mDW = W - dl - dr,    mDH = H - dt - db;      
+
+           // corners
+           gc.drawImage(img, sx, 0, l, t, 0, 0, dl, dt);
+           gc.drawImage(img, sx + frameW - r, 0, r, t, W - dr, 0, dr, dt);
+           gc.drawImage(img, sx, frameH - b, l, b, 0, H - db, dl, db);
+           gc.drawImage(img, sx + frameW - r, frameH - b, r, b, W - dr, H - db, dr, db);
+
+           // edges + center
+           fill(gc, sx + l, 0,           mSW, t,   dl, 0,       mDW, dt,  true,  false); 
+           fill(gc, sx + l, frameH - b,  mSW, b,   dl, H - db,  mDW, db,  true,  false); 
+           fill(gc, sx,     t,           l,   mSH, 0,  dt,       dl,  mDH, false, true);  
+           fill(gc, sx + frameW - r, t,  r,   mSH, W - dr, dt,   dr,  mDH, false, true);  
+           fill(gc, sx + l, t,           mSW, mSH, dl, dt,       mDW, mDH, true,  true);  
+       }
+
+       private void fill(GraphicsContext gc, double sx, double sy, double sw, double sh,
+                         double dx, double dy, double dw, double dh,
+                         boolean alongX, boolean alongY) {
+           if (dw <= 0 || dh <= 0 || sw <= 0 || sh <= 0) return;
+           if (!tileMiddle) { 
+               gc.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh); 
+               return; 
+           }
+
+           double stepX = alongX ? sw * scale : dw;
+           double stepY = alongY ? sh * scale : dh;
+           for (double y = 0; y < dh; y += stepY) {
+               double h = Math.min(stepY, dh - y);
+               for (double x = 0; x < dw; x += stepX) {
+                   double w = Math.min(stepX, dw - x);
+                   gc.drawImage(img, sx, sy,
+                           alongX ? w / scale : sw, alongY ? h / scale : sh,
+                           dx + x, dy + y, w, h);
+               }
+           }
+       }
+   }
 }

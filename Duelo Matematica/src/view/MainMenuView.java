@@ -57,7 +57,7 @@ public class MainMenuView {
         Node headerLabel = ViewUtils.createMainTitleLabel("Duelo\nX\nMatematica");
         loginButton    = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGIN", null);
         //registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CREATE ACCOUNT", null);
-        registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 300, 80, null);
+        registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 300, 60, null);
         registerButton.setText("CREATE ACCOUNT");
         exitButton     = ViewUtils.createSpriteButton("/buttons/btn.png", "EXIT", null);
 

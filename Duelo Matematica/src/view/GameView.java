@@ -7,6 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -18,14 +20,14 @@ import java.util.function.Consumer;
 
 /**
  * GAME VIEW — The visual screen where the actual quiz takes place.
- * 
+ *
  * WHAT DOES THIS CLASS DO?
- * Think of this class as the "Painter" and the "Listener". 
- * - As a Painter, it draws the header, the math question, the four big 
- *   A/B/C/D answer boxes, and the bottom buttons.
- * - As a Listener, it waits for the user to click an answer. When they do, 
- *   it immediately paints the correct answer green and the wrong answer red. 
- * 
+ * Think of this class as the "Painter" and the "Listener".
+ * - As a Painter, it draws the header, the math question, the four big
+ *   A/B/C/D answer boxes (in two columns), and the bottom buttons.
+ * - As a Listener, it waits for the user to click an answer. When they do,
+ *   it immediately paints the correct answer green and the wrong answer red.
+ *
  * It does NOT keep score or pick the next question. That is the GameController's job.
  */
 public class GameView {
@@ -76,14 +78,14 @@ public class GameView {
     private final Button settingsButton;    // The gear icon "⚙"
     private final Button backButton;        // The "X" to quit the game
     private final VBox questionArea;        // The white box holding the math question
-    private final VBox answersArea;         // The container holding the 4 answer boxes
+    private final GridPane answersArea;     // 2-column grid holding the 4 answer boxes
     private final Button nextButton;        // The "NEXT" button (hidden initially)
     private final Button playAgainButton;   // The "PLAY AGAIN" button (hidden initially)
 
     // We keep lists of the answer boxes and badges so we can paint them green/red later.
     private final List<HBox> currentAnswerBoxes = new ArrayList<>();
     private final List<Label> currentLetterBadges = new ArrayList<>();
-    
+
     private int correctIndex = -1;          // Which answer (0-3) is correct
     private boolean answered = false;       // Has the user clicked yet?
 
@@ -128,9 +130,18 @@ public class GameView {
         questionArea.setPadding(new Insets(12));
         questionArea.setStyle("-fx-background-color: #ffffff; -fx-border-color: #cccccc; -fx-border-width: 0 0 0 4px;");
 
-        answersArea = new VBox(12);
-        answersArea.setFillWidth(true);
+        // Two equal-width columns, 12px gap between them (and between rows).
+        answersArea = new GridPane();
+        answersArea.setHgap(12);
+        answersArea.setVgap(12);
         answersArea.setPadding(new Insets(4, 0, 4, 0));
+        for (int c = 0; c < 2; c++) {
+            ColumnConstraints cc = new ColumnConstraints();
+            cc.setPercentWidth(50);          // each column takes half the width
+            cc.setHgrow(Priority.ALWAYS);
+            cc.setFillWidth(true);
+            answersArea.getColumnConstraints().add(cc);
+        }
 
         VBox contentBox = new VBox(14, questionArea, answersArea);
 
@@ -145,11 +156,11 @@ public class GameView {
         // 3. The bottom area (Next / Play Again)
         nextButton      = actionButton("NEXT");
         playAgainButton = actionButton("PLAY AGAIN");
-        
+
         // Hide them both at the start.
         nextButton.setVisible(false);      nextButton.setManaged(false);
         playAgainButton.setVisible(false); playAgainButton.setManaged(false);
-        
+
         nextButton.setOnAction(e -> { if (onNext != null) onNext.run(); });
         playAgainButton.setOnAction(e -> { if (onPlayAgain != null) onPlayAgain.run(); });
 
@@ -177,7 +188,7 @@ public class GameView {
     public Button getSettingsButton() { return settingsButton; }
     public Button getNextButton()     { return nextButton; }
     public Button getPlayAgainButton(){ return playAgainButton; }
-    
+
     // These let the controller plug in its own methods to handle clicks.
     public void setOnAnswerPicked(Consumer<Integer> h) { this.onAnswerPicked = h; }
     public void setOnNext(Runnable r)        { this.onNext = r; }
@@ -187,8 +198,8 @@ public class GameView {
 
     /**
      * SHOW QUESTION — Updates the screen with a brand new question and answers.
-     * 
-     * This is the most important method in the view! It wipes the screen clean 
+     *
+     * This is the most important method in the view! It wipes the screen clean
      * and draws the new data.
      */
     public void showQuestion(String rawQuestion, String[] rawOptions, int correctIndex,
@@ -200,7 +211,7 @@ public class GameView {
         applyDifficultyBadge(difficulty);
 
         // 2. Draw the new question text (using our custom LaTeX renderer for math).
-        TextFlow questionFlow = LatexRenderer.toTextFlow(rawQuestion, 15);
+        TextFlow questionFlow = LatexRenderer.toTextFlow(rawQuestion, 10);
         questionArea.getChildren().setAll(questionFlow);
 
         // 3. Clear the old answers out of memory and off the screen.
@@ -210,7 +221,7 @@ public class GameView {
         this.correctIndex = correctIndex;
         this.answered = false;
 
-        // 4. Build the 4 new answer boxes.
+        // 4. Build the answer boxes — two per row.
         for (int i = 0; i < rawOptions.length; i++) {
             final int picked = i; // Keep track of which button this is (0, 1, 2, or 3)
 
@@ -220,17 +231,19 @@ public class GameView {
             currentLetterBadges.add(letter);
 
             // Draw the answer text (using LaTeX for math).
-            TextFlow optionFlow = LatexRenderer.toTextFlow(rawOptions[i], 16);
-            
+            TextFlow optionFlow = LatexRenderer.toTextFlow(rawOptions[i], 10);
+
             // Put the badge and the text side-by-side in an HBox.
             HBox answerBox = new HBox(14, letter, optionFlow);
             answerBox.setAlignment(Pos.CENTER_LEFT);
-            answerBox.setPadding(new Insets(10, 20, 10, 20));
+            answerBox.setPadding(new Insets(10, 14, 10, 14));
             answerBox.setMinHeight(75); // Make it nice and big.
             answerBox.setMaxWidth(Double.MAX_VALUE);
             answerBox.setStyle(BASE_ANSWER_STYLE);
 
             HBox.setHgrow(optionFlow, Priority.ALWAYS);
+            GridPane.setHgrow(answerBox, Priority.ALWAYS);
+            GridPane.setFillWidth(answerBox, true);
 
             // Wire up the mouse events to look like a button.
             answerBox.setOnMouseClicked(e -> {
@@ -243,9 +256,11 @@ public class GameView {
                 if (!answered) answerBox.setStyle(BASE_ANSWER_STYLE); // Remove hover effect
             });
 
-            // Add it to our list and show it on screen.
+            // Add it to our list and place it in the grid:
+            // A -> (col 0, row 0), B -> (col 1, row 0),
+            // C -> (col 0, row 1), D -> (col 1, row 1)
             currentAnswerBoxes.add(answerBox);
-            answersArea.getChildren().add(answerBox);
+            answersArea.add(answerBox, i % 2, i / 2);
         }
 
         // Hide the bottom buttons until they actually answer.
@@ -255,9 +270,9 @@ public class GameView {
 
     /**
      * HANDLE PICK — Grades the question visually.
-     * 
-     * When a user clicks, we paint the correct answer green, and the wrong 
-     * answer (if they clicked one) red. We also notify the controller so it 
+     *
+     * When a user clicks, we paint the correct answer green, and the wrong
+     * answer (if they clicked one) red. We also notify the controller so it
      * can update the actual score.
      */
     private void handlePick(int picked) {

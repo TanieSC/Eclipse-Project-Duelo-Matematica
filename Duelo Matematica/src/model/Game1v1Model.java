@@ -4,14 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * GAME 1V1 MODEL — The rules and data for the Tug-of-War battle.
- * 
- * WHAT DOES THIS CLASS DO?
- * It holds the question queue, keeps track of the player and opponent's 
- * positions (greenX and redX), and calculates the speed bonus. 
- * It doesn't know anything about buttons or animations.
- */
 public class Game1v1Model {
 
     public enum Result { CORRECT, INCORRECT, VICTORY, DEFEAT }
@@ -19,18 +11,23 @@ public class Game1v1Model {
     private static final double PLATFORM_WIDTH = 480.0;
     private static final double BOX_WIDTH = 35.0;
     private static final double BASE_STEP_DISTANCE = 40.0;
+    private static final int MAX_MISTAKES = 3;
 
     private List<Question> questionQueue;
     private int currentQuestionIndex;
     private Question currentQuestion;
     private long questionStartTime;
+    
+    private int mistakeCount;
+    private int correctCount;
 
-    // Starting positions for the boxes
-    public double greenX = -BOX_WIDTH - 5;
-    public double redX = 5;
+    private double greenX;
+    private double redX;
 
     public Game1v1Model(String categoryFilter) {
         initQuestionBank(categoryFilter);
+        greenX = -BOX_WIDTH - 5;
+        redX = 5;
     }
 
     private void initQuestionBank(String categoryFilter) {
@@ -45,7 +42,6 @@ public class Game1v1Model {
             }
         }
         
-        // Fallback if no questions match
         if (questionQueue.isEmpty()) questionQueue.addAll(allQuestions);
 
         Collections.shuffle(questionQueue);
@@ -56,6 +52,8 @@ public class Game1v1Model {
         currentQuestionIndex = 0;
         greenX = -BOX_WIDTH - 5;
         redX = 5;
+        mistakeCount = 0;
+        correctCount = 0;
         nextQuestion();
     }
 
@@ -68,14 +66,12 @@ public class Game1v1Model {
         questionStartTime = System.currentTimeMillis();
     }
 
-    public Question getCurrentQuestion() {
-        return currentQuestion;
-    }
+    public Question getCurrentQuestion() { return currentQuestion; }
+    public double getGreenX() { return greenX; }
+    public double getRedX() { return redX; }
+    public int getMistakeCount() { return mistakeCount; }
+    public int getCorrectCount() { return correctCount; }
 
-    /**
-     * SUBMIT ANSWER — Calculates if the answer was right, applies the speed 
-     * bonus, and moves the boxes. Returns the result of the turn.
-     */
     public Result submitAnswer(int selectedIndex, int correctIndex) {
         long elapsedMs = System.currentTimeMillis() - questionStartTime;
         double elapsedSeconds = elapsedMs / 1000.0;
@@ -89,21 +85,42 @@ public class Game1v1Model {
 
         boolean isCorrect = (selectedIndex == correctIndex);
         double actualStep = BASE_STEP_DISTANCE * (1.0 + speedBonus);
+        double gap = redX - greenX; // Preserve the distance between boxes
 
         if (isCorrect) {
             greenX += actualStep;
             redX += actualStep;
+            correctCount++;
         } else {
             greenX -= actualStep;
             redX -= actualStep;
+            mistakeCount++;
         }
 
         // Check for game over
         double leftEdge = -PLATFORM_WIDTH / 2.0;
         double rightEdge = PLATFORM_WIDTH / 2.0;
 
-        if (greenX < leftEdge) return Result.DEFEAT;
-        if (redX + BOX_WIDTH > rightEdge) return Result.VICTORY;
+        // If 3 mistakes, force the green box to the absolute left edge
+        if (mistakeCount >= MAX_MISTAKES) {
+            greenX = leftEdge;
+            redX = greenX + gap;
+            return Result.DEFEAT;
+        }
+        
+        // If pushed off left edge
+        if (greenX < leftEdge) {
+            greenX = leftEdge;
+            redX = greenX + gap;
+            return Result.DEFEAT;
+        }
+        
+        // If pushed off right edge (Victory)
+        if (redX + BOX_WIDTH > rightEdge) {
+            redX = rightEdge - BOX_WIDTH;
+            greenX = redX - gap;
+            return Result.VICTORY;
+        }
 
         return isCorrect ? Result.CORRECT : Result.INCORRECT;
     }

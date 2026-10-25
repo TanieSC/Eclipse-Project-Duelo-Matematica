@@ -27,13 +27,13 @@ public class MainMenuController implements Navigator {
     @Override
     public void goToMenu() {
         view.showMenu();
-        //if (Session.isLoggedIn()) {
-       //     view.getLoginButton().setText("LOGGED IN: " + Session.getCurrentUser().getUsername());
-      //  } else {
-      //      view.getLoginButton().setText("LOGIN");
-      //  }
+        if (Session.isLoggedIn()) {
+            view.getLoginButton().setText("LOGGED IN: " + Session.getCurrentUser().getUsername());
+        } else {
+            view.getLoginButton().setText("LOGIN");
+        }
     }
-
+ 
     // ==========================================
     // OVERLAY VIEWS (Menu stays behind)
     // ==========================================
