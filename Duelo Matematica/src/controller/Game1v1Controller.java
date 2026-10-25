@@ -1,7 +1,6 @@
 package controller;
 
 import javafx.animation.PauseTransition;
-import javafx.scene.control.Button;
 import javafx.util.Duration;
 import model.Game1v1Model;
 import view.Game1v1View;
@@ -16,22 +15,21 @@ public class Game1v1Controller {
         this.view = view;
         this.model = model;
         this.mainMenuController = mainMenuController;
-        
-        setupButtonHandlers();
+
+        setupHandlers();
         startGame();
-        
+
         view.getGearButton().setOnAction(e -> mainMenuController.goToSettings());
     }
 
-    private void setupButtonHandlers() {
-		
-		  Button[] options = view.getOptionButtons(); for (int i = 0; i <
-		  options.length; i++) { final int index = i; options[i].setOnAction(e ->
-		  handleAnswer(index)); }
-		  
-		  view.getSurrenderButton().setOnAction(e -> { view.showGameOverPopup(false, ()
-		  -> mainMenuController.goToGameStartMenu()); });
-		 
+    private void setupHandlers() {
+        // GameView-style callback: the view has already coloured the answers,
+        // it just tells us which index was clicked.
+        view.setOnAnswerPicked(this::handleAnswer);
+
+        view.getSurrenderButton().setOnAction(e -> {
+            view.showGameOverPopup(false, () -> mainMenuController.goToGameStartMenu());
+        });
     }
 
     private void startGame() {
@@ -40,26 +38,32 @@ public class Game1v1Controller {
     }
 
     private void handleAnswer(int selectedIndex) {
-        view.disableOptions();
+        // Note: view.handlePick() already set answered=true and painted
+        // correct=green / wrong=red before this callback fired.
+        view.disableOptions(); // harmless, kept for API compatibility
 
         Game1v1Model.Result result = model.submitAnswer(selectedIndex, view.getCurrentCorrectIndex());
 
         double targetGreenX = model.getGreenX();
         double targetRedX = model.getRedX();
 
-		
-		  // View now calculates health based on box positions automatically
-		  view.animateBoxes(targetGreenX, targetRedX, () -> {
-		  
-		  if (result == Game1v1Model.Result.VICTORY) { view.showGameOverPopup(true, ()
-		  -> mainMenuController.goToGameStartMenu());
-		  
-		  } else if (result == Game1v1Model.Result.DEFEAT) {
-		  view.showGameOverPopup(false, () -> mainMenuController.goToGameStartMenu());
-		  
-		  } else { PauseTransition pause = new PauseTransition(Duration.seconds(1.0));
-		  pause.setOnFinished(e -> { model.nextQuestion();
-		  view.showQuestion(model.getCurrentQuestion()); }); pause.play(); } });
-		 
+        // View calculates health based on box positions automatically
+        view.animateBoxes(targetGreenX, targetRedX, () -> {
+
+            if (result == Game1v1Model.Result.VICTORY) {
+                view.showGameOverPopup(true, () -> mainMenuController.goToGameStartMenu());
+
+            } else if (result == Game1v1Model.Result.DEFEAT) {
+                view.showGameOverPopup(false, () -> mainMenuController.goToGameStartMenu());
+
+            } else {
+                PauseTransition pause = new PauseTransition(Duration.seconds(1.0));
+                pause.setOnFinished(e -> {
+                    model.nextQuestion();
+                    view.showQuestion(model.getCurrentQuestion());
+                });
+                pause.play();
+            }
+        });
     }
 }

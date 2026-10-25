@@ -37,8 +37,9 @@ public class MainMenuView {
 
     private final Stage stage;          // The actual OS window.
     private final StackPane root;       // The container holding all our screens.
-    private final VBox menuContent;     // The default home screen (Title + Login/Register/Exit).
-    
+    private final VBox menuContent;      // The default home screen (Title + Login/Register/Exit).    
+    private final Region overlay;
+
     // The three main buttons on the home screen.
     private final Button loginButton;
     private final Button registerButton;
@@ -52,16 +53,19 @@ public class MainMenuView {
      */
     public MainMenuView(Stage stage) {
         this.stage = stage;
+        String titleText = "Duelo X Matematica";
 
-        // 1. Build the Main Menu visuals
-        Node headerLabel = ViewUtils.createMainTitleLabel("Duelo\nX\nMatematica");
-        loginButton    = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGIN", null);
-        //registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CREATE ACCOUNT", null);
+        // Use the sprite header directly (returns a StackPane)
+        StackPane headerLabel = ViewUtils.createSpriteHeader("/panels/ui_scroll.png", titleText);
+
+        loginButton = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGIN", null);
+        
         registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 300, 60, null);
         registerButton.setText("CREATE ACCOUNT");
-        exitButton     = ViewUtils.createSpriteButton("/buttons/btn.png", "EXIT", null);
+        
+        exitButton = ViewUtils.createSpriteButton("/buttons/btn.png","EXIT", null);
 
-        VBox buttonBox = new VBox(5, loginButton, registerButton, exitButton);
+        VBox buttonBox = new VBox(15, loginButton, registerButton, exitButton);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setFillWidth(true);
 
@@ -70,13 +74,15 @@ public class MainMenuView {
         menuContent.setFillWidth(false);
         menuContent.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        // 2. Setup the main window
+        overlay = new Region();
+        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
+        overlay.setVisible(false);
+
         root = new StackPane(menuContent);
-        //root.setStyle("-fx-background-color: #ffffff;");
-        root.setStyle("-fx-background-color: #2b1d14;");
+        root.setStyle("-fx-background-color: #ffffff;");
 
         stage.setTitle("Duelo X Matematica");
-        stage.setScene(new Scene(root, 800, 500)); 
+        stage.setScene(new Scene(root, 900, 700)); 
     }
 
     // =========================================================
