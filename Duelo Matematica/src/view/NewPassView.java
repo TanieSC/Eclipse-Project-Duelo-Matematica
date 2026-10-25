@@ -29,15 +29,19 @@ public class NewPassView {
 
         Label passLabel = new Label("NEW PASSWORD");
         passLabel.setFont(ViewUtils.getCustomFont(13));
-        newPassField = ViewUtils.createStandardPasswordField();
+        newPassField = new PasswordField();
 
+        StackPane newPassContainer  = ViewUtils.createpriteTextField(newPassField);
+        
         Label confirmLabel = new Label("CONFIRM");
         confirmLabel.setFont(ViewUtils.getCustomFont(13));
-        confirmPassField = ViewUtils.createStandardPasswordField();
+        confirmPassField = new PasswordField();
 
+        StackPane confirmPassContainer  = ViewUtils.createpriteTextField(confirmPassField);
+        
         GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
-        formGrid.add(passLabel, 0, 0);    formGrid.add(newPassField, 1, 0);
-        formGrid.add(confirmLabel, 0, 1); formGrid.add(confirmPassField, 1, 1);
+        formGrid.add(passLabel, 0, 0);    formGrid.add(newPassContainer, 1, 0);
+        formGrid.add(confirmLabel, 0, 1); formGrid.add(confirmPassContainer, 1, 1);
 
         messageLabel = new Label();
         messageLabel.setFont(ViewUtils.getCustomFont(12));

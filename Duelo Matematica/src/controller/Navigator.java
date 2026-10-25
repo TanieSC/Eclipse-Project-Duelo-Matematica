@@ -23,4 +23,5 @@ public interface Navigator {
     void goToLeaderboard();
     void goToStoryLevels();
     void goToStoryScreen(int level);
+    void goToConcede(); 
 }

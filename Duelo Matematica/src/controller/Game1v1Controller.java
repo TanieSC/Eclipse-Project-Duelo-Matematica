@@ -19,6 +19,8 @@ public class Game1v1Controller {
         setupHandlers();
         startGame();
 
+        view.getSurrenderButton().setOnAction(e -> mainMenuController.goToConcede());
+        
         view.getGearButton().setOnAction(e -> mainMenuController.goToSettings());
     }
 

@@ -117,6 +117,15 @@ public class MainMenuController implements Navigator {
         view.setOverlayContent(v.getRoot());
     }
     
+    @Override
+    public void goToConcede() {
+        ConcedeView v = new ConcedeView();
+        new ConcedeController(v, this);
+        
+        // This drops the Concede prompt down as a popup over the battle screen
+        view.setOverlayContent(v.getRoot());
+    }
+    
     // ==========================================
     // FULL SCREEN VIEWS (Menu is hidden)
     // ==========================================

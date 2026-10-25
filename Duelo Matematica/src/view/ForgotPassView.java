@@ -32,11 +32,15 @@ public class ForgotPassView {
         Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL");//w Label("EMAIL");
        // emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
         
-        emailField = ViewUtils.createStandardTextField(); //new TextField();
+        emailField = new TextField();
+        emailField.setPrefWidth(180);
+        emailField.setFont(ViewUtils.getCustomFont(10));
 
+        StackPane emailContainer = ViewUtils.createpriteTextField(emailField);
+        
         GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
         formGrid.add(emailLabel, 0, 0);
-        formGrid.add(emailField, 1, 0);
+        formGrid.add(emailContainer, 1, 0);
         
 
         // 3. FEEDBACK & ACTION

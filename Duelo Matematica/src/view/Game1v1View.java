@@ -100,7 +100,7 @@ public class Game1v1View {
         gameLayout.setStyle("-fx-background-color: transparent;");
 
         // --- Top bar (Surrender) ---
-        surrenderButton = ViewUtils.createSpriteButton("/buttons/btn.png", "SURRENDER", null);
+        surrenderButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_concede.png", 48, null);//ViewUtils.createSpriteButton("/buttons/btn.png", "SURRENDER", null);
         HBox topBar = new HBox(surrenderButton);
         topBar.setPadding(new Insets(10, 15, 0, 15));
         topBar.setAlignment(Pos.TOP_LEFT);
@@ -164,11 +164,7 @@ public class Game1v1View {
         backgroundContainer.setMinSize(720, 480);
         backgroundContainer.setMaxSize(720, 480);
         
-        NineSlice scrollBg = ViewUtils.createAutoNineSlice(
-                "/_assets/panels/ui_scroll.png", 
-                3.0,  
-                true  
-        );
+        NineSlice scrollBg = ViewUtils.createAutoNineSlice("/panels/ui_scroll.png", 3.0, true);
         
         // Add the background first, then the content on top
         backgroundContainer.getChildren().addAll(scrollBg, topContentWrapper);
@@ -288,10 +284,10 @@ public class Game1v1View {
             final int picked = i;
 
             // 1. Create the Badge (A, B, C, D)
-            Label letter = new Label(String.valueOf((char) ('A' + i)));
-            letter.setFont(ViewUtils.getCustomFont(15));
+            //Label letter = new Label(String.valueOf((char) ('A' + i)));
+            //letter.setFont(ViewUtils.getCustomFont(15));
            // letter.setStyle(BASE_BADGE_STYLE);
-            currentLetterBadges.add(letter);
+           // currentLetterBadges.add(letter);
 
             // 2. Create the Text
             TextFlow optionFlow = LatexRenderer.toTextFlow(options[i], 10);
@@ -308,12 +304,12 @@ public class Game1v1View {
             contentLayout.setPadding(new Insets(10, 15, 10, 15));
             contentLayout.setMouseTransparent(true); 
 
-            contentLayout.setLeft(letter);
+            //contentLayout.setLeft(letter);
             
             // Set the WRAPPER as the center instead of the raw TextFlow
             contentLayout.setCenter(textWrapper);
             
-            BorderPane.setAlignment(letter, Pos.CENTER_LEFT); 
+            //BorderPane.setAlignment(letter, Pos.CENTER_LEFT); 
             BorderPane.setAlignment(textWrapper, Pos.CENTER); 
 
             // 4. Outer StackPane for the background
@@ -325,7 +321,7 @@ public class Game1v1View {
             answerContainer.setAlignment(Pos.CENTER); 
 
             // 5. Add the NineSlice Background
-            NineSlice bg = ViewUtils.createAutoNineSlice("/_assets/misc/ui_input.png", 3.0, true);
+            NineSlice bg = ViewUtils.createAutoNineSlice("/misc/ui_answer_selection.png", 3.0, true);
             if (bg != null) {
                 bg.setMouseTransparent(true);
                 bg.setMinSize(0, 0);

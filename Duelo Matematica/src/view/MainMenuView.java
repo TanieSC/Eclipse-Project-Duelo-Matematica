@@ -8,6 +8,7 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.Transition;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
@@ -242,6 +243,8 @@ public class MainMenuView {
 
         // Wrap the wood and the content together.
         StackPane dropdownContainer = new StackPane(woodBackground, newNode);
+        dropdownContainer.setPadding(new Insets(30));
+       // dropdownContainer.setStyle("-fx-border-color: #c62828;");
         dropdownContainer.setAlignment(Pos.CENTER); 
         dropdownContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 

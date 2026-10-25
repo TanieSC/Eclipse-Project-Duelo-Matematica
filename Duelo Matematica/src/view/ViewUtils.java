@@ -194,18 +194,31 @@ public final class ViewUtils {
     }
     
     /**
-     * Creates a standardized TextField with the Duelo font and dark style.
+     * STYLED TEXT FIELD — Wraps a TextField with a 9-slice background image.
+     * Returns a StackPane that you add to your layout instead of the raw TextField.
      */
-    public static TextField createStandardTextField() {
-        TextField field = new TextField();
-        field.setPrefWidth(140);
-        field.setFont(getCustomFont(10)); // Apply Duelo.ttf
-        field.setStyle(
-            "-fx-background-color: #666666; " +
-            "-fx-text-inner-color: white; " +
-            "-fx-background-radius: 0;"
-        );
-        return field;
+    public static StackPane createpriteTextField(TextField field) {
+        // 1. Create the 9-slice background using your auto-slicer
+        NineSlice bg = createAutoNineSlice("/misc/ui_text_field.png", 3.0, true);
+        
+        // 2. Make the text field transparent and set the custom font
+        field.setStyle("-fx-background-color: transparent;-fx-text-inner-color: #55321E");
+        field.setFont(getCustomFont(10));
+        field.setPadding(new Insets(5, 15, 5, 15)); // Space for text inside the wood
+        // 3. Put the background and the field together
+        StackPane container = new StackPane(bg, field);
+        container.setPrefHeight(45); // Default height for the fields
+        container.setAlignment(Pos.CENTER_LEFT); // Align text to the left
+        
+        // 4. Ensure the 9-slice stretches to fill the container perfectly
+        bg.prefWidthProperty().bind(container.widthProperty());
+        bg.prefHeightProperty().bind(container.heightProperty());
+        bg.minWidthProperty().bind(container.widthProperty());
+        bg.minHeightProperty().bind(container.heightProperty());
+        bg.maxWidthProperty().bind(container.widthProperty());
+        bg.maxHeightProperty().bind(container.heightProperty());
+        
+        return container;
     }
 
     /**
@@ -797,7 +810,7 @@ public final class ViewUtils {
     * This prevents the rollers from stretching horizontally and stops the center from disappearing.
     */
    public static NineSlice createAutoNineSlice(String imagePath, double scale, boolean tileMiddle) {
-       InputStream stream = ViewUtils.class.getResourceAsStream(imagePath);
+       InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
        if (stream == null) {
            System.err.println("ERROR: NineSlice Image NOT FOUND at path: " + imagePath);
            return null;

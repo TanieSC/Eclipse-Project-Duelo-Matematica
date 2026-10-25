@@ -23,6 +23,7 @@ public class GameStoryController {
         // Wire buttons
         view.getPauseButton().setOnAction(e -> handlePause());
         view.getGearButton().setOnAction(e -> nav.goToSettings());
+        view.getPauseButton().setOnAction(e -> nav.goToConcede());
         
         for (int i = 0; i < 4; i++) {
             final int index = i;

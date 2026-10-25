@@ -29,7 +29,7 @@ public class LoginView {
     // and grab them later.
 
     // The main container holding everything (like a vertical stack of blocks).
-    private final VBox root;
+	 private final StackPane root;
 
     // The input boxes where the user types their email and password.
     private final TextField emailField;
@@ -51,96 +51,67 @@ public class LoginView {
     public LoginView() {
         
         // ==========================================
-        // 1. THE HEADER (Title + Close Button)
+        // 1. THE CONTENT (Title, Form, Buttons)
         // ==========================================
-        Label titleLabel = ViewUtils.createPopupHeaderLabel("LOGIN");//new Label("LOGIN");
-        //titleLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 20));
+        Label titleLabel = ViewUtils.createPopupHeaderLabel("LOGIN");
 
-        backButton = ViewUtils.createCloseButton("X");  //new Button("X");
-        //backButton.setStyle(
-        //    "-fx-background-color: transparent; -fx-font-weight: bold;" +
-        //    "-fx-font-size: 14px; -fx-cursor: hand;"
-        //);
-
-        // A BorderPane lets us put the title in the center and the X on the right.
+        // We keep a BorderPane for the title, but we remove the button from it
         BorderPane headerBox = new BorderPane();
         headerBox.setCenter(titleLabel);
-        headerBox.setRight(backButton);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
-        // ==========================================
-        // 2. THE FORM (Email and Password fields)
-        // ==========================================
-        Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL"); //  new Label("EMAIL");
-        //emailLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
-        
+        Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL");
         emailField = new TextField("demo@duelo.com");
         emailField.setPrefWidth(180);
         emailField.setFont(ViewUtils.getCustomFont(10));
-        emailField.setStyle(
-            "-fx-background-color: #666666; -fx-text-inner-color: white;" +
-            "-fx-background-radius: 0;"
-        );
+        StackPane emailContainer = ViewUtils.createpriteTextField(emailField);
+        emailContainer.setPrefWidth(200); 
 
-        Label passwordLabel = ViewUtils.createBodyTextLabel("PASSWORD"); // new Label("PASSWORD");
-        //passwordLabel.setFont(Font.font("Arial", FontWeight.NORMAL, 13));
-        
-        // PasswordField hides the characters as the user types (shows dots instead).
+        Label passwordLabel = ViewUtils.createBodyTextLabel("PASSWORD");
         passwordField = new PasswordField();
-        passwordField.setPrefWidth(180);
         passwordField.setFont(ViewUtils.getCustomFont(10));
-        passwordField.setStyle(
-            "-fx-background-color: #666666; -fx-text-inner-color: white;" +
-            "-fx-background-radius: 0;"
-        );
+        StackPane passContainer  = ViewUtils.createpriteTextField(passwordField);
 
-        // A GridPane works like an invisible spreadsheet. 
-        // We put the labels in the left column and the text boxes in the right column.
         GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
-        formGrid.add(emailLabel, 0, 0);    formGrid.add(emailField, 1, 0);
-        formGrid.add(passwordLabel, 0, 1); formGrid.add(passwordField, 1, 1);
-        
+        formGrid.add(emailLabel, 0, 0);    formGrid.add(emailContainer, 1, 0);
+        formGrid.add(passwordLabel, 0, 1); formGrid.add(passContainer, 1, 1);
 
-        
-        // ==========================================
-        // 3. LINKS & FEEDBACK
-        // ==========================================
-        
-        
         forgotPasswordLink = new Hyperlink("FORGOT PASSWORD?");
         forgotPasswordLink.setFont(ViewUtils.getCustomFont(10));
-        forgotPasswordLink.setStyle(
-            "-fx-text-fill: black; -fx-underline: false;"
-        );
+        forgotPasswordLink.setStyle("-fx-text-fill: black; -fx-underline: false;");
 
-        // This label is empty at first, but the Controller will fill it 
-        // with red text if the user makes a mistake.
-        messageLabel = ViewUtils.createBodyTextLabel("");//new Label();
+        messageLabel = ViewUtils.createBodyTextLabel("");
         messageLabel.setFont(ViewUtils.getCustomFont(8));
         messageLabel.setStyle("-fx-text-fill: red;");
 
-        // ==========================================
-        // 4. THE CONFIRM BUTTON
-        // ==========================================
-        confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null); //new Button("CONFIRM");
+        confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null);
         confirmButton.setTranslateY(-15); 
 
-        // ==========================================
-        // 5. ASSEMBLING THE CARD
-        // ==========================================
-        // We stack everything vertically in our main 'root' VBox. 
-        // The number '10' is the vertical spacing between each element.
-        root = new VBox(10, headerBox, formGrid, forgotPasswordLink, messageLabel, confirmButton);
+        // Group all the content into a VBox
+        VBox contentBox = new VBox(10, headerBox, formGrid, forgotPasswordLink, messageLabel, confirmButton);
+        contentBox.setAlignment(Pos.TOP_CENTER);
         
-        root.setPadding(new Insets(15, 20, 20, 20));
-        root.setAlignment(Pos.TOP_CENTER);
-        
-        // Keep the card at a nice, small size instead of stretching 
-        // to fill the entire giant window.
+        // Add padding to push the content away from the edges
+        contentBox.setPadding(new Insets(25, 20, 20, 20)); 
+
+        // ==========================================
+        // 2. THE EXIT BUTTON
+        // ==========================================
+        backButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_exit.png", 40, null);
+
+        // ==========================================
+        // 3. ASSEMBLE EVERYTHING
+        // ==========================================
+        // Stack the content and the exit button together
+        root = new StackPane(contentBox, backButton);
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
-        
-        // Give it a grey background and a border to look like a "card".
         root.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+
+        // Align the button to the top right corner
+        StackPane.setAlignment(backButton, Pos.TOP_RIGHT);
+        
+        // Push the button OUTWARD to overlap the wooden border exactly like ConcedeView
+        StackPane.setMargin(backButton, new Insets(-10, -4, 0, 0)); 
     }
 
     // ============================================================
