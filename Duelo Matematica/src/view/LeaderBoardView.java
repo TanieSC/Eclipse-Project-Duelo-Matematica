@@ -6,9 +6,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import model.LeaderBoardModel;
 import model.LeaderBoardModel.LeaderboardEntry;
@@ -17,18 +17,17 @@ import java.util.List;
 
 public class LeaderBoardView {
 
-    private final BorderPane root;
+    private final StackPane root;
     private final VBox entryListVBox;
     private final Button backButton;
-    private final Button gearButton;
+    // REMOVED: private final Button gearButton;
 
     public LeaderBoardView(LeaderBoardModel model) {
-        root = new BorderPane();
+        root = new StackPane();
         root.setStyle("-fx-background-color: transparent;");
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
         Label titleLabel = ViewUtils.createPopupHeaderLabel("LEADERBOARD");
-        
         HBox headerRow = createHeaderRow();
 
         entryListVBox = new VBox(12);
@@ -49,34 +48,18 @@ public class LeaderBoardView {
         leaderboardCard.setPrefSize(440, 360);
         leaderboardCard.setMaxSize(440, 360);
 
-        gearButton = createGearButton();
+        // THE EXIT BUTTON
+        backButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_exit.png", 40, null);
 
-        backButton = new Button("BACK");
-        backButton.setPrefSize(130, 42);
-        backButton.setFont(ViewUtils.getCustomFont(16));
-        backButton.setStyle("-fx-background-color: #d0d0d0; -fx-text-fill: #000000; -fx-cursor: hand;");
-
-        HBox leftContainer = new HBox(gearButton);
-        leftContainer.setAlignment(Pos.BOTTOM_LEFT);
-
-        HBox centerContainer = new HBox(backButton);
-        centerContainer.setAlignment(Pos.BOTTOM_CENTER);
-
-        Region rightSpacer = new Region();
-        rightSpacer.setPrefWidth(42);
-
-        BorderPane bottomBar = new BorderPane();
-        bottomBar.setLeft(leftContainer);
-        bottomBar.setCenter(centerContainer);
-        bottomBar.setRight(rightSpacer);
-        bottomBar.setPadding(new Insets(0, 15, 15, 15));
-
-        VBox centerLayout = new VBox(leaderboardCard);
-        centerLayout.setAlignment(Pos.CENTER);
-        centerLayout.setPadding(new Insets(20, 20, 0, 20));
-
-        root.setCenter(centerLayout);
-        root.setBottom(bottomBar);
+        // ASSEMBLE EVERYTHING (Removed gearButton from here)
+        root.getChildren().addAll(leaderboardCard, backButton);
+        
+        // Center the main card
+        StackPane.setAlignment(leaderboardCard, Pos.CENTER);
+        
+        // Align and position the exit button exactly like ConcedeView
+        StackPane.setAlignment(backButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(backButton, new Insets(-10, -4, 0, 0)); 
 
         updateLeaderboard(model.getEntries());
     }
@@ -102,20 +85,20 @@ public class LeaderBoardView {
         header.setAlignment(Pos.CENTER);
         header.setPadding(new Insets(0, 10, 0, 10));
 
-        Label rankHeader = new Label("RANK");
+        Label rankHeader = ViewUtils.createSubHeaderLabel("RANK");//new Label("RANK");
         rankHeader.setPrefWidth(90);
         rankHeader.setAlignment(Pos.CENTER_LEFT);
-        rankHeader.setFont(ViewUtils.getCustomFont(15));
+        //rankHeader.setFont(ViewUtils.getCustomFont(15));
 
-        Label userHeader = new Label("USER");
+        Label userHeader = ViewUtils.createSubHeaderLabel("USER");// new Label("USER");
         userHeader.setPrefWidth(160);
         userHeader.setAlignment(Pos.CENTER);
-        userHeader.setFont(ViewUtils.getCustomFont(15));
+       // userHeader.setFont(ViewUtils.getCustomFont(15));
 
-        Label tierHeader = new Label("TIER");
+        Label tierHeader = ViewUtils.createSubHeaderLabel("TIER");// new Label("TIER");
         tierHeader.setPrefWidth(110);
         tierHeader.setAlignment(Pos.CENTER_RIGHT);
-        tierHeader.setFont(ViewUtils.getCustomFont(15));
+       // tierHeader.setFont(ViewUtils.getCustomFont(15));
 
         header.getChildren().addAll(rankHeader, userHeader, tierHeader);
         return header;
@@ -126,34 +109,28 @@ public class LeaderBoardView {
         row.setAlignment(Pos.CENTER);
         row.setPadding(new Insets(2, 10, 2, 10));
 
-        Label rankLbl = new Label(rankText);
+        Label rankLbl = ViewUtils.createBodyTextLabel(rankText);// new Label(rankText);
         rankLbl.setPrefWidth(90);
         rankLbl.setAlignment(Pos.CENTER_LEFT);
-        rankLbl.setFont(ViewUtils.getCustomFont(15));
+       // rankLbl.setFont(ViewUtils.getCustomFont(15));
 
-        Label userLbl = new Label(userText);
+        Label userLbl =  ViewUtils.createBodyTextLabel(userText);//new Label(userText);
         userLbl.setPrefWidth(160);
         userLbl.setAlignment(Pos.CENTER);
-        userLbl.setFont(ViewUtils.getCustomFont(15));
+       // userLbl.setFont(ViewUtils.getCustomFont(15));
 
-        Label tierLbl = new Label(tierText);
+        Label tierLbl =  ViewUtils.createBodyTextLabel(tierText);//new Label(tierText);
         tierLbl.setPrefWidth(110);
         tierLbl.setAlignment(Pos.CENTER_RIGHT);
-        tierLbl.setFont(ViewUtils.getCustomFont(15));
+       // tierLbl.setFont(ViewUtils.getCustomFont(15));
 
         row.getChildren().addAll(rankLbl, userLbl, tierLbl);
         return row;
     }
 
-    private Button createGearButton() {
-        Button gearBtn = new Button("\u2699");
-        gearBtn.setPrefSize(42, 42);
-        gearBtn.setFont(ViewUtils.getCustomFont(20));
-        gearBtn.setStyle("-fx-border-color: #000000; -fx-border-width: 2px; -fx-background-color: #ffffff; -fx-cursor: hand;");
-        return gearBtn;
-    }
+    // REMOVED: createGearButton() method
 
     public Node getRoot() { return root; }
     public Button getBackButton() { return backButton; }
-    public Button getGearButton() { return gearButton; }
+    // REMOVED: public Button getGearButton() { return gearButton; }
 }

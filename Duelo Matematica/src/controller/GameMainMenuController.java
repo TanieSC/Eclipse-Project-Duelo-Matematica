@@ -18,7 +18,13 @@ public class GameMainMenuController {
         view.getStartButton().setOnAction(e -> nav.goToGameStartMenu());
 
         // BACK -> Return to the App Main Menu (Login Screen)
-        view.getBackButton().setOnAction(e -> nav.goToMenu());
+        view.getBackButton().setOnAction(e -> {
+            // 1. Clear the user session (logs them out)
+            model.Session.logout(); 
+            
+            // 2. Go back to the main login menu
+            nav.goToMenu(); 
+        });
 
         // CREDITS -> Popup
         view.getCreditsButton().setOnAction(e -> nav.goToCredits());

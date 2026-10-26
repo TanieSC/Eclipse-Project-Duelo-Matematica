@@ -15,7 +15,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import model.GameStoryModel.Question;
 
-public class GameStoryView {
+public class GameStoryView1234 {
 
     private final BorderPane root;
     private final Label categoryLabel;
@@ -28,7 +28,7 @@ public class GameStoryView {
     private final Button pauseButton;
     private final Button gearButton;
 
-    public GameStoryView() {
+    public GameStoryView1234() {
         root = new BorderPane();
         // Transparent background
         root.setStyle("-fx-background-color: transparent;");

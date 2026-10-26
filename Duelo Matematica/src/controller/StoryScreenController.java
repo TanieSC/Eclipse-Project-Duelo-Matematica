@@ -25,7 +25,7 @@ public class StoryScreenController {
         view.getSkipButton().setOnAction(e -> {
             if (storyTimeline != null) storyTimeline.stop();
             // Go to actual game or back to menus
-            nav.goToGameStartMenu(); 
+            nav.goToGameStartMenu(); // TODO: Replace with nav.goTo1v1Game() or nav.goToGame() later
         });
 
         // Start the story sequence
@@ -47,7 +47,7 @@ public class StoryScreenController {
         storyTimeline.setOnFinished(e -> {
             // Delay before proceeding automatically to the game
             Timeline delay = new Timeline(new KeyFrame(Duration.seconds(1.5), evt -> {
-                nav.goToGameStartMenu(); // Change this to the actual game if needed
+                nav.goToGameStartMenu(); // TODO: Replace with actual game screen
             }));
             delay.play();
         });

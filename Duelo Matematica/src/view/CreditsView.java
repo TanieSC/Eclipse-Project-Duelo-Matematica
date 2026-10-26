@@ -9,16 +9,15 @@ import javafx.scene.layout.*;
 
 public class CreditsView {
 
-    private final VBox root;
+    private final StackPane root;
     private final Button backButton;
 
     public CreditsView() {
         Label titleLabel = ViewUtils.createPopupHeaderLabel("CREDITS");
-        backButton = ViewUtils.createCloseButton("X");
 
+        // We only put the title in the header now, the button will float on top
         BorderPane headerBox = new BorderPane();
         headerBox.setCenter(titleLabel);
-        headerBox.setRight(backButton);
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
 
         VBox leftCol = new VBox(20);
@@ -41,11 +40,23 @@ public class CreditsView {
         grid.add(leftCol, 0, 0);
         grid.add(rightCol, 1, 0);
 
-        root = new VBox(30, headerBox, grid);
-        root.setPadding(new Insets(15, 40, 40, 40));
-        root.setAlignment(Pos.TOP_CENTER);
+        // Group all the content into a VBox
+        VBox contentBox = new VBox(30, headerBox, grid);
+        // Add top padding to make room for the floating button
+        contentBox.setPadding(new Insets(25, 40, 40, 40)); 
+        contentBox.setAlignment(Pos.TOP_CENTER);
+
+        // --- THE FIX: Use the exact same button creation as ConcedeView ---
+        backButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_exit.png", 40, null);
+
+        // --- ASSEMBLE EVERYTHING ---
+        root = new StackPane(contentBox, backButton);
         root.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         root.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+
+        // --- ALIGN AND MARGIN EXACTLY LIKE CONCEDEVIEW ---
+        StackPane.setAlignment(backButton, Pos.TOP_RIGHT);
+        StackPane.setMargin(backButton, new Insets(-10, -4, 0, 0));
     }
 
     private VBox createSection(String role, String... names) {

@@ -20,7 +20,5 @@ public class LeaderBoardController {
         // Clicking "BACK" closes the popup (revealing the Game Start Menu underneath)
         view.getBackButton().setOnAction(e -> nav.closePopup());
         
-        // Clicking the gear opens the Settings popup
-        view.getGearButton().setOnAction(e -> nav.goToSettings());
     }
 }

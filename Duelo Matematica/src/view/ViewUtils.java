@@ -128,6 +128,7 @@ public final class ViewUtils {
     public static Label createMainTitleLabel(String text) { 
         Label headerLabel = new Label(text);
         
+        headerLabel.setTextFill(Color.web("#55321E")); //darker brown color #55321E lighter brown color #6b3e26
         // Center the text inside the box horizontally and vertically.
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setTextAlignment(TextAlignment.CENTER);
@@ -155,6 +156,7 @@ public final class ViewUtils {
      */
     public static Label createPopupHeaderLabel(String text) {
         Label headerLabel = new Label(text);
+        headerLabel.setTextFill(Color.web("#55321E")); //darker brown color #55321E lighter brown color #6b3e26
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setFont(Font.font(customFontFamily, 20));
         
@@ -176,6 +178,7 @@ public final class ViewUtils {
      */
     public static Label createSubHeaderLabel(String text) { 
         Label headerLabel = new Label(text);
+        headerLabel.setTextFill(Color.web("#55321E")); //darker brown color #55321E lighter brown color #6b3e26
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setFont(Font.font(customFontFamily, 14));
         headerLabel.setStyle("-fx-border-color: transparent");
@@ -187,6 +190,7 @@ public final class ViewUtils {
      */
     public static Label createBodyTextLabel(String text) { 
         Label headerLabel = new Label(text);
+        headerLabel.setTextFill(Color.web("#55321E")); //darker brown color #55321E lighter brown color #6b3e26
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setFont(Font.font(customFontFamily, 10));
         headerLabel.setStyle("-fx-border-color: transparent");
@@ -197,12 +201,12 @@ public final class ViewUtils {
      * STYLED TEXT FIELD — Wraps a TextField with a 9-slice background image.
      * Returns a StackPane that you add to your layout instead of the raw TextField.
      */
-    public static StackPane createpriteTextField(TextField field) {
+    public static StackPane createSpriteTextField(TextField field) {
         // 1. Create the 9-slice background using your auto-slicer
-        NineSlice bg = createAutoNineSlice("/misc/ui_text_field.png", 3.0, true);
+        NineSlice bg = createAutoNineSlice("/misc/ui_text_field.png", 2.0, true);
         
         // 2. Make the text field transparent and set the custom font
-        field.setStyle("-fx-background-color: transparent;-fx-text-inner-color: #55321E");
+        field.setStyle("-fx-background-color: transparent; -fx-text-inner-color: #55321E");
         field.setFont(getCustomFont(10));
         field.setPadding(new Insets(5, 15, 5, 15)); // Space for text inside the wood
         // 3. Put the background and the field together
@@ -224,16 +228,28 @@ public final class ViewUtils {
     /**
      * Creates a standardized PasswordField with the Duelo font and dark style.
      */
-    public static PasswordField createStandardPasswordField() {
-        PasswordField field = new PasswordField();
-        field.setPrefWidth(140);
-        field.setFont(getCustomFont(10)); // Apply Duelo.ttf
-        field.setStyle(
-            "-fx-background-color: #666666; " +
-            "-fx-text-inner-color: white; " +
-            "-fx-background-radius: 0;"
-        );
-        return field;
+    public static StackPane createSpritePasswordField(PasswordField field) {
+        // 1. Create the 9-slice background using your auto-slicer
+        NineSlice bg = createAutoNineSlice("/misc/ui_text_field.png", 2.0, true);
+        
+        // 2. Make the text field transparent and set the custom font
+        field.setStyle("-fx-background-color: transparent; -fx-text-inner-color: #55321E");
+        field.setFont(getCustomFont(10));
+        field.setPadding(new Insets(5, 15, 5, 15)); // Space for text inside the wood
+        // 3. Put the background and the field together
+        StackPane container = new StackPane(bg, field);
+        container.setPrefHeight(45); // Default height for the fields
+        container.setAlignment(Pos.CENTER_LEFT); // Align text to the left
+        
+        // 4. Ensure the 9-slice stretches to fill the container perfectly
+        bg.prefWidthProperty().bind(container.widthProperty());
+        bg.prefHeightProperty().bind(container.heightProperty());
+        bg.minWidthProperty().bind(container.widthProperty());
+        bg.minHeightProperty().bind(container.heightProperty());
+        bg.maxWidthProperty().bind(container.widthProperty());
+        bg.maxHeightProperty().bind(container.heightProperty());
+        
+        return container;
     }
     
    /**
@@ -368,7 +384,7 @@ public final class ViewUtils {
        // --- TEXT SETUP ---
        Label textLabel = new Label();
        textLabel.setFont(getCustomFont(14)); 
-       textLabel.setTextFill(Color.web("#6b3e26")); 
+       textLabel.setTextFill(Color.web("#55321E")); //darker brown color #55321E lighter brown color #6b3e26
        textLabel.setPadding(Insets.EMPTY);
        textLabel.setAlignment(Pos.CENTER);
        textLabel.setTextAlignment(TextAlignment.CENTER);
@@ -843,6 +859,6 @@ public final class ViewUtils {
        if (t + b >= h) { t = h * 0.3; b = h * 0.3; }
 
        return new NineSlice(img, 1, l, r, t, b, scale, tileMiddle);
-   }
+   }   
    
 }

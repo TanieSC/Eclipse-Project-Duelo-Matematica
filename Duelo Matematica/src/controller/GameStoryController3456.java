@@ -9,13 +9,13 @@ import view.GameStoryView;
 /**
  * GAME STORY CONTROLLER — The brain behind the Tug-of-War screen.
  */
-public class GameStoryController {
+public class GameStoryController3456 {
 
     private final GameStoryView view;
     private final GameStoryModel model;
     private final Navigator nav;
 
-    public GameStoryController(GameStoryView view, GameStoryModel model, Navigator nav) {
+    public GameStoryController3456(GameStoryView view, GameStoryModel model, Navigator nav) {
         this.view = view;
         this.model = model;
         this.nav = nav;

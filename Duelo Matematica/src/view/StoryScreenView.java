@@ -27,8 +27,9 @@ public class StoryScreenView {
         // Transparent background
         root.setStyle("-fx-background-color: transparent;");
 
-        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null);
-        skipButton = ViewUtils.createSpriteButton("/buttons/btn.png", "SKIP >", null);
+        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 48, null);
+        skipButton = ViewUtils.createSpriteButton("/buttons/btn.png", 120, 60, null);
+        skipButton.setText("SKIP >");
 
         BorderPane topBar = new BorderPane();
         topBar.setLeft(pauseButton);
@@ -54,9 +55,9 @@ public class StoryScreenView {
     public Button getSkipButton() { return skipButton; }
 
     public void addLine(String text) {
-        Label label = new Label(text);
-        label.setFont(ViewUtils.getCustomFont(26));
-        label.setStyle("-fx-text-fill: #000000;"); // Black text since wood background is light
+        Label label = ViewUtils.createBodyTextLabel(text);//new Label(text);
+       // label.setFont(ViewUtils.getCustomFont(26));
+       // label.setStyle("-fx-text-fill: #000000;"); // Black text since wood background is light
         label.setWrapText(true);
         storyContentBox.getChildren().add(label);
 

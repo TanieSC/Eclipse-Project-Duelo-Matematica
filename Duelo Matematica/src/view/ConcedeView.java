@@ -22,11 +22,13 @@ public class ConcedeView {
           // --- 1. THE CONTENT (Title, Message, Buttons) ---
           Label titleLabel = ViewUtils.createPopupHeaderLabel("CONCEDE?");
           
-          Label messageLabel = new Label("Are you sure you\nwant to concede?");
-          messageLabel.setFont(ViewUtils.getCustomFont(10));
-          messageLabel.setStyle("-fx-text-fill: #222222;");
-          messageLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-          messageLabel.setAlignment(Pos.CENTER);
+          Label messageLabel =  ViewUtils.createBodyTextLabel("Are you sure you\nwant to concede?");//new Label("Are you sure you\nwant to concede?");
+			/*
+			 * messageLabel.setFont(ViewUtils.getCustomFont(10));
+			 * messageLabel.setStyle("-fx-text-fill: #222222;");
+			 * messageLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+			 * messageLabel.setAlignment(Pos.CENTER);
+			 */
           
           yesButton = ViewUtils.createSpriteButton("/buttons/btn.png", "YES", null);
           noButton  = ViewUtils.createSpriteButton("/buttons/btn.png", "NO", null);

@@ -112,10 +112,10 @@ public class Game1v1View {
         bottomBar.setAlignment(Pos.BOTTOM_LEFT);
 
         // --- Question area ---
-        categoryLabel = new Label("CATEGORY");
+        categoryLabel =ViewUtils.createPopupHeaderLabel("CATEGORY");// new Label("CATEGORY");
         //categoryLabel.setAlignment(Pos.CENTER);
-        categoryLabel.setFont(ViewUtils.getCustomFont(18));
-        categoryLabel.setStyle("-fx-background-color: transparent;");
+       // categoryLabel.setFont(ViewUtils.getCustomFont(18));
+        //categoryLabel.setStyle("-fx-background-color: transparent;");
 
         HBox categoryContainer = new HBox(categoryLabel);
         categoryContainer.setAlignment(Pos.CENTER);

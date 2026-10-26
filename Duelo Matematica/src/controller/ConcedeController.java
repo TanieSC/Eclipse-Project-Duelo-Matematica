@@ -13,6 +13,6 @@ public class ConcedeController {
         view.getYesButton().setOnAction(e -> {
             nav.closePopup();
             nav.goToGameStartMenu(); // Or wherever you want to send them after conceding
-        });
+        }); 
     }
 }

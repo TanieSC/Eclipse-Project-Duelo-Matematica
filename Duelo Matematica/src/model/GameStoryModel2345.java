@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * GAME STORY MODEL — The rules and data for the Tug-of-War battle.
  */
-public class GameStoryModel {
+public class GameStoryModel2345 {
 
     // LOCAL EMBEDDED QUESTION BANK (from your original code)
     private static final String[][] LOCAL_MATH_QUESTIONS = {
@@ -59,7 +59,7 @@ public class GameStoryModel {
     public double greenX;
     public double redX;
 
-    public GameStoryModel() {
+    public GameStoryModel2345() {
         questionQueue = new ArrayList<>();
         for (String[] row : LOCAL_MATH_QUESTIONS) {
             questionQueue.add(new Question(row[1], row[2], row[3], Arrays.copyOfRange(row, 4, 8)));

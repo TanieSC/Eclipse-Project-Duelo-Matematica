@@ -63,14 +63,14 @@ public class LoginView {
         Label emailLabel = ViewUtils.createBodyTextLabel("EMAIL");
         emailField = new TextField("demo@duelo.com");
         emailField.setPrefWidth(180);
-        emailField.setFont(ViewUtils.getCustomFont(10));
-        StackPane emailContainer = ViewUtils.createpriteTextField(emailField);
+        //emailField.setFont(ViewUtils.getCustomFont(10));
+        StackPane emailContainer = ViewUtils.createSpriteTextField(emailField);
         emailContainer.setPrefWidth(200); 
 
         Label passwordLabel = ViewUtils.createBodyTextLabel("PASSWORD");
         passwordField = new PasswordField();
-        passwordField.setFont(ViewUtils.getCustomFont(10));
-        StackPane passContainer  = ViewUtils.createpriteTextField(passwordField);
+       // passwordField.setFont(ViewUtils.getCustomFont(10));
+        StackPane passContainer  = ViewUtils.createSpritePasswordField(passwordField);
 
         GridPane formGrid = ViewUtils.createStandardFormGrid(15, 15);
         formGrid.add(emailLabel, 0, 0);    formGrid.add(emailContainer, 1, 0);
@@ -78,10 +78,10 @@ public class LoginView {
 
         forgotPasswordLink = new Hyperlink("FORGOT PASSWORD?");
         forgotPasswordLink.setFont(ViewUtils.getCustomFont(10));
-        forgotPasswordLink.setStyle("-fx-text-fill: black; -fx-underline: false;");
+        forgotPasswordLink.setStyle("-fx-text-fill: #55321E; -fx-underline: false;");
 
         messageLabel = ViewUtils.createBodyTextLabel("");
-        messageLabel.setFont(ViewUtils.getCustomFont(8));
+        //messageLabel.setFont(ViewUtils.getCustomFont(8));
         messageLabel.setStyle("-fx-text-fill: red;");
 
         confirmButton = ViewUtils.createSpriteButton("/buttons/btn.png", "CONFIRM", null);

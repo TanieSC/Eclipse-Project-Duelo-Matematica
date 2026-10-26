@@ -23,7 +23,7 @@ public class GameMainMenuView {
         // 2. Custom Wooden Buttons
         btnStart   = ViewUtils.createSpriteButton("/buttons/btn.png", "START", null);
         btnCredits = ViewUtils.createSpriteButton("/buttons/btn.png", "CREDITS", null);
-        btnBack    = ViewUtils.createSpriteButton("/buttons/btn.png", "BACK", null);
+        btnBack    = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGOUT", null);
 
         VBox buttonBox = new VBox(15, btnStart, btnCredits, btnBack);
         buttonBox.setAlignment(Pos.CENTER);
