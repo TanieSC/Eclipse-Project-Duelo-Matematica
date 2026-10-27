@@ -33,11 +33,6 @@ public final class Session {
     // If nobody is logged in, this is "null" (empty).
     private static User currentUser;
 
-    // Do we have a paused game?
-    // If a player quits halfway through, we save their game here. 
-    // If they finish or log out, this becomes "null" (empty).
-    private static GameService savedGame;
-
     /**
      * PRIVATE CONSTRUCTOR — prevents anyone from creating a new Session.
      * There is only ever ONE Session in the app.
@@ -76,40 +71,6 @@ public final class Session {
      */
     public static void logout() {
         currentUser = null;
-        savedGame = null;
     }
 
-    // ============================================================
-    // PART 2: THE PAUSED GAME (Save / Resume)
-    // ============================================================
-
-    /**
-     * SAVED GAME — Saves a game so the player can come back to it.
-     * 
-     * This is like hitting "Save" in a video game. When a player clicks 
-     * the "X" button to quit mid-game, the GameController calls this method 
-     * to stash their progress safely in memory.
-     */
-    public static void setSavedGame(GameService game) { savedGame = game; }
-
-    /** 
-     * Returns the saved game so the player can resume it.
-     * If there is no saved game, it returns null.
-     */
-    public static GameService getSavedGame() { return savedGame; }
-
-    /** 
-     * Convenience check: Do we have a saved game right now? 
-     * Returns TRUE if there is a game waiting, FALSE if not.
-     */
-    public static boolean hasSavedGame() { return savedGame != null; }
-
-    /** 
-     * CLEAR SAVED GAME — Deletes the save file.
-     * 
-     * This is called when the player actually finishes a round, or 
-     * decides to start a brand new game. Once it's cleared, there is 
-     * no going back to the old game.
-     */
-    public static void clearSavedGame() { savedGame = null; }
 }

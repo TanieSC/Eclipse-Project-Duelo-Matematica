@@ -22,10 +22,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -59,6 +63,7 @@ public final class ViewUtils {
     // ui_popup_scroll.png (12 animation frames)
     private static final double POPUP_CAP_X = 8, POPUP_CAP_TOP = 8, POPUP_CAP_BOTTOM = 14, POPUP_SCALE = 3;
 
+    private static Transition activeOverlayTransition;
     
     
     // Private constructor so nobody tries to create an object of this toolbox.
@@ -859,6 +864,211 @@ public final class ViewUtils {
        if (t + b >= h) { t = h * 0.3; b = h * 0.3; }
 
        return new NineSlice(img, 1, l, r, t, b, scale, tileMiddle);
-   }   
+   }
+       
+       // ==========================================
+       // REUSABLE POPUP OVERLAY LOGIC
+       // ==========================================
+       public static void showOverlayContent(StackPane root, Node newNode) {
+            if (activeOverlayTransition != null) activeOverlayTransition.stop();
+
+            if (root.getChildren().size() >= 3) {
+                Node oldPopup = root.getChildren().get(root.getChildren().size() - 1);
+                
+                if (oldPopup instanceof StackPane && ((StackPane) oldPopup).getClip() != null) {
+                    StackPane oldContainer = (StackPane) oldPopup;
+                    Rectangle clip = (Rectangle) oldContainer.getClip();
+                    
+                    Timeline clipTimeline = new Timeline(
+                        new KeyFrame(Duration.ZERO, new KeyValue(clip.heightProperty(), clip.getHeight())),
+                        new KeyFrame(Duration.millis(250), new KeyValue(clip.heightProperty(), 0, Interpolator.EASE_IN))
+                    );
+
+                    Timeline woodTimeline = null;
+                    Node graphicNode = oldContainer.getChildren().get(0);
+                    if (graphicNode instanceof ImageView) {
+                        ImageView woodBackground = (ImageView) graphicNode;
+                        Image woodImg = woodBackground.getImage();
+                        double frameWidth = woodImg.getWidth() / 12.0;
+                        double frameHeight = woodImg.getHeight();
+                        woodTimeline = new Timeline();
+                        for (int i = 0; i < 12; i++) {
+                            final int frame = 11 - i; 
+                            woodTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 20), e -> {
+                                woodBackground.setViewport(new Rectangle2D(frame * frameWidth, 0, frameWidth, frameHeight));
+                            }));
+                        }
+                    }
+
+                    ParallelTransition rollUp = new ParallelTransition(clipTimeline);
+                    if (woodTimeline != null) rollUp.getChildren().add(woodTimeline);
+                    
+                    rollUp.setOnFinished(e -> {
+                        root.getChildren().remove(oldContainer); 
+                        showOverlayContent(root, newNode); 
+                    });
+                    
+                    activeOverlayTransition = rollUp;
+                    rollUp.play();
+                    return;
+                }
+            }
+
+            Region darkOverlay;
+            if (root.getChildren().size() >= 2) {
+                darkOverlay = (Region) root.getChildren().get(1);
+            } else {
+                darkOverlay = new Region();
+                darkOverlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.5);");
+                darkOverlay.setOpacity(0);
+                FadeTransition fadeOverlay = new FadeTransition(Duration.millis(200), darkOverlay);
+                fadeOverlay.setToValue(1.0);
+                fadeOverlay.play();
+                root.getChildren().add(darkOverlay);
+            }
+
+            InputStream stream = ViewUtils.class.getResourceAsStream("/_assets/panels/ui_popup_scroll.png");
+            
+            if (stream == null) {
+                System.err.println("WARNING: ui_popup_scroll.png not found! Falling back to popup.");
+                StackPane fallbackContainer = new StackPane(newNode);
+                fallbackContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                newNode.setOpacity(0);
+                newNode.setScaleX(0.9);
+                newNode.setScaleY(0.9);
+                FadeTransition fadeIn = new FadeTransition(Duration.millis(250), newNode);
+                fadeIn.setToValue(1.0);
+                ScaleTransition scaleIn = new ScaleTransition(Duration.millis(250), newNode);
+                scaleIn.setToX(1.0);
+                scaleIn.setToY(1.0);
+                activeOverlayTransition = new ParallelTransition(fadeIn, scaleIn);
+                activeOverlayTransition.play();
+                root.getChildren().add(fallbackContainer);
+                return;
+            }
+
+            Image woodImg = new Image(stream);
+            ImageView woodBackground = new ImageView(woodImg);
+            Region viewRegion = (Region) newNode;
+            
+            woodBackground.setPreserveRatio(false);
+            woodBackground.fitWidthProperty().bind(viewRegion.widthProperty());
+            woodBackground.fitHeightProperty().bind(viewRegion.heightProperty());
+
+            StackPane dropdownContainer = new StackPane(woodBackground, newNode);
+            dropdownContainer.setPadding(new Insets(30));
+            dropdownContainer.setAlignment(Pos.CENTER); 
+            dropdownContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+            root.getChildren().add(dropdownContainer);
+            
+            root.applyCss();
+            root.layout();
+
+            double targetHeight = dropdownContainer.getHeight();
+            if (targetHeight <= 0) targetHeight = 300;
+
+            Rectangle clip = new Rectangle();
+            clip.widthProperty().bind(dropdownContainer.widthProperty());
+            clip.setHeight(0); 
+            dropdownContainer.setClip(clip);
+
+            double frameWidth = woodImg.getWidth() / 12.0;
+            double frameHeight = woodImg.getHeight();
+            
+            Timeline woodTimeline = new Timeline();
+            for (int i = 0; i < 12; i++) {
+                final int frame = i;
+                woodTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 40), e -> {
+                    woodBackground.setViewport(new Rectangle2D(frame * frameWidth, 0, frameWidth, frameHeight));
+                }));
+            }
+
+            Timeline clipTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(clip.heightProperty(), 0, Interpolator.EASE_IN)),
+                new KeyFrame(Duration.millis(480), new KeyValue(clip.heightProperty(), targetHeight, Interpolator.EASE_OUT))
+            );
+
+            activeOverlayTransition = new ParallelTransition(woodTimeline, clipTimeline);
+            activeOverlayTransition.play();
+        }
+
+        public static void closePopup(StackPane root, Runnable onFinished) {
+            if (root.getChildren().size() <= 1) {
+                if (onFinished != null) onFinished.run();
+                return;
+            }
+
+            Node topNode = root.getChildren().get(root.getChildren().size() - 1);
+            
+            if (!(topNode instanceof StackPane) || ((StackPane) topNode).getClip() == null) {
+                Node overlayNode = root.getChildren().size() > 2 ? root.getChildren().get(1) : null;
+                
+                FadeTransition fadeOutNode = new FadeTransition(Duration.millis(200), topNode);
+                fadeOutNode.setToValue(0.0);
+                
+                Transition closeTransition;
+                
+                if (overlayNode != null) {
+                    FadeTransition fadeOverlay = new FadeTransition(Duration.millis(200), overlayNode);
+                    fadeOverlay.setToValue(0.0);
+                    closeTransition = new ParallelTransition(fadeOutNode, fadeOverlay);
+                } else {
+                    closeTransition = fadeOutNode;
+                }
+                
+                closeTransition.setOnFinished(e -> {
+                    root.getChildren().remove(1, root.getChildren().size());
+                    if (onFinished != null) onFinished.run();
+                });
+                activeOverlayTransition = closeTransition;
+                closeTransition.play();
+                return;
+            }
+
+            StackPane dropdownContainer = (StackPane) topNode;
+            Rectangle clip = (Rectangle) dropdownContainer.getClip();
+            Node overlayNode = root.getChildren().size() > 2 ? root.getChildren().get(1) : null;
+
+            Timeline clipTimeline = new Timeline(
+                new KeyFrame(Duration.ZERO, new KeyValue(clip.heightProperty(), clip.getHeight())),
+                new KeyFrame(Duration.millis(250), new KeyValue(clip.heightProperty(), 0, Interpolator.EASE_IN))
+            );
+
+            Timeline woodTimeline = null;
+            Node graphicNode = dropdownContainer.getChildren().get(0);
+            
+            if (graphicNode instanceof ImageView) {
+                ImageView woodBackground = (ImageView) graphicNode;
+                Image woodImg = woodBackground.getImage();
+                double frameWidth = woodImg.getWidth() / 12.0;
+                double frameHeight = woodImg.getHeight();
+
+                woodTimeline = new Timeline();
+                for (int i = 0; i < 12; i++) {
+                    final int frame = 11 - i; 
+                    woodTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(i * 20), e -> {
+                        woodBackground.setViewport(new Rectangle2D(frame * frameWidth, 0, frameWidth, frameHeight));
+                    }));
+                }
+            }
+
+            ParallelTransition transition = new ParallelTransition(clipTimeline);
+            if (woodTimeline != null) transition.getChildren().add(woodTimeline);
+            
+            if (overlayNode != null) {
+                FadeTransition fadeOverlay = new FadeTransition(Duration.millis(250), overlayNode);
+                fadeOverlay.setToValue(0.0);
+                transition.getChildren().add(fadeOverlay);
+            }
+
+            transition.setOnFinished(e -> {
+                root.getChildren().remove(1, root.getChildren().size());
+                if (onFinished != null) onFinished.run();
+            });
+
+            activeOverlayTransition = transition;
+            transition.play();
+        }
    
 }

@@ -21,19 +21,18 @@ public class StoryScreenController {
             nav.goToStoryLevels(); // Go back to map when paused
         });
 
-        // Skip button behavior
+        // Skip button goes straight to battle
         view.getSkipButton().setOnAction(e -> {
             if (storyTimeline != null) storyTimeline.stop();
-            // Go to actual game or back to menus
-            nav.goToGameStartMenu(); // TODO: Replace with nav.goTo1v1Game() or nav.goToGame() later
+            nav.goToStoryBattle(level); 
         });
 
         // Start the story sequence
         List<String> lines = model.getStoryLines(level);
-        playStorySequence(view, lines, nav);
+        playStorySequence(view, lines, level, nav);
     }
 
-    private void playStorySequence(StoryScreenView view, List<String> lines, Navigator nav) {
+    private void playStorySequence(StoryScreenView view, List<String> lines, int level, Navigator nav) {
         storyTimeline = new Timeline();
 
         for (int i = 0; i < lines.size(); i++) {
@@ -45,9 +44,8 @@ public class StoryScreenController {
         }
 
         storyTimeline.setOnFinished(e -> {
-            // Delay before proceeding automatically to the game
             Timeline delay = new Timeline(new KeyFrame(Duration.seconds(1.5), evt -> {
-                nav.goToGameStartMenu(); // TODO: Replace with actual game screen
+                nav.goToStoryBattle(level); // Automatically load the battle
             }));
             delay.play();
         });

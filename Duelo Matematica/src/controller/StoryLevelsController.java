@@ -9,7 +9,7 @@ public class StoryLevelsController {
         view.getPauseButton().setOnAction(e -> nav.goToGameStartMenu()); 
         view.getGearButton().setOnAction(e -> nav.goToSettings());
 
-        // Wire the level selection (Runs when green box finishes moving)
+        // When a landmark is clicked, go to the DIALOGUE screen
         view.setOnLevelSelected(level -> {
             nav.goToStoryScreen(level); 
         });

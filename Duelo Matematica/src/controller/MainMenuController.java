@@ -1,7 +1,6 @@
 package controller;
 
 import model.AuthService;
-import model.GameService;
 import model.MathQuestions;
 import model.Session;
 import view.*;
@@ -147,6 +146,15 @@ public class MainMenuController implements Navigator {
     }
 
     @Override
+    public void goTo1v1Game() {
+        model.Game1v1Model model = new model.Game1v1Model("All");
+        view.Game1v1View v = new view.Game1v1View();
+        new controller.Game1v1Controller(v, model, this);
+        view.setContent(v.getRoot());
+    }
+    
+
+    @Override
     public void goToStoryLevels() {
         StoryLevelsView v = new StoryLevelsView();
         new StoryLevelsController(v, this);
@@ -156,50 +164,17 @@ public class MainMenuController implements Navigator {
     @Override
     public void goToStoryScreen(int level) {
         StoryScreenView v = new StoryScreenView();
-        model.StoryModel model = new model.StoryModel();
-        new StoryScreenController(v, model, level, this);
-        view.setContent(v.getRoot());
-    }
-    
-    @Override
-    public void goToTopicSelection() {
-        TopicView v = new TopicView();
-        new TopicController(v, this);
-        view.setContent(v.getRoot());
-    }
-
-    
-    @Override
-    public void goToResume() {
-        if (!Session.hasSavedGame()) { goToTopicSelection(); return; }
-        ResumeView v = new ResumeView(Session.getSavedGame());
-        new ResumeController(v, this);
+        model.StoryModel storyModel = new model.StoryModel();
+        new StoryScreenController(v, storyModel, level, this);
         view.setContent(v.getRoot());
     }
 
     @Override
-    public void goToGame(String category) {
-        GameService service = new GameService(MathQuestions.loadAll(), category);
-        GameView v = new GameView();
-        new GameController(v, service, this, false);
-        view.setContent(v.getRoot());
-    }
-
-    @Override
-    public void resumeGame() {
-        GameService service = Session.getSavedGame();
-        if (service == null) { goToTopicSelection(); return; }
-        GameView v = new GameView();
-        new GameController(v, service, this, true);
-        view.setContent(v.getRoot());
-    }
-    
-    @Override
-    public void goTo1v1Game() {
-        model.Game1v1Model model = new model.Game1v1Model("All");
-        view.Game1v1View v = new view.Game1v1View();
-        new controller.Game1v1Controller(v, model, this);
-        view.setContent(v.getRoot());
+    public void goToStoryBattle(int level) {
+        model.StoryBattleModel gameModel = new model.StoryBattleModel();
+        StoryBattleView gameView = new StoryBattleView();
+        new StoryBattleController(gameView, gameModel, this, level);
+        view.setContent(gameView.getRoot());
     }
     
     @Override

@@ -421,35 +421,43 @@ public class Game1v1View {
     public void showOverlay(Node overlay) { rootStack.getChildren().add(overlay); }
     public void hideOverlay(Node overlay) { rootStack.getChildren().remove(overlay); }
 
+    // ==========================================
+    // INLINE DROPDOWN POPUP
+    // ==========================================
     public void showGameOverPopup(boolean isWin, Runnable onReturnToMenu) {
-        StackPane overlay = new StackPane();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.6);");
-
         VBox popupBox = new VBox(20);
         popupBox.setAlignment(Pos.CENTER);
-        popupBox.setMaxSize(400, 250);
-        popupBox.setStyle("-fx-background-color: #f4f4f4; -fx-padding: 30px;" +
-                          " -fx-border-color: #333333; -fx-border-width: 3px;" +
-                          " -fx-border-radius: 10px; -fx-background-radius: 10px;");
+        popupBox.setPadding(new Insets(40, 60, 40, 60)); 
+        
+        // --- THE FIX ---
+        // Force the popup to be a compact card (not stretch across the screen)
+        popupBox.setPrefSize(450, 250);
+        popupBox.setMaxSize(450, 250);
+        // ----------------
 
         Label titleLabel = new Label(isWin ? "VICTORY!" : "DEFEAT");
-        titleLabel.setFont(ViewUtils.getCustomFont(36));
-        titleLabel.setStyle("-fx-text-fill: " + (isWin ? "#00a800;" : "#d00000;") + " -fx-font-weight: bold;");
+        titleLabel.setFont(ViewUtils.getCustomFont(20));
+        titleLabel.setStyle("-fx-text-fill: " + (isWin ? "#00a800;" : "#d00000;"));
 
         Label messageLabel = new Label(isWin ? "You defeated the opponent!"
                                              : "You made 3 mistakes or got pushed off!");
-        messageLabel.setFont(ViewUtils.getCustomFont(16));
+        messageLabel.setFont(ViewUtils.getCustomFont(10));
         messageLabel.setStyle("-fx-text-fill: #333333;");
+        messageLabel.setWrapText(true);
+        messageLabel.setAlignment(Pos.CENTER);
+        messageLabel.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
 
         Button returnBtn = ViewUtils.createSpriteButton("/buttons/btn.png", "RETURN TO MENU", null);
         returnBtn.setFont(ViewUtils.getCustomFont(16));
+        
+        // When clicked, use ViewUtils to animate the roll-up, then run the callback
         returnBtn.setOnAction(e -> {
-            rootStack.getChildren().remove(overlay);
-            if (onReturnToMenu != null) onReturnToMenu.run();
+            ViewUtils.closePopup(rootStack, onReturnToMenu);
         });
 
         popupBox.getChildren().addAll(titleLabel, messageLabel, returnBtn);
-        overlay.getChildren().add(popupBox);
-        rootStack.getChildren().add(overlay);
+        
+        // Use ViewUtils to trigger the wooden dropdown animation
+        ViewUtils.showOverlayContent(rootStack, popupBox);
     }
 }
