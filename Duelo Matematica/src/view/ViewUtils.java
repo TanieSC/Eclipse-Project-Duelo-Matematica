@@ -15,6 +15,11 @@ import javafx.scene.image.ImageView;
 import java.io.InputStream;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -1070,5 +1075,77 @@ public final class ViewUtils {
             activeOverlayTransition = transition;
             transition.play();
         }
+              
+          
+        /**
+         * Applies a landscape background image that scales to cover the container.
+         * It preserves the aspect ratio (no stretching/squishing) and crops if needed.
+         */
+        public static void applyBackgroundImage(Region container, String imagePath) {
+            try {
+                java.io.InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
+                if (stream != null) {
+                    Image bgImage = new Image(stream);
+                    // The 'true' at the end is 'cover'. It ensures the image fills the space.
+                    BackgroundImage bg = new BackgroundImage(
+                        bgImage,
+                        BackgroundRepeat.NO_REPEAT,
+                        BackgroundRepeat.NO_REPEAT,
+                        BackgroundPosition.CENTER,
+                        //new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, false, true) //cover
+                       // new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false) //contain
+                        new BackgroundSize(
+                        	    1.0, 1.0,
+                        	    true, true,      // width & height as percentages → 100% of region
+                        	    false, false     // neither contain nor cover
+                        	)
+                        
+                    );
+                    container.setBackground(new Background(bg));
+                } else {
+                    System.err.println("ERROR: Background image not found at " + imagePath);
+                    container.setStyle("-fx-background-color: #87CEEB;"); // Fallback Sky Blue
+                }
+            } catch (Exception e) {
+                container.setStyle("-fx-background-color: #87CEEB;");
+            }
+        }
+        
+        /**
+         * Applies the standard dark red tiled grid background to a container.
+         */
+        public static void applyTiledBackground(String imagePath, Region container ) {
+            try {
+                java.io.InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
+                if (stream != null) {
+                    Image bgImage = new Image(stream);
+                    BackgroundImage bg = new BackgroundImage(
+                        bgImage,
+                        BackgroundRepeat.REPEAT, 
+                        BackgroundRepeat.REPEAT, 
+                        BackgroundPosition.DEFAULT,
+                        BackgroundSize.DEFAULT 
+                    );
+                    container.setBackground(new Background(bg));
+                } else {
+                    container.setStyle("-fx-background-color: #4a0d15;"); // Fallback
+                }
+            } catch (Exception e) {
+                container.setStyle("-fx-background-color: #4a0d15;"); // Fallback
+            }
+        }
    
+        /**
+         * APPLY DROP SHADOW — Adds a standard 3D shadow effect to any UI element.
+         * Use this to make buttons, scrolls, and cards pop off the background.
+         */
+        public static void applyDropShadow(javafx.scene.Node node) {
+            DropShadow shadow = new DropShadow();
+            shadow.setColor(Color.rgb(0, 0, 0, 0.6)); // 60% opacity black
+            shadow.setRadius(15);                     // Softness of the shadow
+            shadow.setOffsetX(5);                     // Push slightly to the right
+            shadow.setOffsetY(5);                     // Push slightly downwards
+            
+            node.setEffect(shadow);
+        }
 }

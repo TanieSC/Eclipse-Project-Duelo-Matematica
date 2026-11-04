@@ -1,6 +1,7 @@
 package controller;
 
 import model.AuthService;
+
 import model.MathQuestions;
 import model.Session;
 import view.*;
@@ -67,17 +68,25 @@ public class MainMenuController implements Navigator {
 
     @Override
     public void goToUserProfile() {
-        // Get the current username from the session, or default to "Guest"
+        // 1. Grab the logged-in user from the Session memory
+        model.User currentUser = model.Session.getCurrentUser();
+        
+        // 2. Create the profile model using the real data from the database
         String username = "Guest";
-        if (model.Session.getCurrentUser() != null) {
-            username = model.Session.getCurrentUser().getUsername();
+        String tier = "Bronze";
+        int elo = 0;
+
+        if (currentUser != null) {
+            username = currentUser.getUsername();
+            tier = currentUser.getTier();
+            elo = currentUser.getElo();
         }
 
-        // Create the profile model (Using dummy stats for now)
-        model.UserProfileModel model = new model.UserProfileModel(username, "Gold", 1500);
+        // 3. Pass the real stats to the model
+        model.UserProfileModel profileModel = new model.UserProfileModel(username, tier, elo);
         
-        // Build view and controller
-        UserProfileView v = new UserProfileView(model);
+        // 4. Build view and controller
+        UserProfileView v = new UserProfileView(profileModel);
         new UserProfileController(v, this);
         
         view.setOverlayContent(v.getRoot());
@@ -181,4 +190,5 @@ public class MainMenuController implements Navigator {
     public void closePopup() {
         view.closePopup(); // <--- This will now compile without errors
     }
+
 }

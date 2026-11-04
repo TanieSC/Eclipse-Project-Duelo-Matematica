@@ -10,5 +10,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JlatexMath"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JLatexMath"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JmDNS"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/SQLite JDBC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -15,8 +15,7 @@ import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -64,6 +63,13 @@ public class StoryLevelsView {
         mapView.setFitHeight(mapHeight);
         mapView.setPreserveRatio(false); 
 
+        // Add a drop shadow to the map so it pops off the red background
+        DropShadow mapShadow = new DropShadow();
+        mapShadow.setColor(Color.rgb(0, 0, 0, 0.7));
+        mapShadow.setRadius(15);
+        mapShadow.setOffsetX(5);
+        mapShadow.setOffsetY(5);
+
         // 2. Setup the Game Pane
         gamePane = new Pane();
         gamePane.setPrefSize(mapWidth, mapHeight);
@@ -89,9 +95,27 @@ public class StoryLevelsView {
         pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 48, null);
         gearButton  = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null);
 
-        // 6. Assemble Everything
+        // 6. Assemble the Interactive Map (Apply shadow here)
         StackPane interactiveMap = new StackPane(mapView, gamePane);
+        interactiveMap.setMaxSize(mapWidth, mapHeight);
+        interactiveMap.setEffect(mapShadow); 
+        
+        // 7. Assemble Root and Apply Tiled Background
         root = new StackPane(interactiveMap, pauseButton, gearButton);
+        
+        ViewUtils.applyTiledBackground("/backgrounds/bg_map_level.png", root);
+        // Load the dark red background
+		/*
+		 * try { InputStream bgStream =
+		 * getClass().getResourceAsStream("/_assets/backgrounds/bg_map_level.png"); if
+		 * (bgStream != null) { Image bgImage = new Image(bgStream); BackgroundImage bg
+		 * = new BackgroundImage( bgImage, BackgroundRepeat.REPEAT,
+		 * BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT, BackgroundSize.DEFAULT
+		 * ); root.setBackground(new Background(bg)); } else {
+		 * root.setStyle("-fx-background-color: #4a0d15;"); // Fallback red } } catch
+		 * (Exception e) { root.setStyle("-fx-background-color: #4a0d15;"); // Fallback
+		 * red }
+		 */
         
         StackPane.setAlignment(pauseButton, Pos.TOP_LEFT);
         StackPane.setMargin(pauseButton, new Insets(20));

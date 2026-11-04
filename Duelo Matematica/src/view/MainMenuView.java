@@ -65,6 +65,11 @@ public class MainMenuView {
         registerButton.setText("CREATE ACCOUNT");
         
         exitButton = ViewUtils.createSpriteButton("/buttons/btn.png","EXIT", null);
+        
+        ViewUtils.applyDropShadow(headerLabel);
+        ViewUtils.applyDropShadow(loginButton);
+        ViewUtils.applyDropShadow(registerButton);
+        ViewUtils.applyDropShadow(exitButton);
 
         VBox buttonBox = new VBox(15, loginButton, registerButton, exitButton);
         buttonBox.setAlignment(Pos.CENTER);
@@ -80,7 +85,9 @@ public class MainMenuView {
         overlay.setVisible(false);
 
         root = new StackPane(menuContent);
-        root.setStyle("-fx-background-color: #ffffff;");
+        ViewUtils.applyBackgroundImage(root, "/backgrounds/bg_main_menu.png");
+
+       // root.setStyle("-fx-background-color: #ffffff;");
 
         stage.setTitle("Duelo X Matematica");
         stage.setScene(new Scene(root, 900, 700)); 
