@@ -1,5 +1,7 @@
 package controller;
 
+import network.GameConnection;
+
 public interface Navigator {
     void goToMenu();
     void goToLogin();
@@ -19,4 +21,7 @@ public interface Navigator {
     void goToStoryScreen(int level);
     void goToStoryBattle(int level);
     void goToConcede(); 
+    void goTo1v1TimeSelection();
+    void goTo1v1Matchmaking(int durationSeconds);
+    void goTo1v1Battle(GameConnection connection, int durationSeconds);
 }

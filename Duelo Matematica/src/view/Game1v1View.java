@@ -87,9 +87,11 @@ public class Game1v1View {
 
     private final Button surrenderButton;
     private final Button gearButton;
-
+    private final Label timerLabel;
+    
     private int currentCorrectIndex = -1;
     private boolean answered = false;
+    private ParallelTransition currentBoxAnim;
 
     // GameView-style callback: tells the controller which 0..3 option was clicked.
     private Consumer<Integer> onAnswerPicked;
@@ -101,9 +103,18 @@ public class Game1v1View {
 
         // --- Top bar (Surrender) ---
         surrenderButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_concede.png", 48, null);//ViewUtils.createSpriteButton("/buttons/btn.png", "SURRENDER", null);
-        HBox topBar = new HBox(surrenderButton);
+        
+        timerLabel = ViewUtils.createBodyTextLabel("");
+        timerLabel.setStyle("-fx-text-fill: #000000; -fx-font-size: 18px; -fx-font-weight: bold;");
+        timerLabel.setVisible(false);
+        timerLabel.setManaged(false);
+
+        Region timerSpacer = new Region();
+        HBox.setHgrow(timerSpacer, Priority.ALWAYS);
+
+        HBox topBar = new HBox(surrenderButton, timerSpacer, timerLabel);
         topBar.setPadding(new Insets(10, 15, 0, 15));
-        topBar.setAlignment(Pos.TOP_LEFT);
+        topBar.setAlignment(Pos.CENTER_LEFT);
 
         // --- Bottom bar (Gear) ---
         gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 42, null);
@@ -256,22 +267,27 @@ public class Game1v1View {
     public void setOnAnswerPicked(Consumer<Integer> handler) { this.onAnswerPicked = handler; }
 
     public void showQuestion(Question q) {
-        categoryLabel.setText(q.getTopic().toUpperCase() + " (" + q.getDifficulty() + ")");
-
-        TextFlow questionFlow = LatexRenderer.toTextFlow(q.getText(), 10);
-        questionContainer.getChildren().setAll(questionFlow);
-
         List<String> optionsList = new ArrayList<>();
         optionsList.add(q.getCorrectAnswer());
         Collections.addAll(optionsList, q.getWrongAnswers());
         Collections.shuffle(optionsList);
-
         String[] shuffled = optionsList.toArray(new String[0]);
-        currentCorrectIndex = -1;
+
+        int correctIdx = -1;
         for (int i = 0; i < shuffled.length; i++) {
-            if (shuffled[i].equals(q.getCorrectAnswer())) { currentCorrectIndex = i; break; }
+            if (shuffled[i].equals(q.getCorrectAnswer())) { correctIdx = i; break; }
         }
-        setOptions(shuffled);
+        showQuestion(q, shuffled, correctIdx);
+    }
+
+    /** Network overload — caller supplies a pre-shuffled option order. */
+    public void showQuestion(Question q, String[] preShuffledOptions, int correctIdx) {
+        categoryLabel.setText(q.getTopic().toUpperCase() + " (" + q.getDifficulty() + ")");
+        TextFlow questionFlow = LatexRenderer.toTextFlow(q.getText(), 10);
+        questionContainer.getChildren().setAll(questionFlow);
+
+        currentCorrectIndex = correctIdx;
+        setOptions(preShuffledOptions);
     }
 
     public void setOptions(String[] options) {
@@ -391,6 +407,15 @@ public class Game1v1View {
         }
     }
 
+    public void showTimer(boolean visible) {
+        timerLabel.setVisible(visible);
+        timerLabel.setManaged(visible);
+    }
+
+    public void setTimerText(String text) {
+        timerLabel.setText(text);
+    }
+    
     /** 1v1 rule visualisation: pushes the boxes and rebalances the health bar. */
     public void animateBoxes(double targetGreenX, double targetRedX, Runnable onFinished) {
         TranslateTransition greenAnim = new TranslateTransition(Duration.millis(350), greenBox);
@@ -413,8 +438,11 @@ public class Game1v1View {
             )
         );
 
+        if (currentBoxAnim != null) currentBoxAnim.stop();
+        
         ParallelTransition syncAnim = new ParallelTransition(greenAnim, redAnim, healthAnim);
         syncAnim.setOnFinished(e -> { if (onFinished != null) onFinished.run(); });
+        currentBoxAnim = syncAnim;
         syncAnim.play();
     }
 

@@ -134,6 +134,20 @@ public class MainMenuController implements Navigator {
         view.setOverlayContent(v.getRoot());
     }
     
+    @Override
+    public void goTo1v1TimeSelection() {
+        TimeSelectionView v = new TimeSelectionView();
+        new TimeSelectionController(v, this);
+        view.setOverlayContent(v.getRoot());
+    }
+
+    @Override
+    public void goTo1v1Matchmaking(int durationSeconds) {
+        MatchmakingView v = new MatchmakingView(durationSeconds);
+        new MatchmakingController(v, this, authService, durationSeconds);
+        view.setOverlayContent(v.getRoot());
+    }
+    
     // ==========================================
     // FULL SCREEN VIEWS (Menu is hidden)
     // ==========================================
@@ -189,6 +203,14 @@ public class MainMenuController implements Navigator {
     @Override
     public void closePopup() {
         view.closePopup(); // <--- This will now compile without errors
+    }
+    
+    @Override
+    public void goTo1v1Battle(network. GameConnection connection, int durationSeconds) {
+        Game1v1View v = new Game1v1View();
+        model.Network1v1Model m = new model.Network1v1Model("All", durationSeconds);
+        new Network1v1Controller(v, m, this, authService, connection);
+        view.setContent(v.getRoot());
     }
 
 }

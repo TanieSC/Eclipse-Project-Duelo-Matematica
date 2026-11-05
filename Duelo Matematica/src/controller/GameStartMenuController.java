@@ -29,7 +29,8 @@ public class GameStartMenuController {
         view.getGearButton().setOnAction(e -> nav.goToSettings());
 
         // 1VS1, PROFILE, LEADERBOARD -> Placeholder popups for now
-        view.get1vs1Button().setOnAction(e -> nav.goTo1v1Game());
+        //view.get1vs1Button().setOnAction(e -> nav.goTo1v1Game());
+        view.get1vs1Button().setOnAction(e -> nav.goTo1v1TimeSelection());
         view.getProfileButton().setOnAction(e -> nav.goToUserProfile());
         view.getLeaderboardButton().setOnAction(e -> nav.goToLeaderboard());
         view.getStoryButton().setOnAction(e -> nav.goToStoryLevels());

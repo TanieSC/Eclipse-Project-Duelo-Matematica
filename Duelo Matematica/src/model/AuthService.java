@@ -187,25 +187,21 @@ public class AuthService {
         }
         return sb.toString();
     }
-    
+
     /**
-     * UPDATE ELO — Writes a new Elo rating and recomputes the checksum.
-     * Both network 1v1 clients call this after a match. Each side computes
-     * its own new rating locally from (myElo, oppElo, actualScore); the
-     * Elo formula is zero-sum, so both sides stay in agreement.
+     * UPDATE ELO — Persists a new ELO for a user, recomputing the checksum.
+     * Mirrors updatePassword() so tamper detection stays intact.
      */
     public boolean updateElo(String email, int newElo) {
         try (Connection conn = DriverManager.getConnection(URL)) {
-            // Need username + current pass to recompute the checksum.
             String selectSql = "SELECT user_n, pass FROM users WHERE email = ?";
             PreparedStatement pstmtSelect = conn.prepareStatement(selectSql);
             pstmtSelect.setString(1, email);
             ResultSet rs = pstmtSelect.executeQuery();
-
             if (rs.next()) {
                 String username = rs.getString("user_n");
-                String passHash = rs.getString("pass");
-                String newChecksum = generateChecksum(email, username, passHash, newElo);
+                String hash = rs.getString("pass");
+                String newChecksum = generateChecksum(email, username, hash, newElo);
 
                 String updateSql = "UPDATE users SET elo = ?, checksum = ? WHERE email = ?";
                 PreparedStatement pstmtUpdate = conn.prepareStatement(updateSql);
@@ -221,14 +217,26 @@ public class AuthService {
     }
 
     /**
-     * Standard Elo formula, K = 32.
-     * actualScore: 1.0 = win, 0.5 = draw, 0.0 = loss.
-     * Both sides compute this from their OWN perspective — the gains and
-     * losses are equal in magnitude, so the ladder stays zero-sum.
+     * GET USER BY EMAIL — Reads fresh state (Elo, tier) directly from the DB.
+     * Used to refresh Session after an Elo change.
      */
-    public static int computeNewElo(int myElo, int oppElo, double actualScore) {
-        double expected = 1.0 / (1.0 + Math.pow(10.0, (oppElo - myElo) / 400.0));
-        return (int) Math.round(myElo + 32.0 * (actualScore - expected));
+    public User getUserByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = ?";
+        try (Connection conn = DriverManager.getConnection(URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String storedHash = rs.getString("pass");
+                String username = rs.getString("user_n");
+                int elo = rs.getInt("elo");
+                String tier = calculateTier(elo);
+                return new User(email, username, storedHash, tier, elo);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private String calculateTier(int elo) {
