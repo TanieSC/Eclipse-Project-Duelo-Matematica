@@ -789,7 +789,7 @@ public final class ViewUtils {
     * Factory method to easily create a NineSlice from a resource path.
     */
    public static NineSlice createNineSlice(String imagePath, int frames, double l, double r, double t, double b, double scale, boolean tileMiddle) {
-       Image img = new Image(ViewUtils.class.getResourceAsStream(imagePath));
+       Image img = new Image(ViewUtils.class.getResourceAsStream("/_assets" + imagePath));
        return new NineSlice(img, frames, l, r, t, b, scale, tileMiddle);
    }
 

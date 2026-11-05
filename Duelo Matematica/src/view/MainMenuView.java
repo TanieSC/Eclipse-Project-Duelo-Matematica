@@ -1,64 +1,97 @@
 package view;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
-import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
  * MAIN MENU VIEW — The "Window Shell" and Animation Director.
- * 
- * WHAT DOES THIS CLASS DO?
- * This is the ONLY class in the app that owns the actual OS window (the Stage).
- * It acts like a picture frame that holds all the different screens.
- * 
- * It handles TWO different types of screen changes:
- * 1. FULL SCREEN SWAPS: Uses a smooth "Popup" effect (Fade + Scale up).
- * 2. POPUP OVERLAYS: Uses a "Wooden Dropdown/Roll-up" effect (using a 12-frame image).
  */
 public class MainMenuView {
 
-    private final Stage stage;          // The actual OS window.
-    private final StackPane root;       // The container holding all our screens.
-    private final VBox menuContent;      // The default home screen (Title + Login/Register/Exit).    
-    private final Region overlay;
-
-    // The three main buttons on the home screen.
+    private final Stage stage;          
+    private final StackPane root;       
+    private final VBox menuContent;      
+    
     private final Button loginButton;
     private final Button registerButton;
     private final Button exitButton;
     
-    // Keeps track of any running animation so we can stop it if the user clicks really fast.
     private Transition activeTransition;
 
-    /**
-     * CONSTRUCTOR — Builds the main window and sets up the home menu.
-     */
     public MainMenuView(Stage stage) {
         this.stage = stage;
-        String titleText = "Duelo X Matematica";
 
-        // Use the sprite header directly (returns a StackPane)
-        StackPane headerLabel = ViewUtils.createSpriteHeader("/panels/ui_scroll.png", titleText);
+        // ==========================================
+        // 1. THE CUSTOM HEADER (DUELO + Swords + MATEMATICA)
+        // ==========================================
+        Label lblDuelo = new Label("DUELO");
+        lblDuelo.setFont(ViewUtils.getCustomFont(40));
+        lblDuelo.setTextFill(Color.web("#55321E")); // Very dark, almost black
+        lblDuelo.setTranslateY(10); // Push down slightly toward the swords
 
+        ImageView swordsIcon = new ImageView();
+        try {
+            // Load the image you provided
+            var stream = getClass().getResourceAsStream("/_assets/misc/ui_crossed_swords.png");
+            if (stream != null) {
+                swordsIcon.setImage(new Image(stream));
+                swordsIcon.setFitWidth(95); // Adjust this if the swords need to be bigger/smaller
+                swordsIcon.setPreserveRatio(true);
+            }
+        } catch (Exception e) {
+            System.err.println("Could not load swords icon.");
+        }
+
+        Label lblMatematica = new Label("MATEMATICA");
+        lblMatematica.setFont(ViewUtils.getCustomFont(40));
+        lblMatematica.setTextFill(Color.web("#55321E"));
+        lblMatematica.setTranslateY(-50); // Pull up slightly toward the swords
+
+        // Stack them vertically. Negative spacing (-25) pulls them tightly together
+        VBox titleBox = new VBox(-20, lblDuelo, swordsIcon, lblMatematica);
+        titleBox.setAlignment(Pos.CENTER);
+
+        // Wrap the text in the wooden scroll background
+        NineSlice scrollBg = ViewUtils.createNineSlice("/panels/ui_scroll.png", 1, 20, 20, 8, 14, 3.0, true);
+        StackPane headerContainer = new StackPane(scrollBg, titleBox);
+        
+        // Make the scroll large and wide enough to match your screenshot's proportions
+        headerContainer.setPrefSize(700, 280); 
+        headerContainer.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+        // Bind the background to perfectly fill the container
+        if (scrollBg != null) {
+            scrollBg.prefWidthProperty().bind(headerContainer.widthProperty());
+            scrollBg.prefHeightProperty().bind(headerContainer.heightProperty());
+            scrollBg.minWidthProperty().bind(headerContainer.widthProperty());
+            scrollBg.minHeightProperty().bind(headerContainer.heightProperty());
+            scrollBg.maxWidthProperty().bind(headerContainer.widthProperty());
+            scrollBg.maxHeightProperty().bind(headerContainer.heightProperty());
+        }
+
+        ViewUtils.applyDropShadow(headerContainer);
+
+        // ==========================================
+        // 2. THE BUTTONS
+        // ==========================================
         loginButton = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGIN", null);
         
         registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 300, 60, null);
@@ -66,7 +99,6 @@ public class MainMenuView {
         
         exitButton = ViewUtils.createSpriteButton("/buttons/btn.png","EXIT", null);
         
-        ViewUtils.applyDropShadow(headerLabel);
         ViewUtils.applyDropShadow(loginButton);
         ViewUtils.applyDropShadow(registerButton);
         ViewUtils.applyDropShadow(exitButton);
@@ -75,22 +107,43 @@ public class MainMenuView {
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.setFillWidth(true);
 
-        menuContent = new VBox(30, headerLabel, buttonBox);
+        // ==========================================
+        // 3. ASSEMBLE THE MENU
+        // ==========================================
+        menuContent = new VBox(40, headerContainer, buttonBox); // 40px gap between header and buttons
         menuContent.setAlignment(Pos.CENTER);
         menuContent.setFillWidth(false);
         menuContent.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        overlay = new Region();
-        overlay.setStyle("-fx-background-color: rgba(0, 0, 0, 0.4);");
-        overlay.setVisible(false);
-
+        // ==========================================
+        // 4. ROOT & BACKGROUND
+        // ==========================================
         root = new StackPane(menuContent);
         ViewUtils.applyBackgroundImage(root, "/backgrounds/bg_main_menu.png");
 
-       // root.setStyle("-fx-background-color: #ffffff;");
-
         stage.setTitle("Duelo X Matematica");
-        stage.setScene(new Scene(root, 900, 700)); 
+        //stage.setScene(new Scene(root, 900, 700)); 
+        // Create the scene
+        Scene scene = new Scene(root, 900, 700); 
+        
+        // APPLY CUSTOM CURSOR HERE
+        try {
+            var cursorStream = getClass().getResourceAsStream("/_assets/misc/ui_cursor.png");
+            if (cursorStream != null) {
+                Image cursorImage = new Image(cursorStream);
+                
+                // The (0, 0) are the "hotspot" coordinates. 
+                // For a top-left pointing arrow, the hotspot is at the very tip (0,0).
+                Cursor customCursor = new ImageCursor(cursorImage, 0, 0);
+                scene.setCursor(customCursor);
+            } else {
+                System.err.println("WARNING: Custom cursor image NOT FOUND at /_assets/misc/cursor.png");
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to load custom cursor: " + e.getMessage());
+        }
+
+        stage.setScene(scene);
     }
 
     // =========================================================
@@ -115,6 +168,14 @@ public class MainMenuView {
             return;
         }
 
+        // NEW: swap the root background so it only lives on the menu screen.
+        if (newNode == menuContent) {
+            ViewUtils.applyBackgroundImage(root, "/backgrounds/bg_main_menu.png");
+        } else {
+            //root.setBackground(null);
+        	ViewUtils.applyBackgroundImage(root, "");
+        }
+        
         // Clear the screen completely (removes the main menu) and add the new screen.
         root.getChildren().setAll(newNode);
 
