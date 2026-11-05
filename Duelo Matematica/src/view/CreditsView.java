@@ -34,16 +34,16 @@ public class CreditsView {
             createSection("PM & ARCHITECT", "CIRE")
         );
 
-        GridPane grid = new GridPane();
-        grid.setHgap(50);
-        grid.setAlignment(Pos.CENTER);
+        GridPane grid = ViewUtils.createStandardFormGrid(15, 15); //new GridPane();
+        //grid.setHgap(50);
+        //grid.setAlignment(Pos.CENTER);
         grid.add(leftCol, 0, 0);
         grid.add(rightCol, 1, 0);
 
         // Group all the content into a VBox
         VBox contentBox = new VBox(30, headerBox, grid);
         // Add top padding to make room for the floating button
-        contentBox.setPadding(new Insets(25, 40, 40, 40)); 
+        contentBox.setPadding(new Insets(25, 40, 80, 40)); 
         contentBox.setAlignment(Pos.TOP_CENTER);
 
         // --- THE FIX: Use the exact same button creation as ConcedeView ---

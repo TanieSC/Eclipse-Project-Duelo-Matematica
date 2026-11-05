@@ -44,9 +44,9 @@ public class LeaderBoardView {
 
         VBox leaderboardCard = new VBox(18, titleLabel, headerRow, scrollPane);
         leaderboardCard.setAlignment(Pos.TOP_CENTER);
-        leaderboardCard.setStyle("-fx-padding: 25px 30px;");
-        leaderboardCard.setPrefSize(440, 360);
-        leaderboardCard.setMaxSize(440, 360);
+        leaderboardCard.setStyle("-fx-padding: 40px 30px;");
+        leaderboardCard.setPrefSize(440, 460);
+        leaderboardCard.setMaxSize(440, 460);
 
         // THE EXIT BUTTON
         backButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_exit.png", 40, null);

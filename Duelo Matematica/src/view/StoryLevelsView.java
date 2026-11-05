@@ -31,7 +31,7 @@ public class StoryLevelsView {
 
     private final StackPane root;
     private final Pane gamePane;
-    private final Button pauseButton;
+    private final Button backButton;
     private final Button gearButton;
     
     private final Rectangle greenBox;
@@ -92,7 +92,11 @@ public class StoryLevelsView {
         gamePane.getChildren().addAll(greenBox, houseZone, mountainZone, castleZone);
 
         // 5. Setup UI buttons
-        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 50, null);
+        //pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 50, null);
+        
+        backButton = ViewUtils.createSpriteButton("/buttons/btn.png", 120, 60, null);
+        backButton.setText("< Back");
+        
         gearButton  = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
 
         // 6. Assemble the Interactive Map (Apply shadow here)
@@ -101,7 +105,7 @@ public class StoryLevelsView {
         interactiveMap.setEffect(mapShadow); 
         
         // 7. Assemble Root and Apply Tiled Background
-        root = new StackPane(interactiveMap, pauseButton, gearButton);
+        root = new StackPane(interactiveMap, backButton, gearButton);
         
         ViewUtils.applyTiledBackground("/backgrounds/bg_map_level.png", root);
         // Load the dark red background
@@ -117,8 +121,8 @@ public class StoryLevelsView {
 		 * red }
 		 */
         
-        StackPane.setAlignment(pauseButton, Pos.TOP_LEFT);
-        StackPane.setMargin(pauseButton, new Insets(20));
+        StackPane.setAlignment(backButton, Pos.TOP_LEFT);
+        StackPane.setMargin(backButton, new Insets(20));
         
         StackPane.setAlignment(gearButton, Pos.BOTTOM_LEFT);
         StackPane.setMargin(gearButton, new Insets(20));
@@ -205,6 +209,6 @@ public class StoryLevelsView {
     }
 
     public Node getRoot() { return root; }
-    public Button getPauseButton() { return pauseButton; }
+    public Button getPauseButton() { return backButton; }
     public Button getGearButton() { return gearButton; }
 }

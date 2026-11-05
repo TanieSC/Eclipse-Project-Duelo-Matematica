@@ -2,7 +2,6 @@ package controller;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.control.Alert;
 import javafx.util.Duration;
 import model.StoryModel;
 import view.StoryScreenView;
@@ -14,11 +13,20 @@ public class StoryScreenController {
     private Timeline storyTimeline;
 
     public StoryScreenController(StoryScreenView view, StoryModel model, int level, Navigator nav) {
-        // Pause button behavior
+        
+        // Pause button shows the overlay and pauses the text
         view.getPauseButton().setOnAction(e -> {
             if (storyTimeline != null) storyTimeline.pause();
-            showPauseDialog();
-            nav.goToStoryLevels(); // Go back to map when paused
+            
+            view.showPauseOverlay(
+                () -> { // onResume (runs when popup is closed via Resume)
+                    if (storyTimeline != null) storyTimeline.play();
+                },
+                () -> { // onExitToMap (runs when popup is closed via Back to Map)
+                    if (storyTimeline != null) storyTimeline.stop();
+                    nav.goToStoryLevels();
+                }
+            );
         });
 
         // Skip button goes straight to battle
@@ -51,13 +59,5 @@ public class StoryScreenController {
         });
 
         storyTimeline.play();
-    }
-
-    private void showPauseDialog() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Pause");
-        alert.setHeaderText(null);
-        alert.setContentText("Game Paused");
-        alert.show();
     }
 }
