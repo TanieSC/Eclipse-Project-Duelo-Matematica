@@ -137,7 +137,7 @@ public class MainMenuView {
                 Cursor customCursor = new ImageCursor(cursorImage, 0, 0);
                 scene.setCursor(customCursor);
             } else {
-                System.err.println("WARNING: Custom cursor image NOT FOUND at /_assets/misc/cursor.png");
+                System.err.println("WARNING: Custom cursor image NOT FOUND at /_assets/misc/ui_cursor.png");
             }
         } catch (Exception e) {
             System.err.println("Failed to load custom cursor: " + e.getMessage());
