@@ -2,6 +2,7 @@ package controller;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import model.AudioManager;
 import model.Session;
 import model.UserProfileModel;
 import view.GameSettingsView;
@@ -17,6 +18,8 @@ public class GameStartMenuController {
         this.view = view;
         this.nav = nav;
 
+        AudioManager.playBGM("mus_main_menu.wav"); // Start menu music
+        
         // --- WIRING THE BUTTONS ---
 
         // STORY -> Go to the Topic/Category Selection screen!

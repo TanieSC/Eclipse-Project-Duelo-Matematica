@@ -194,6 +194,7 @@ public class StoryBattleView {
         gameLayout.setBottom(bottomBar);
 
         rootStack.getChildren().add(gameLayout);
+        ViewUtils.applyBackgroundImage(rootStack, "/backgrounds/bg_house.png");
     }
 
     public Node getRoot() { return rootStack; }

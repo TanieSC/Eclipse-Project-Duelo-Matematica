@@ -127,21 +127,19 @@ public class MainMenuView {
         Scene scene = new Scene(root, 900, 700); 
         
         // APPLY CUSTOM CURSOR HERE
-        try {
-            var cursorStream = getClass().getResourceAsStream("/_assets/misc/ui_cursor.png");
-            if (cursorStream != null) {
-                Image cursorImage = new Image(cursorStream);
-                
-                // The (0, 0) are the "hotspot" coordinates. 
-                // For a top-left pointing arrow, the hotspot is at the very tip (0,0).
-                Cursor customCursor = new ImageCursor(cursorImage, 0, 0);
-                scene.setCursor(customCursor);
-            } else {
-                System.err.println("WARNING: Custom cursor image NOT FOUND at /_assets/misc/ui_cursor.png");
-            }
-        } catch (Exception e) {
-            System.err.println("Failed to load custom cursor: " + e.getMessage());
-        }
+		/*
+		 * try { var cursorStream =
+		 * getClass().getResourceAsStream("/_assets/misc/ui_cursor.png"); if
+		 * (cursorStream != null) { Image cursorImage = new Image(cursorStream);
+		 * 
+		 * // The (0, 0) are the "hotspot" coordinates. // For a top-left pointing
+		 * arrow, the hotspot is at the very tip (0,0). Cursor customCursor = new
+		 * ImageCursor(cursorImage, 0, 0); scene.setCursor(customCursor); } else {
+		 * System.err.
+		 * println("WARNING: Custom cursor image NOT FOUND at /_assets/misc/ui_cursor.png"
+		 * ); } } catch (Exception e) {
+		 * System.err.println("Failed to load custom cursor: " + e.getMessage()); }
+		 */
 
         stage.setScene(scene);
     }

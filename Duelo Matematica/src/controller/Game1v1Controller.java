@@ -2,6 +2,7 @@ package controller;
 
 import javafx.animation.PauseTransition;
 import javafx.util.Duration;
+import model.AudioManager;
 import model.Game1v1Model;
 import view.Game1v1View;
 
@@ -16,6 +17,8 @@ public class Game1v1Controller {
         this.model = model;
         this.mainMenuController = mainMenuController;
 
+        AudioManager.playBGM("mus_battle.wav"); 
+        
         setupHandlers();
         startGame();
 

@@ -2,6 +2,7 @@ package controller;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import model.AudioManager;
 import model.NpcOpponent;
 import model.StoryBattleModel;
 import view.StoryBattleView;
@@ -20,6 +21,8 @@ public class StoryBattleController {
         this.view = view;
         this.model = model;
         this.nav = nav;
+        
+        AudioManager.playBGM("mus_battle.wav"); 
         
         // 1. Instantiate the Bot using the chosen level (1, 2, or 3)
         this.bot = new NpcOpponent(level);

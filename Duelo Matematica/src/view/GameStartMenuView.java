@@ -22,12 +22,20 @@ public class GameStartMenuView {
 
     public GameStartMenuView(String titleText) {
         Label headerLabel = ViewUtils.createPopupHeaderLabel(titleText);
+        ViewUtils.applyDropShadow(headerLabel);
 
         btnStory       = ViewUtils.createSpriteButton("/buttons/btn.png", "STORY", null);
         btn1vs1        = ViewUtils.createSpriteButton("/buttons/btn.png", "1VS1", null);
         btnProfile     = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_profile.png", 55, null);
         btnLeaderboard = ViewUtils.createSpriteButton("/buttons/btn.png", "LEADERBOARD", null);
         btnBack        = ViewUtils.createSpriteButton("/buttons/btn.png", "BACK", null);
+        
+        ViewUtils.applyDropShadow(btnStory);
+        ViewUtils.applyDropShadow(btn1vs1);
+        ViewUtils.applyDropShadow(btnProfile);
+        ViewUtils.applyDropShadow(btnLeaderboard);
+        ViewUtils.applyDropShadow(btnBack);
+
 
         HBox profileLeaderboardRow = new HBox(15, btnProfile, btnLeaderboard);
         profileLeaderboardRow.setAlignment(Pos.CENTER);
@@ -45,10 +53,12 @@ public class GameStartMenuView {
         centerContent.setFillWidth(false);
 
         gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
+        ViewUtils.applyDropShadow(gearButton);
 
         root = new StackPane();
         // CRUCIAL: Transparent background
-        root.setStyle("-fx-background-color: #ffffff;"); 
+        root.setStyle("-fx-background-color: transparent;"); 
+       // ViewUtils.applyBackgroundImage(root, "/backgrounds/bg_main_menu.png");
         root.getChildren().addAll(centerContent, gearButton);
         
         StackPane.setAlignment(gearButton, Pos.BOTTOM_LEFT);

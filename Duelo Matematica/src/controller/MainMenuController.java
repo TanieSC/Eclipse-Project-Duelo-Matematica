@@ -1,5 +1,6 @@
 package controller;
 
+import model.AudioManager;
 import model.AuthService;
 
 import model.MathQuestions;
@@ -14,6 +15,8 @@ public class MainMenuController implements Navigator {
     public MainMenuController(MainMenuView view, AuthService authService) {
         this.view = view;
         this.authService = authService;
+        
+        AudioManager.playBGM("mus_main_menu.wav"); // Start menu music
 
         view.getLoginButton().setOnAction(e -> {
             if (!Session.isLoggedIn()) goToLogin();

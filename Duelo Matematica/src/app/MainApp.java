@@ -3,6 +3,7 @@ package app;
 import controller.MainMenuController;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import model.AudioManager;
 import model.AuthService;
 import view.MainMenuView;
 import view.ViewUtils;
@@ -68,6 +69,10 @@ public class MainApp extends Application {
     	
         //Load the custom font FIRST
         ViewUtils.loadCustomFont();
+        
+        
+        //Preload SFX so there is zero delay
+        AudioManager.preloadSfx(); 
 
         // MODEL: one shared instance of the account manager.
         // Nothing else in App touches this — it's handed to MainMenuController

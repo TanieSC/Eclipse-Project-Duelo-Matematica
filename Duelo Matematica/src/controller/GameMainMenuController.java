@@ -2,6 +2,7 @@ package controller;
 
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import model.AudioManager;
 import view.GameMainMenuView;
 import view.GameSettingsView;
 
@@ -13,7 +14,9 @@ public class GameMainMenuController {
     public GameMainMenuController(GameMainMenuView view, Navigator nav) {
         this.view = view;
         this.nav = nav;
-
+        
+        AudioManager.playBGM("mus_main_menu.wav"); // Start menu music
+        
         // START -> Go to the Game Start Menu (Select Mode)
         view.getStartButton().setOnAction(e -> nav.goToGameStartMenu());
 

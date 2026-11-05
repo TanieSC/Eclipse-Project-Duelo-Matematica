@@ -37,6 +37,7 @@ import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import model.AudioManager;
 
 
 /**
@@ -451,12 +452,19 @@ public final class ViewUtils {
        button.hoverProperty().addListener((obs, wasHovered, isNowHovered) -> {
           if (button.isArmed()) return; 
           int frame = isNowHovered ? 1 : 0;
+          
+          if (isNowHovered) {
+              // Optional: Play a soft hover sound
+              AudioManager.playSFX("sfx_button_hover.wav");
+          }
+          
           updateSpriteViewports(leftCap, midSection, rightCap, frame, frameWidth, frameHeight, capWidthLeft, capWidthRight, midWidth);
        });
 
        // --- PRESS ANIMATION ---
        button.armedProperty().addListener((obs, wasArmed, isNowArmed) -> {
           if (isNowArmed) {
+        	  AudioManager.playSFX("sfx_button_pressed.wav");
               updateSpriteViewports(leftCap, midSection, rightCap, 2, frameWidth, frameHeight, capWidthLeft, capWidthRight, midWidth);
               textLabel.setTranslateY(-5);
           } else {
@@ -995,6 +1003,7 @@ public final class ViewUtils {
             );
 
             activeOverlayTransition = new ParallelTransition(woodTimeline, clipTimeline);
+            AudioManager.playSFX("sfx_paper.wav");
             activeOverlayTransition.play();
         }
 
@@ -1073,6 +1082,7 @@ public final class ViewUtils {
             });
 
             activeOverlayTransition = transition;
+            AudioManager.playSFX("sfx_wax_break.wav");
             transition.play();
         }
               

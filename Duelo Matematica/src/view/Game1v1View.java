@@ -254,6 +254,7 @@ public class Game1v1View {
         gameLayout.setBottom(bottomBar);
 
         rootStack.getChildren().add(gameLayout);
+        ViewUtils.applyBackgroundImage(rootStack, "/backgrounds/bg_house.png");
         
     }
 
@@ -468,7 +469,7 @@ public class Game1v1View {
         titleLabel.setStyle("-fx-text-fill: " + (isWin ? "#00a800;" : "#d00000;"));
 
         Label messageLabel = new Label(isWin ? "You defeated the opponent!"
-                                             : "You made 3 mistakes or got pushed off!");
+                                             : "Defeat (Conceded)!");
         messageLabel.setFont(ViewUtils.getCustomFont(10));
         messageLabel.setStyle("-fx-text-fill: #333333;");
         messageLabel.setWrapText(true);

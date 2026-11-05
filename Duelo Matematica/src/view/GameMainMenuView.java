@@ -19,11 +19,16 @@ public class GameMainMenuView {
     public GameMainMenuView(String titleText) {
         // 1. Custom Wooden Header
         Label headerLabel = ViewUtils.createPopupHeaderLabel(titleText);
+        ViewUtils.applyDropShadow(headerLabel);
 
         // 2. Custom Wooden Buttons
         btnStart   = ViewUtils.createSpriteButton("/buttons/btn.png", "START", null);
         btnCredits = ViewUtils.createSpriteButton("/buttons/btn.png", "CREDITS", null);
         btnBack    = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGOUT", null);
+        
+        ViewUtils.applyDropShadow(btnStart);
+        ViewUtils.applyDropShadow(btnCredits);
+        ViewUtils.applyDropShadow(btnBack);
 
         VBox buttonBox = new VBox(15, btnStart, btnCredits, btnBack);
         buttonBox.setAlignment(Pos.CENTER);
@@ -34,10 +39,12 @@ public class GameMainMenuView {
         centerContent.setFillWidth(false);
 
         gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
+        ViewUtils.applyDropShadow(gearButton);
 
         root = new StackPane();
         // CRUCIAL: Transparent background so the wooden popup shows!
-        root.setStyle("-fx-background-color: #ffffff;"); 
+        root.setStyle("-fx-background-color: transparent;"); 
+        //ViewUtils.applyBackgroundImage(root, "/backgrounds/bg_main_menu.png");
         root.getChildren().addAll(centerContent, gearButton);
         
         StackPane.setAlignment(gearButton, Pos.BOTTOM_LEFT);
