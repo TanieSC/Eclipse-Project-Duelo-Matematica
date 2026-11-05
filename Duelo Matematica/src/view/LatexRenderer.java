@@ -3,6 +3,7 @@ package view;
 import javafx.embed.swing.SwingFXUtils; // Cleanly bridges AWT to JavaFX
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
@@ -42,6 +43,7 @@ public final class LatexRenderer {
             if (!plain.isEmpty()) {
                 Text t = new Text(plain);
                 t.setFont(ViewUtils.getCustomFont(fontSize));
+                t.setFill(Color.web("#55321E"));
                 flow.getChildren().add(t); 
             }
             
@@ -63,6 +65,7 @@ public final class LatexRenderer {
         if (!tail.isEmpty()) {
             Text t = new Text(tail);
             t.setFont(ViewUtils.getCustomFont(fontSize));
+            t.setFill(Color.web("#55321E"));
             flow.getChildren().add(t);
         }
         return flow;
@@ -83,28 +86,29 @@ public final class LatexRenderer {
 
         String boldLatex = "\\boldsymbol{" + latex + "}";
         
-        // JLaTeXMath strictly requires java.awt, so we fully qualify it here
         TeXFormula formula = new TeXFormula(boldLatex);
         TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, renderSize);
-        
-        // AWT Insets are required by TeXIcon
         icon.setInsets(new java.awt.Insets(1, 1, 1, 1)); 
 
-        // Create the AWT BufferedImage canvas
         BufferedImage bimg = new BufferedImage(
             Math.max(1, icon.getIconWidth()),
             Math.max(1, icon.getIconHeight()),
             BufferedImage.TYPE_INT_ARGB 
         );
         
-        // Paint the formula onto the AWT canvas
         java.awt.Graphics2D g2 = bimg.createGraphics();
-        g2.setColor(java.awt.Color.BLACK); 
+        
+        // --- THE FIX ---
+        // 1. Decode the color
+        java.awt.Color brownColor = java.awt.Color.decode("#55321E");
+        
+        // 2. Set it on BOTH the graphics object and the icon itself
+        g2.setColor(brownColor);
+        icon.setForeground(brownColor); // <--- THIS IS THE CRUCIAL LINE
+        
         icon.paintIcon(null, g2, 0, 0);
         g2.dispose(); 
 
-        // Use SwingFXUtils to seamlessly convert AWT to JavaFX
-        // This replaces your manual toFxImage() method completely!
         return SwingFXUtils.toFXImage(bimg, null);
     }
 }

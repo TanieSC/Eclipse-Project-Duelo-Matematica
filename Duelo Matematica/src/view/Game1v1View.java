@@ -102,7 +102,7 @@ public class Game1v1View {
         gameLayout.setStyle("-fx-background-color: transparent;");
 
         // --- Top bar (Surrender) ---
-        surrenderButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_concede.png", 48, null);//ViewUtils.createSpriteButton("/buttons/btn.png", "SURRENDER", null);
+        surrenderButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_concede.png", 50, null);//ViewUtils.createSpriteButton("/buttons/btn.png", "SURRENDER", null);
         
         timerLabel = ViewUtils.createBodyTextLabel("");
         timerLabel.setStyle("-fx-text-fill: #000000; -fx-font-size: 18px; -fx-font-weight: bold;");
@@ -117,7 +117,7 @@ public class Game1v1View {
         topBar.setAlignment(Pos.CENTER_LEFT);
 
         // --- Bottom bar (Gear) ---
-        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 42, null);
+        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
         HBox bottomBar = new HBox(gearButton);
         bottomBar.setPadding(new Insets(0, 15, 12, 15));
         bottomBar.setAlignment(Pos.BOTTOM_LEFT);

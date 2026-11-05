@@ -94,7 +94,7 @@ public class MainMenuView {
         // ==========================================
         loginButton = ViewUtils.createSpriteButton("/buttons/btn.png", "LOGIN", null);
         
-        registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 300, 60, null);
+        registerButton = ViewUtils.createSpriteButton("/buttons/btn.png", 300, 80, null);
         registerButton.setText("CREATE ACCOUNT");
         
         exitButton = ViewUtils.createSpriteButton("/buttons/btn.png","EXIT", null);
@@ -169,12 +169,11 @@ public class MainMenuView {
         }
 
         // NEW: swap the root background so it only lives on the menu screen.
-        if (newNode == menuContent) {
-            ViewUtils.applyBackgroundImage(root, "/backgrounds/bg_main_menu.png");
-        } else {
-            //root.setBackground(null);
-        	ViewUtils.applyBackgroundImage(root, "");
-        }
+		/*
+		 * if (newNode == menuContent) { ViewUtils.applyBackgroundImage(root,
+		 * "/backgrounds/bg_main_menu.png"); } else { //root.setBackground(null);
+		 * ViewUtils.applyBackgroundImage(root, ""); }
+		 */
         
         // Clear the screen completely (removes the main menu) and add the new screen.
         root.getChildren().setAll(newNode);

@@ -92,8 +92,8 @@ public class StoryLevelsView {
         gamePane.getChildren().addAll(greenBox, houseZone, mountainZone, castleZone);
 
         // 5. Setup UI buttons
-        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 48, null);
-        gearButton  = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null);
+        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 50, null);
+        gearButton  = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
 
         // 6. Assemble the Interactive Map (Apply shadow here)
         StackPane interactiveMap = new StackPane(mapView, gamePane);

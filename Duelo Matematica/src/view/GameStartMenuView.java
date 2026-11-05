@@ -25,7 +25,7 @@ public class GameStartMenuView {
 
         btnStory       = ViewUtils.createSpriteButton("/buttons/btn.png", "STORY", null);
         btn1vs1        = ViewUtils.createSpriteButton("/buttons/btn.png", "1VS1", null);
-        btnProfile     = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_profile.png", 45, null);
+        btnProfile     = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_profile.png", 55, null);
         btnLeaderboard = ViewUtils.createSpriteButton("/buttons/btn.png", "LEADERBOARD", null);
         btnBack        = ViewUtils.createSpriteButton("/buttons/btn.png", "BACK", null);
 
@@ -44,7 +44,7 @@ public class GameStartMenuView {
         centerContent.setAlignment(Pos.CENTER);
         centerContent.setFillWidth(false);
 
-        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null);
+        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
 
         root = new StackPane();
         // CRUCIAL: Transparent background

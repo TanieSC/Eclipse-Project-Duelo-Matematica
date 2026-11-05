@@ -33,7 +33,7 @@ public class GameMainMenuView {
         centerContent.setAlignment(Pos.CENTER);
         centerContent.setFillWidth(false);
 
-        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 48, null);
+        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
 
         root = new StackPane();
         // CRUCIAL: Transparent background so the wooden popup shows!

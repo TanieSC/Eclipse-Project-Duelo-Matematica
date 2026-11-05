@@ -66,13 +66,13 @@ public class StoryBattleView {
         gameLayout.setStyle("-fx-background-color: transparent;");
 
         // --- Top bar (Surrender) ---
-        surrenderButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_concede.png", 48, null);
+        surrenderButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_concede.png", 50, null);
         HBox topBar = new HBox(surrenderButton);
         topBar.setPadding(new Insets(10, 15, 0, 15));
         topBar.setAlignment(Pos.TOP_LEFT);
 
         // --- Bottom bar (Gear) ---
-        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 42, null);
+        gearButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_settings.png", 50, null);
         HBox bottomBar = new HBox(gearButton);
         bottomBar.setPadding(new Insets(0, 15, 12, 15));
         bottomBar.setAlignment(Pos.BOTTOM_LEFT);
@@ -342,12 +342,12 @@ public class StoryBattleView {
 
         Label messageLabel = new Label(isWin ? "You defeated the math warrior!" : "You were defeated...");
         messageLabel.setFont(ViewUtils.getCustomFont(10));
-        messageLabel.setStyle("-fx-text-fill: #333333;");
+        messageLabel.setStyle("-fx-text-fill: #55321E");
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(TextAlignment.CENTER);
 
         Button returnBtn = ViewUtils.createSpriteButton("/buttons/btn.png", "RETURN TO MAP", null);
-        returnBtn.setFont(ViewUtils.getCustomFont(16));
+        //returnBtn.setFont(ViewUtils.getCustomFont(16));
         
         // Use ViewUtils to roll up the popup cleanly, then trigger the exit callback
         returnBtn.setOnAction(e -> {

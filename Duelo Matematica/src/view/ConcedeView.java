@@ -44,7 +44,7 @@ public class ConcedeView {
           contentBox.setPadding(new Insets(25, 40, 40, 40)); 
 
           // --- 2. THE EXIT BUTTON ---
-          closeButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_exit.png", 32, null);
+          closeButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_exit.png", 40, null);
 
           // --- 3. ASSEMBLE EVERYTHING ---
           root = new StackPane(contentBox, closeButton);

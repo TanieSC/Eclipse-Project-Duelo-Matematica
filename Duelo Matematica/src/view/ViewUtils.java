@@ -298,7 +298,7 @@ public final class ViewUtils {
        
        // 3. Add 80 pixels of padding so the text doesn't touch the wooden edges.
        double calculatedWidth = textWidth + 80; 
-       double fixedHeight = 60; // Keep a consistent height
+       double fixedHeight = 80; // Keep a consistent height
        
        // 4. Generate the button using the manual size method.
        Button btn = createSpriteButton(imagePath, calculatedWidth, fixedHeight, onClickAction);       

@@ -25,10 +25,10 @@ public class StoryScreenView {
     public StoryScreenView() {
         root = new BorderPane();
         // Transparent background
-        root.setStyle("-fx-background-color: transparent;");
+        root.setStyle("-fx-background-color: #000000;");
 
-        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 48, null);
-        skipButton = ViewUtils.createSpriteButton("/buttons/btn.png", 120, 60, null);
+        pauseButton = ViewUtils.createTwoFrameSpriteButton("/buttons/btn_pause.png", 50, null);
+        skipButton = ViewUtils.createSpriteButton("/buttons/btn.png", 120, 80, null);
         skipButton.setText("SKIP >");
 
         BorderPane topBar = new BorderPane();
@@ -57,8 +57,7 @@ public class StoryScreenView {
     public void addLine(String text) {
         Label label = ViewUtils.createBodyTextLabel(text);//new Label(text);
        // label.setFont(ViewUtils.getCustomFont(26));
-       // label.setStyle("-fx-text-fill: #000000;"); // Black text since wood background is light
-        label.setWrapText(true);
+        label.setStyle("-fx-text-fill: white"); //#6b3e26;");
         storyContentBox.getChildren().add(label);
 
         Timeline scrollAnimation = new Timeline(
