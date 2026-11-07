@@ -198,7 +198,10 @@ public class MainMenuController implements Navigator {
     @Override
     public void goToStoryBattle(int level) {
         model.StoryBattleModel gameModel = new model.StoryBattleModel();
-        StoryBattleView gameView = new StoryBattleView();
+        
+        // Pass the level into the view!
+        StoryBattleView gameView = new StoryBattleView(level); 
+        
         new StoryBattleController(gameView, gameModel, this, level);
         view.setContent(gameView.getRoot());
     }

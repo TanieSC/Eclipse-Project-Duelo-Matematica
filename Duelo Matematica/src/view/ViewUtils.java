@@ -277,6 +277,63 @@ public final class ViewUtils {
    }
    
    /**
+    * Creates a looping animated sprite from a horizontal sprite sheet.
+    * 
+    * @param imagePath    The path to the image (e.g., "/sprites/hero.png")
+    * @param frameCount   Total number of frames in the image (changeable!)
+    * @param fitWidth     The width to display the sprite on screen
+    * @param fitHeight    The height to display the sprite on screen
+    * @param fps          Frames per second (e.g., 10.0 for 10 FPS)
+    * @return An ImageView node with a running animation
+    */
+   public static ImageView createAnimatedSprite(String imagePath, int frameCount, double fitWidth, double fitHeight, double fps) {
+       // 1. Load the image
+       java.io.InputStream stream = ViewUtils.class.getResourceAsStream("/_assets" + imagePath);
+       if (stream == null) {
+           System.err.println("ERROR: Animated Sprite NOT FOUND at path: /_assets" + imagePath);
+           return new ImageView(); // return empty to prevent crash
+       }
+       
+       Image spriteSheet = new Image(stream);
+       
+       // 2. Calculate the size of a single frame
+       double frameWidth = spriteSheet.getWidth() / frameCount;
+       double frameHeight = spriteSheet.getHeight();
+       
+       // 3. Create the ImageView
+       ImageView imageView = new ImageView(spriteSheet);
+       imageView.setPreserveRatio(false); 
+       imageView.setFitWidth(fitWidth);
+       imageView.setFitHeight(fitHeight);
+       imageView.setSmooth(false); // Keep pixel art crisp (no blur)
+       
+       // Set the starting frame (Frame 0)
+       imageView.setViewport(new Rectangle2D(0, 0, frameWidth, frameHeight));
+       
+       // 4. Create the animation timeline
+       double frameDurationMs = 1000.0 / fps;
+       Timeline timeline = new Timeline();
+       
+       for (int i = 0; i < frameCount; i++) {
+           final int frameIndex = i;
+           KeyFrame keyFrame = new KeyFrame(Duration.millis(i * frameDurationMs), e -> {
+               // Move the viewport to the next frame
+               imageView.setViewport(new Rectangle2D(frameIndex * frameWidth, 0, frameWidth, frameHeight));
+           });
+           timeline.getKeyFrames().add(keyFrame);
+       }
+       
+       // Loop forever
+       timeline.setCycleCount(Timeline.INDEFINITE);
+       timeline.play();
+       
+       // Attach the timeline to the ImageView so Java doesn't garbage collect it
+       imageView.setUserData(timeline); 
+       
+       return imageView;
+   }
+   
+   /**
     * SPRITE BUTTON (AUTO-SIZE) — Creates a wooden button that automatically 
     * sizes itself based on the length of the text.
     */

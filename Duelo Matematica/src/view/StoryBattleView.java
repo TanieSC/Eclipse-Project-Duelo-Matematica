@@ -49,6 +49,8 @@ public class StoryBattleView {
     // 1v1 health / push visuals
     private final Rectangle greenBox;
     private final Rectangle redBox;
+    private final AnimatedSprite greenSprite;
+    private final AnimatedSprite redSprite;
     private final Region redHealth;
     private final Region greenHealth;
 
@@ -60,7 +62,7 @@ public class StoryBattleView {
 
     private Consumer<Integer> onAnswerPicked;
 
-    public StoryBattleView() {
+    public StoryBattleView(int level) {
         rootStack = new StackPane();
         gameLayout = new BorderPane();
         gameLayout.setStyle("-fx-background-color: transparent;");
@@ -181,7 +183,62 @@ public class StoryBattleView {
         redBox.layoutXProperty().bind(platformPane.widthProperty().subtract(redBox.widthProperty()).divide(2));
         redBox.layoutYProperty().bind(platformPane.heightProperty().subtract(redBox.heightProperty()).divide(2));
 
-        platformPane.getChildren().addAll(healthBars, frame, greenBox, redBox);
+        
+     // 2. CREATE THE SPRITES
+        greenSprite = new AnimatedSprite(
+            "/player/player_idle.png", 13,       
+            "/player/player_punch.png", 7,     
+            "/player/player_hurt.png", 10,      
+            35, 50                         
+        );
+
+        // --- ENEMY SPRITE (Dynamic based on level) ---
+        String enemyIdle, enemyCorrect, enemyWrong;
+
+        if (level == 3) {
+            // Level 3: Knight
+        	ViewUtils.applyBackgroundImage(rootStack, "/backgrounds/bg_castle.png");
+            enemyIdle = "/enemies/enemy2_idle.png";
+            enemyCorrect = "/enemies/enemy2_punch.png";
+            enemyWrong = "/enemies/enemy2_hurt.png";
+        } else if (level == 2)  {
+            // Level 1 & 2: Hooded Figure
+        	ViewUtils.applyBackgroundImage(rootStack, "/backgrounds/bg_campsite.png");
+            enemyIdle = "/enemies/enemy_idle.png";
+            enemyCorrect = "/enemies/enemy_punch.png";
+            enemyWrong = "/enemies/enemy_hurt.png";
+        } else {
+        	ViewUtils.applyBackgroundImage(rootStack, "/backgrounds/bg_house.png");
+            enemyIdle = "/enemies/enemy_idle.png";
+            enemyCorrect = "/enemies/enemy_punch.png";
+            enemyWrong = "/enemies/enemy_hurt.png";
+        }
+        
+        redSprite = new AnimatedSprite(
+                enemyIdle, 13,
+                enemyCorrect, 7,
+                enemyWrong, 10,
+                35, 50
+            );
+        
+        redSprite.setScaleX(-1); 
+
+        // 3. BIND POSITIONS WITH AN OFFSET
+        // We subtract 45 from the Y axis to move the sprite ABOVE the box (into the red circle)
+        double yOffset = 45; 
+
+        greenSprite.layoutXProperty().bind(greenBox.layoutXProperty());
+        greenSprite.layoutYProperty().bind(greenBox.layoutYProperty().subtract(yOffset));
+        greenSprite.translateXProperty().bind(greenBox.translateXProperty());
+        greenSprite.translateYProperty().bind(greenBox.translateYProperty());
+
+        redSprite.layoutXProperty().bind(redBox.layoutXProperty());
+        redSprite.layoutYProperty().bind(redBox.layoutYProperty().subtract(yOffset));
+        redSprite.translateXProperty().bind(redBox.translateXProperty());
+        redSprite.translateYProperty().bind(redBox.translateYProperty());
+
+        // 4. ADD TO PANE (Sprites MUST be added last so they are on top)
+        platformPane.getChildren().addAll(healthBars, frame, greenBox, redBox, greenSprite, redSprite);
 
         // --- Center composition ---
         VBox centerContent = new VBox(15, backgroundContainer, platformContainer);
@@ -193,13 +250,14 @@ public class StoryBattleView {
         gameLayout.setCenter(centerContent);
         gameLayout.setBottom(bottomBar);
 
-        rootStack.getChildren().add(gameLayout);
-        ViewUtils.applyBackgroundImage(rootStack, "/backgrounds/bg_house.png");
+        rootStack.getChildren().add(gameLayout);  
     }
 
     public Node getRoot() { return rootStack; }
     public Button getSurrenderButton() { return surrenderButton; }
     public Button getGearButton() { return gearButton; }
+    public AnimatedSprite getGreenSprite() { return greenSprite; }
+    public AnimatedSprite getRedSprite() { return redSprite; }
 
     public void setOnAnswerPicked(Consumer<Integer> handler) { this.onAnswerPicked = handler; }
 

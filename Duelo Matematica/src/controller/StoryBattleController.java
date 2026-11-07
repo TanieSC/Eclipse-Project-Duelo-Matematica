@@ -58,6 +58,20 @@ public class StoryBattleController {
         view.disableOptions();
 
         StoryBattleModel.Result result = model.submitAnswer(selectedIndex);
+        
+        if (result == StoryBattleModel.Result.DEFEAT) {
+        	AudioManager.playSFX("sfx_death.wav");
+        }
+        
+        // --- TRIGGER PLAYER ANIMATIONS ---
+        if (result == StoryBattleModel.Result.CORRECT || result == StoryBattleModel.Result.VICTORY) {
+            view.getGreenSprite().playCorrect();
+            view.getRedSprite().playWrong();
+        } else if (result == StoryBattleModel.Result.INCORRECT || result == StoryBattleModel.Result.DEFEAT) {
+            view.getGreenSprite().playWrong();
+            view.getRedSprite().playCorrect();
+        }
+        
         processTurnResult(result);
     }
 
@@ -69,6 +83,18 @@ public class StoryBattleController {
             view.disableOptions();
 
             StoryBattleModel.Result result = model.submitOpponentAnswer(answer.getChosenIndex(), answer.getDelayMs());
+      	    
+            // --- TRIGGER NPC ANIMATIONS ---
+            // Note: In story mode, if the NPC answers correctly, it pushes the player back.
+            // So the NPC plays "Correct" and the Player plays "Wrong".
+            if (result == StoryBattleModel.Result.CORRECT || result == StoryBattleModel.Result.VICTORY) {
+                view.getRedSprite().playCorrect();
+                view.getGreenSprite().playWrong();
+            } else if (result == StoryBattleModel.Result.INCORRECT || result == StoryBattleModel.Result.DEFEAT) {
+                view.getRedSprite().playWrong();
+                view.getGreenSprite().playCorrect();
+            }
+            
             processTurnResult(result);
         });
     }

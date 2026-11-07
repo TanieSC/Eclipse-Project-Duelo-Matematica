@@ -4,6 +4,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.util.Duration;
+import model.AudioManager;
 import model.AuthService;
 import model.Network1v1Model;
 import model.Question;
@@ -175,6 +176,18 @@ public class Network1v1Controller {
 
         long elapsed = System.currentTimeMillis() - questionStartMs;
         conn.send("ANS:" + model.getCurrentQuestionIndex() + ":" + selectedIdx + ":" + elapsed);
+        
+        // Check if the player's answer was correct
+        boolean isCorrect = (selectedIdx == model.getCurrentCorrectIndex());
+        
+        // --- TRIGGER PLAYER ANIMATIONS ---
+        if (isCorrect) {
+            view.getGreenSprite().playCorrect();
+            view.getRedSprite().playWrong();
+        } else {
+            view.getGreenSprite().playWrong();
+            view.getRedSprite().playCorrect();
+        }
 
         model.applyPlayerAnswer(selectedIdx, elapsed);
         view.animateBoxes(model.getGreenX(), model.getRedX(), this::afterAnimation);
@@ -187,6 +200,16 @@ public class Network1v1Controller {
         opponentAnswered = true;
 
         boolean oppCorrect = (optIdx == model.getCurrentCorrectIndex());
+        
+        // --- TRIGGER OPPONENT ANIMATIONS ---
+        if (oppCorrect) {
+            view.getRedSprite().playCorrect();
+            view.getGreenSprite().playWrong();
+        } else {
+            view.getRedSprite().playWrong();
+            view.getGreenSprite().playCorrect();
+        }
+        
         model.applyOpponentAnswer(oppCorrect, elapsed);
         view.animateBoxes(model.getGreenX(), model.getRedX(), this::afterAnimation);
     }
@@ -215,6 +238,11 @@ public class Network1v1Controller {
     private void detectAndHandleEnd(Network1v1Model.Result result) {
         if (matchEnded) return;
 
+        if(result == Network1v1Model.Result.OPPONENT_VICTORY) {
+        	
+        	AudioManager.playSFX("sfx_death.wav");
+        }
+             
         String sendResult =
                 result == Network1v1Model.Result.PLAYER_VICTORY   ? "WIN"  :
                 result == Network1v1Model.Result.OPPONENT_VICTORY ? "LOSE" : "DRAW";

@@ -48,6 +48,19 @@ public class Game1v1Controller {
         view.disableOptions(); // harmless, kept for API compatibility
 
         Game1v1Model.Result result = model.submitAnswer(selectedIndex, view.getCurrentCorrectIndex());
+        
+        //System.out.println("DEBUG: Answer result is " + result); // <-- ADD THIS
+
+        if (result == Game1v1Model.Result.CORRECT || result == Game1v1Model.Result.VICTORY) {
+          //  System.out.println("DEBUG: Playing Correct Animation"); // <-- ADD THIS
+            view.getGreenSprite().playCorrect(); 
+            view.getRedSprite().playWrong();     
+        } else if (result == Game1v1Model.Result.INCORRECT || result == Game1v1Model.Result.DEFEAT) {
+           // System.out.println("DEBUG: Playing Wrong Animation"); // <-- ADD THIS
+            view.getGreenSprite().playWrong();   
+            view.getRedSprite().playCorrect();   
+        }
+
 
         double targetGreenX = model.getGreenX();
         double targetRedX = model.getRedX();

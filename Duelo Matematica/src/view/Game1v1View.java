@@ -82,6 +82,8 @@ public class Game1v1View {
     // 1v1 health / push visuals
     private final Rectangle greenBox;
     private final Rectangle redBox;
+    private final AnimatedSprite greenSprite;
+    private final AnimatedSprite redSprite;
     private final Region redHealth;
     private final Region greenHealth;
 
@@ -240,7 +242,38 @@ public class Game1v1View {
         redBox.layoutYProperty().bind(
             platformPane.heightProperty().subtract(redBox.heightProperty()).divide(2));
 
-        platformPane.getChildren().addAll(healthBars, frame, greenBox, redBox);
+     // 2. CREATE THE SPRITES
+        greenSprite = new AnimatedSprite(
+            "/player/player_idle.png", 13,       
+            "/player/player_punch.png", 7,     
+            "/player/player_hurt.png", 10,      
+            35, 50                         
+        );
+
+        redSprite = new AnimatedSprite(
+            "/player/player2_idle.png", 13,
+            "/player/player2_punch.png", 7,
+            "/player/player2_hurt.png", 10,
+            35, 50
+        );
+        redSprite.setScaleX(-1); 
+
+        // 3. BIND POSITIONS WITH AN OFFSET
+        // We subtract 45 from the Y axis to move the sprite ABOVE the box (into the red circle)
+        double yOffset = 45; 
+
+        greenSprite.layoutXProperty().bind(greenBox.layoutXProperty());
+        greenSprite.layoutYProperty().bind(greenBox.layoutYProperty().subtract(yOffset));
+        greenSprite.translateXProperty().bind(greenBox.translateXProperty());
+        greenSprite.translateYProperty().bind(greenBox.translateYProperty());
+
+        redSprite.layoutXProperty().bind(redBox.layoutXProperty());
+        redSprite.layoutYProperty().bind(redBox.layoutYProperty().subtract(yOffset));
+        redSprite.translateXProperty().bind(redBox.translateXProperty());
+        redSprite.translateYProperty().bind(redBox.translateYProperty());
+
+        // 4. ADD TO PANE (Sprites MUST be added last so they are on top)
+        platformPane.getChildren().addAll(healthBars, frame, greenBox, redBox, greenSprite, redSprite);
 
         // --- Center composition ---
         VBox centerContent = new VBox(15, backgroundContainer, platformContainer);
@@ -263,6 +296,8 @@ public class Game1v1View {
     public Button getSurrenderButton() { return surrenderButton; }
     public Button getGearButton() { return gearButton; }
     public int getCurrentCorrectIndex() { return currentCorrectIndex; }
+    public AnimatedSprite getGreenSprite() { return greenSprite; }
+    public AnimatedSprite getRedSprite() { return redSprite; }
 
     /** Same callback-style wiring that GameView uses. */
     public void setOnAnswerPicked(Consumer<Integer> handler) { this.onAnswerPicked = handler; }
